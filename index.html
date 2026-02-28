@@ -9,11 +9,6 @@
       --bg1:#071327;
       --bg2:#0d214a;
       --bg3:#153571;
-
-      --bg1-end:#120d2f;
-      --bg2-end:#2a2360;
-      --bg3-end:#3f4690;
-
       --accent:#4c7dff;
       --text:#e6eeff;
       --warn:#ffcc66;
@@ -177,13 +172,13 @@
     .dev-btn{background:rgba(143,179,255,.25);border:1px solid rgba(255,255,255,.25);border-radius:999px;padding:6px 10px;font-size:.8rem;color:#fff;cursor:pointer}
     .dev-btn.real{background:rgba(255,204,102,.24)}
     .mono{font-family:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace}
-    .dev-input,.dev-sec{background:rgba(255,255,255,.12);border:1px solid rgba(255,255,255,.28);color:#fff;border-radius:8px;padding:6px 8px;font-size:.82rem}
+    .dev-input,.dev-sec,.dev-num{background:rgba(255,255,255,.12);border:1px solid rgba(255,255,255,.28);color:#fff;border-radius:8px;padding:6px 8px;font-size:.82rem}
     .dev-sec{width:70px}
+    .dev-num{width:88px}
     .dev-input::-webkit-calendar-picker-indicator{filter:invert(1);cursor:pointer}
     .theme-btn{border:1px solid rgba(255,255,255,.35);border-radius:999px;padding:6px 10px;font-size:.78rem;color:#fff;background:rgba(255,255,255,.12);cursor:pointer}
     .dev-info{margin-top:8px;padding:8px 10px;background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.15);border-radius:8px;font-size:.78rem;line-height:1.35}
-    .dev-info .k{opacity:.78}
-    .dev-info .v{opacity:.98}
+    .dev-info .k{opacity:.78}.dev-info .v{opacity:.98}
 
     @media (max-width:700px){
       .fx{inset:-40%}
@@ -196,7 +191,7 @@
       .cal-day{min-height:34px;font-size:.78rem;border-radius:7px;padding:0}.cal-dow{font-size:.7rem}
       .legend{font-size:.7rem;gap:8px}.dev-panel{padding:10px;border-radius:10px}.dev-title{font-size:.82rem}
       .dev-row{gap:6px}.dev-btn{font-size:.76rem;padding:7px 9px}
-      .dev-input,.dev-sec{width:100%;font-size:.86rem}
+      .dev-input,.dev-sec,.dev-num{width:100%;font-size:.86rem}
       .dev-row.custom-time-row{display:grid;grid-template-columns:1fr 90px;gap:6px}
       .dev-row.custom-time-row .dev-btn{grid-column:span 2;width:100%}
     }
@@ -237,7 +232,8 @@
 
   <div class="container" id="mainContainer">
     <div class="dev-panel" id="devPanel">
-      <div class="dev-title">Dev Tools (time + theme + diagnostics)</div>
+      <div class="dev-title">Dev Tools (time + continuous color cycle + diagnostics)</div>
+
       <div class="dev-row">
         <button class="dev-btn real" onclick="setTestNow(null)">Real Time</button>
         <button class="dev-btn" onclick="setTestNow('2026-03-02T10:00:00')">Mon During Class</button>
@@ -267,6 +263,14 @@
         <span class="mono" style="font-size:.8rem;opacity:.9;">Sim Speed: <strong id="simSpeedValue">1x</strong></span>
       </div>
 
+      <!-- NEW: direct cycle duration control -->
+      <div class="dev-row" style="margin-top:8px;">
+        <span class="mono" style="font-size:.8rem;opacity:.9;">Cycle seconds (1x):</span>
+        <input id="cycleSecondsInput" class="dev-num mono" type="number" min="5" max="3600" step="1" value="600" />
+        <button class="theme-btn" onclick="applyCycleSeconds()">Apply</button>
+        <span class="mono" style="font-size:.8rem;opacity:.9;">Effective: <strong id="effectiveCycleSeconds">600s</strong></span>
+      </div>
+
       <div class="dev-row" id="themeRow" style="margin-top:8px; display:none;">
         <button class="theme-btn" onclick="applyTheme('blue')">Dark Blue</button>
         <button class="theme-btn" onclick="applyTheme('violet')">Violet</button>
@@ -275,7 +279,7 @@
         <button class="theme-btn" onclick="applyTheme('emerald')">Emerald</button>
         <button class="theme-btn" onclick="applyTheme('crimson')">Crimson</button>
         <button class="theme-btn" onclick="applyTheme('arctic')">Arctic</button>
-        <button class="theme-btn" onclick="resetThemeShift()">Reset + Shift</button>
+        <button class="theme-btn" onclick="resetThemeShift()">Reset Cycle</button>
       </div>
 
       <div class="dev-info mono" id="devInfo">Loading diagnostics…</div>
@@ -318,117 +322,130 @@
   </div>
 
   <script>
-    let DEV_MODE = false;
-    let BARE_MODE = false;
-    let SIM_SPEED = 1;
-    let currentThemeName = "blue";
-    let activeShotsCount = 0;
-    let shotsSpawnedLast60s = [];
-    let currentDensity = 1;
-    let reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-
-    let colorShiftTimer = null;
-    const COLOR_SHIFT_BASE_MS = 600000; // 10 min @ 1x
-
+    let DEV_MODE=false, BARE_MODE=false, SIM_SPEED=1;
+    let BASE_CYCLE_MS=600000; // user editable in dev panel
+    let currentThemeName="blue", activeShotsCount=0, shotsSpawnedLast60s=[], currentDensity=1;
+    let reducedMotion=window.matchMedia('(prefers-reduced-motion: reduce)').matches;
     let TEST_NOW=null,devRunning=false,devAnchorRealMs=null,devAnchorSimMs=null;
 
-    const themePresets = {
-      blue:   {start:["#071327","#0d214a","#153571"], end:["#120d2f","#2a2360","#3f4690"]},
-      violet: {start:["#1a153f","#2f266f","#4d3f96"], end:["#28184f","#4b2c8f","#6f47bd"]},
-      teal:   {start:["#0b1f2e","#12435b","#1b6f87"], end:["#123149","#1d5d74","#2b8899"]},
-      sunset: {start:["#2a1638","#4f2457","#7a3566"], end:["#3c1b28","#744023","#b2632c"]},
-      emerald:{start:["#0c2a21","#13503f","#1a7560"], end:["#113226","#1b5a46","#2f8e71"]},
-      crimson:{start:["#2a0f1d","#4d1733","#77224c"], end:["#3b1322","#68243c","#9a3a58"]},
-      arctic: {start:["#102338","#1a3f63","#275f88"], end:["#1b2f47","#285777","#3f7da3"]}
+    let colorCycleRAF=null, cycleFrom=null, cycleTo=null, cycleStart=0, cycleDurationMs=600000;
+    const cycleThemeKeys=["blue","violet","teal","sunset","emerald","crimson","arctic"];
+
+    const themePresets={
+      blue:{start:["#071327","#0d214a","#153571"]},
+      violet:{start:["#1a153f","#2f266f","#4d3f96"]},
+      teal:{start:["#0b1f2e","#12435b","#1b6f87"]},
+      sunset:{start:["#2a1638","#4f2457","#7a3566"]},
+      emerald:{start:["#0c2a21","#13503f","#1a7560"]},
+      crimson:{start:["#2a0f1d","#4d1733","#77224c"]},
+      arctic:{start:["#102338","#1a3f63","#275f88"]}
     };
 
-    function cssVar(name){return getComputedStyle(document.documentElement).getPropertyValue(name).trim();}
-    function setRootVar(name,val){document.documentElement.style.setProperty(name,val);}
-    function nowLocalString(d){return d.toLocaleString(undefined,{hour12:false,year:"numeric",month:"2-digit",day:"2-digit",hour:"2-digit",minute:"2-digit",second:"2-digit"});}
-    function parseHexColor(hex){const s=hex.replace("#","").trim();const full=s.length===3?s.split("").map(c=>c+c).join(""):s;const n=parseInt(full,16);return {r:(n>>16)&255,g:(n>>8)&255,b:n&255};}
-    function toHex({r,g,b}){const h=v=>Math.max(0,Math.min(255,Math.round(v))).toString(16).padStart(2,"0");return `#${h(r)}${h(g)}${h(b)}`;}
-    function lerpColor(a,b,t){const c1=parseHexColor(a),c2=parseHexColor(b);return toHex({r:c1.r+(c2.r-c1.r)*t,g:c1.g+(c2.g-c1.g)*t,b:c1.b+(c2.b-c1.b)*t});}
+    const cssVar=n=>getComputedStyle(document.documentElement).getPropertyValue(n).trim();
+    const setRootVar=(n,v)=>document.documentElement.style.setProperty(n,v);
+    function parseHex(hex){const s=hex.replace("#","").trim();const f=s.length===3?s.split("").map(c=>c+c).join(""):s;const n=parseInt(f,16);return[(n>>16)&255,(n>>8)&255,n&255];}
+    function toHex([r,g,b]){const h=v=>Math.max(0,Math.min(255,Math.round(v))).toString(16).padStart(2,"0");return `#${h(r)}${h(g)}${h(b)}`;}
+    function lerp(a,b,t){return [a[0]+(b[0]-a[0])*t,a[1]+(b[1]-a[1])*t,a[2]+(b[2]-a[2])*t];}
+    function setBgTriplet(arr){setRootVar('--bg1',arr[0]);setRootVar('--bg2',arr[1]);setRootVar('--bg3',arr[2]);}
 
     function getNow(){
       if(!TEST_NOW) return new Date();
       if(devRunning && devAnchorRealMs!==null && devAnchorSimMs!==null){
-        const elapsedReal = Date.now()-devAnchorRealMs;
-        return new Date(devAnchorSimMs + elapsedReal * SIM_SPEED);
+        return new Date(devAnchorSimMs + (Date.now()-devAnchorRealMs)*SIM_SPEED);
       }
       return new Date(TEST_NOW);
     }
 
-    function setSimSpeed(mult){
-      SIM_SPEED = Math.max(0.1, Number(mult) || 1);
-      const speedEl = document.getElementById("simSpeedValue");
-      if(speedEl) speedEl.textContent = `${SIM_SPEED}x`;
+    function getEffectiveCycleMs(){ return BASE_CYCLE_MS / SIM_SPEED; }
 
-      if(devRunning && devAnchorRealMs!==null && devAnchorSimMs!==null){
-        const nowSim = getNow();
-        devAnchorSimMs = nowSim.getTime();
-        devAnchorRealMs = Date.now();
-      }
+    function stopCycle(){ if(colorCycleRAF) cancelAnimationFrame(colorCycleRAF); colorCycleRAF=null; }
 
-      restartColorShiftWithCurrentProgress();
+    function startContinuousColorCycle(forceThemeName=null){
+      stopCycle();
+      if(forceThemeName && themePresets[forceThemeName]) currentThemeName=forceThemeName;
+
+      cycleFrom=[parseHex(cssVar('--bg1')),parseHex(cssVar('--bg2')),parseHex(cssVar('--bg3'))];
+      const idx=Math.max(0,cycleThemeKeys.indexOf(currentThemeName));
+      const nextName=cycleThemeKeys[(idx+1)%cycleThemeKeys.length];
+      const target=themePresets[nextName].start;
+      cycleTo=[parseHex(target[0]),parseHex(target[1]),parseHex(target[2])];
+
+      cycleStart=performance.now();
+      cycleDurationMs=getEffectiveCycleMs();
+
+      const tick=(ts)=>{
+        const t=Math.min(1,(ts-cycleStart)/cycleDurationMs);
+        setBgTriplet([toHex(lerp(cycleFrom[0],cycleTo[0],t)),toHex(lerp(cycleFrom[1],cycleTo[1],t)),toHex(lerp(cycleFrom[2],cycleTo[2],t))]);
+
+        if(t<1){colorCycleRAF=requestAnimationFrame(tick);return;}
+
+        currentThemeName=nextName;
+        cycleFrom=cycleTo;
+        const n2=cycleThemeKeys[(cycleThemeKeys.indexOf(currentThemeName)+1)%cycleThemeKeys.length];
+        const t2=themePresets[n2].start;
+        cycleTo=[parseHex(t2[0]),parseHex(t2[1]),parseHex(t2[2])];
+        cycleStart=performance.now();
+        cycleDurationMs=getEffectiveCycleMs();
+        colorCycleRAF=requestAnimationFrame(tick);
+      };
+
+      colorCycleRAF=requestAnimationFrame(tick);
       updateDevInfo();
-    }
-
-    function getColorShiftDurationMs(){ return COLOR_SHIFT_BASE_MS / SIM_SPEED; }
-
-    function stopColorShift(){ if(colorShiftTimer){ cancelAnimationFrame(colorShiftTimer); colorShiftTimer=null; } }
-
-    function startTenMinuteColorShift(){
-      stopColorShift();
-
-      const from1 = cssVar('--bg1'), from2 = cssVar('--bg2'), from3 = cssVar('--bg3');
-      const to1 = cssVar('--bg1-end'), to2 = cssVar('--bg2-end'), to3 = cssVar('--bg3-end');
-      const duration = getColorShiftDurationMs();
-      const start = performance.now();
-
-      function tick(now){
-        const t = Math.min(1, (now - start) / duration);
-        setRootVar('--bg1', lerpColor(from1, to1, t));
-        setRootVar('--bg2', lerpColor(from2, to2, t));
-        setRootVar('--bg3', lerpColor(from3, to3, t));
-        if(t < 1){ colorShiftTimer=requestAnimationFrame(tick); } else { colorShiftTimer=null; }
-      }
-      colorShiftTimer = requestAnimationFrame(tick);
-    }
-
-    function restartColorShiftWithCurrentProgress(){
-      if(!colorShiftTimer) return;
-      startTenMinuteColorShift();
     }
 
     function applyTheme(name){
-      const t = themePresets[name]; if(!t) return;
-      currentThemeName = name;
-      setRootVar('--bg1', t.start[0]); setRootVar('--bg2', t.start[1]); setRootVar('--bg3', t.start[2]);
-      setRootVar('--bg1-end', t.end[0]); setRootVar('--bg2-end', t.end[1]); setRootVar('--bg3-end', t.end[2]);
-      startTenMinuteColorShift();
+      const t=themePresets[name]; if(!t) return;
+      currentThemeName=name;
+      setBgTriplet(t.start);
+      startContinuousColorCycle(name);
       updateDevInfo();
     }
-    function resetThemeShift(){ applyTheme('blue'); }
 
+    function resetThemeShift(){ applyTheme("blue"); }
+
+    function setSimSpeed(mult){
+      SIM_SPEED=Math.max(.1,Number(mult)||1);
+      const el=document.getElementById("simSpeedValue"); if(el) el.textContent=`${SIM_SPEED}x`;
+
+      if(devRunning && devAnchorRealMs!==null && devAnchorSimMs!==null){
+        const nowSim=getNow(); devAnchorSimMs=nowSim.getTime(); devAnchorRealMs=Date.now();
+      }
+
+      const eff=document.getElementById("effectiveCycleSeconds");
+      if(eff) eff.textContent=`${(getEffectiveCycleMs()/1000).toFixed(2)}s`;
+
+      startContinuousColorCycle(currentThemeName);
+      updateDevInfo();
+    }
+
+    function applyCycleSeconds(){
+      const input=document.getElementById("cycleSecondsInput");
+      if(!input) return;
+      const v=Math.max(5,Math.min(3600,Number(input.value)||600));
+      input.value=String(v);
+      BASE_CYCLE_MS=v*1000;
+      const eff=document.getElementById("effectiveCycleSeconds");
+      if(eff) eff.textContent=`${(getEffectiveCycleMs()/1000).toFixed(2)}s`;
+      startContinuousColorCycle(currentThemeName);
+      updateDevInfo();
+    }
+
+    function nowLocalString(d){return d.toLocaleString(undefined,{hour12:false,year:"numeric",month:"2-digit",day:"2-digit",hour:"2-digit",minute:"2-digit",second:"2-digit"});}
     function updateDevInfo(){
-      const el=document.getElementById("devInfo"); if(!el || !DEV_MODE) return;
-      const params = new URLSearchParams(window.location.search);
-      const now = getNow(), w = window.innerWidth, h = window.innerHeight, dpr = Math.min(window.devicePixelRatio || 1, 2);
-      const cutoff = Date.now() - 60000;
-      shotsSpawnedLast60s = shotsSpawnedLast60s.filter(ts => ts >= cutoff);
-      const shotsPerMin = shotsSpawnedLast60s.length;
+      const el=document.getElementById("devInfo"); if(!el||!DEV_MODE) return;
+      const params=new URLSearchParams(location.search),cut=Date.now()-60000;
+      shotsSpawnedLast60s=shotsSpawnedLast60s.filter(t=>t>=cut);
 
-      el.innerHTML = `
-        <div><span class="k">time:</span> <span class="v">${nowLocalString(now)}</span></div>
+      el.innerHTML=`
+        <div><span class="k">time:</span> <span class="v">${nowLocalString(getNow())}</span></div>
         <div><span class="k">params:</span> <span class="v">dev=${params.get("dev")||"0"} b=${params.get("b")||"0"}</span></div>
         <div><span class="k">sim speed:</span> <span class="v">${SIM_SPEED}x</span></div>
+        <div><span class="k">cycle (base/effective):</span> <span class="v">${(BASE_CYCLE_MS/1000).toFixed(2)}s / ${(getEffectiveCycleMs()/1000).toFixed(2)}s</span></div>
         <div><span class="k">theme:</span> <span class="v">${currentThemeName}</span></div>
         <div><span class="k">bg:</span> <span class="v">${cssVar('--bg1')} | ${cssVar('--bg2')} | ${cssVar('--bg3')}</span></div>
-        <div><span class="k">target:</span> <span class="v">${cssVar('--bg1-end')} | ${cssVar('--bg2-end')} | ${cssVar('--bg3-end')}</span></div>
-        <div><span class="k">shooting:</span> <span class="v">active=${activeShotsCount} rate≈${shotsPerMin}/min</span></div>
-        <div><span class="k">screen:</span> <span class="v">${w}x${h} dpr=${dpr}</span></div>
-        <div><span class="k">density/reducedMotion:</span> <span class="v">${currentDensity} / ${reducedMotion}</span></div>
-      `;
+        <div><span class="k">shooting:</span> <span class="v">active=${activeShotsCount} rate≈${shotsSpawnedLast60s.length}/min</span></div>
+        <div><span class="k">screen:</span> <span class="v">${innerWidth}x${innerHeight} dpr=${Math.min(devicePixelRatio||1,2)}</span></div>
+        <div><span class="k">density/reducedMotion:</span> <span class="v">${currentDensity} / ${reducedMotion}</span></div>`;
     }
 
     (function backgroundFX(){
@@ -437,53 +454,14 @@
       const canvas=document.getElementById('shootingCanvas');
       const ctx=canvas.getContext('2d');
 
-      function updateDensity(){
-        const w=window.innerWidth; let d=1;
-        if(w<480) d=0.55; else if(w<768) d=0.72; else if(w<1200) d=0.88;
-        currentDensity=d; root.style.setProperty('--density', d.toString());
-      }
-
-      let w=0,h=0,dpr=Math.min(window.devicePixelRatio||1,2);
-      const shots=[];
-
-      function resizeCanvas(){
-        w=window.innerWidth; h=window.innerHeight; dpr=Math.min(window.devicePixelRatio||1,2);
-        canvas.width=Math.floor(w*dpr); canvas.height=Math.floor(h*dpr);
-        canvas.style.width=w+'px'; canvas.style.height=h+'px';
-        ctx.setTransform(dpr,0,0,dpr,0,0);
-      }
-
-      function spawnShot(){
-        const startX=Math.random()*w*.7+w*.3, startY=Math.random()*h*.35;
-        const speed=5+Math.random()*4, len=70+Math.random()*80, angle=(Math.PI*.75)+(Math.random()-.5)*.22;
-        shots.push({x:startX,y:startY,vx:Math.cos(angle)*speed,vy:Math.sin(angle)*speed,life:0,ttl:26+Math.random()*18,len,alpha:.35+Math.random()*.35});
-        shotsSpawnedLast60s.push(Date.now());
-      }
-
-      function drawShot(s){
-        const ex=s.x-s.vx*(s.len/10), ey=s.y-s.vy*(s.len/10);
-        const g=ctx.createLinearGradient(s.x,s.y,ex,ey), a=s.alpha*(1-s.life/s.ttl);
-        g.addColorStop(0,`rgba(255,255,255,${a})`); g.addColorStop(1,'rgba(180,210,255,0)');
-        ctx.strokeStyle=g; ctx.lineWidth=1.2; ctx.beginPath(); ctx.moveTo(s.x,s.y); ctx.lineTo(ex,ey); ctx.stroke();
-      }
-
-      function loop(){
-        reducedMotion=mqReduce.matches;
-        if(!mqReduce.matches){
-          ctx.clearRect(0,0,w,h);
-          const spawnChance = w<700 ? 0.0007 : 0.0012;
-          if(Math.random()<spawnChance) spawnShot();
-          for(let i=shots.length-1;i>=0;i--){
-            const s=shots[i]; s.x+=s.vx; s.y+=s.vy; s.life+=1; drawShot(s);
-            if(s.life>=s.ttl || s.x<-120 || s.y>h+120) shots.splice(i,1);
-          }
-        }
-        activeShotsCount=shots.length;
-        requestAnimationFrame(loop);
-      }
-
-      window.addEventListener('resize',()=>{resizeCanvas();updateDensity();updateDevInfo();});
-      updateDensity(); resizeCanvas(); startTenMinuteColorShift(); loop();
+      function updateDensity(){const w=innerWidth;let d=1;if(w<480)d=.55;else if(w<768)d=.72;else if(w<1200)d=.88;currentDensity=d;root.style.setProperty('--density',d);}
+      let w=0,h=0,dpr=Math.min(devicePixelRatio||1,2),shots=[];
+      function resizeCanvas(){w=innerWidth;h=innerHeight;dpr=Math.min(devicePixelRatio||1,2);canvas.width=Math.floor(w*dpr);canvas.height=Math.floor(h*dpr);canvas.style.width=w+'px';canvas.style.height=h+'px';ctx.setTransform(dpr,0,0,dpr,0,0);}
+      function spawnShot(){const x=Math.random()*w*.7+w*.3,y=Math.random()*h*.35,s=5+Math.random()*4,l=70+Math.random()*80,a=Math.PI*.75+(Math.random()-.5)*.22;shots.push({x,y,vx:Math.cos(a)*s,vy:Math.sin(a)*s,life:0,ttl:26+Math.random()*18,len:l,alpha:.35+Math.random()*.35});shotsSpawnedLast60s.push(Date.now());}
+      function drawShot(s){const ex=s.x-s.vx*(s.len/10),ey=s.y-s.vy*(s.len/10),g=ctx.createLinearGradient(s.x,s.y,ex,ey),a=s.alpha*(1-s.life/s.ttl);g.addColorStop(0,`rgba(255,255,255,${a})`);g.addColorStop(1,'rgba(180,210,255,0)');ctx.strokeStyle=g;ctx.lineWidth=1.2;ctx.beginPath();ctx.moveTo(s.x,s.y);ctx.lineTo(ex,ey);ctx.stroke();}
+      function loop(){reducedMotion=mqReduce.matches;if(!mqReduce.matches){ctx.clearRect(0,0,w,h);if(Math.random()<(w<700?0.0007:0.0012))spawnShot();for(let i=shots.length-1;i>=0;i--){const s=shots[i];s.x+=s.vx;s.y+=s.vy;s.life++;drawShot(s);if(s.life>=s.ttl||s.x<-120||s.y>h+120)shots.splice(i,1);}}activeShotsCount=shots.length;requestAnimationFrame(loop);}
+      addEventListener('resize',()=>{resizeCanvas();updateDensity();updateDevInfo();});
+      updateDensity();resizeCanvas();loop();
     })();
 
     function formatDate(d){return d.getFullYear()+"-"+String(d.getMonth()+1).padStart(2,"0")+"-"+String(d.getDate()).padStart(2,"0");}
@@ -498,21 +476,12 @@
     function formatDuration(totalSeconds){totalSeconds=Math.max(0,Math.floor(totalSeconds));const h=Math.floor(totalSeconds/3600),m=Math.floor((totalSeconds%3600)/60),s=totalSeconds%60;return h>0?`${h}h ${m}m ${s}s`:`${m}m ${s}s`;}
 
     let lastMainLabel="";
-    function setMainLabel(nextLabel){
-      const el=document.getElementById("currentPeriod");
-      if(nextLabel!==lastMainLabel){el.classList.remove("period-flash"); void el.offsetWidth; el.classList.add("period-flash"); lastMainLabel=nextLabel;}
-      el.innerHTML=nextLabel;
-    }
-
+    function setMainLabel(nextLabel){const el=document.getElementById("currentPeriod");if(nextLabel!==lastMainLabel){el.classList.remove("period-flash");void el.offsetWidth;el.classList.add("period-flash");lastMainLabel=nextLabel;}el.innerHTML=nextLabel;}
     function toLocalInputValue(dateObj){const pad=n=>String(n).padStart(2,"0");return `${dateObj.getFullYear()}-${pad(dateObj.getMonth()+1)}-${pad(dateObj.getDate())}T${pad(dateObj.getHours())}:${pad(dateObj.getMinutes())}:${pad(dateObj.getSeconds())}`;}
-    function setTestNow(iso){
-      TEST_NOW=iso;devRunning=false;devAnchorRealMs=null;devAnchorSimMs=null;
-      if(TEST_NOW){const d=new Date(TEST_NOW);document.getElementById("devDateTimeInput").value=toLocalInputValue(d);document.getElementById("devSecondInput").value=d.getSeconds();}
-      update(); if(calendarVisible) renderCalendar(); fitContainer(); updateDevInfo();
-    }
-    function applyCustomDevTime(){const input=document.getElementById("devDateTimeInput").value;if(!input) return;const secRaw=Number(document.getElementById("devSecondInput").value||0),sec=Math.max(0,Math.min(59,secRaw));let d=new Date(input); if(Number.isNaN(d.getTime())) return; d.setSeconds(sec,0); setTestNow(d.toISOString());}
-    function startDevRun(){if(!TEST_NOW) setTestNow(new Date().toISOString());const sim=getNow();devRunning=true;devAnchorRealMs=Date.now();devAnchorSimMs=sim.getTime();updateDevInfo();}
-    function pauseDevRun(){if(!TEST_NOW) return; if(devRunning) TEST_NOW=getNow().toISOString();devRunning=false;devAnchorRealMs=null;devAnchorSimMs=null;updateDevInfo();}
+    function setTestNow(iso){TEST_NOW=iso;devRunning=false;devAnchorRealMs=null;devAnchorSimMs=null;if(TEST_NOW){const d=new Date(TEST_NOW);document.getElementById("devDateTimeInput").value=toLocalInputValue(d);document.getElementById("devSecondInput").value=d.getSeconds();}update();if(calendarVisible)renderCalendar();fitContainer();updateDevInfo();}
+    function applyCustomDevTime(){const input=document.getElementById("devDateTimeInput").value;if(!input)return;const secRaw=Number(document.getElementById("devSecondInput").value||0),sec=Math.max(0,Math.min(59,secRaw));let d=new Date(input);if(Number.isNaN(d.getTime()))return;d.setSeconds(sec,0);setTestNow(d.toISOString());}
+    function startDevRun(){if(!TEST_NOW)setTestNow(new Date().toISOString());const sim=getNow();devRunning=true;devAnchorRealMs=Date.now();devAnchorSimMs=sim.getTime();updateDevInfo();}
+    function pauseDevRun(){if(!TEST_NOW)return;if(devRunning)TEST_NOW=getNow().toISOString();devRunning=false;devAnchorRealMs=null;devAnchorSimMs=null;updateDevInfo();}
 
     const scheduleCatalog={
       regularTF:{title:"Daily Schedule (Tue–Fri)",blocks:[["Period 1","08:45","09:42"],["Period 2","09:48","10:45"],["Period 3","10:51","11:48"],["Period 4","11:54","12:51"],["Lunch","12:57","13:27"],["Period 5","13:33","14:30"],["Period 6","14:36","15:33"]]},
@@ -617,43 +586,31 @@
     function toggleCalendar(){if (BARE_MODE) return;calendarVisible=!calendarVisible;document.getElementById("calendarCard").classList.toggle("hidden",!calendarVisible);document.getElementById("topGrid").classList.toggle("calendar-visible",calendarVisible);document.getElementById("calendarToggleBtn").innerText=calendarVisible?"Hide Calendar":"Show Calendar";if(calendarVisible) renderCalendar();fitContainer();}
 
     function initModes(){
-      const params=new URLSearchParams(window.location.search);
-      DEV_MODE=params.get("dev")==="1";
-      BARE_MODE=params.get("b")==="1";
+      const params=new URLSearchParams(location.search);
+      DEV_MODE=params.get("dev")==="1"; BARE_MODE=params.get("b")==="1";
       if(BARE_MODE) document.body.classList.add("bare-mode");
     }
-
     function initDevPanelVisibility(){
-      const devPanel=document.getElementById("devPanel");
-      const themeRow=document.getElementById("themeRow");
-      devPanel.style.display=DEV_MODE?"block":"none";
-      themeRow.style.display=DEV_MODE?"flex":"none";
+      const devPanel=document.getElementById("devPanel"),themeRow=document.getElementById("themeRow");
+      devPanel.style.display=DEV_MODE?"block":"none"; themeRow.style.display=DEV_MODE?"flex":"none";
+      const input=document.getElementById("cycleSecondsInput"); if(input) input.value=String(BASE_CYCLE_MS/1000);
+      const eff=document.getElementById("effectiveCycleSeconds"); if(eff) eff.textContent=`${(getEffectiveCycleMs()/1000).toFixed(2)}s`;
       fitContainer();
     }
-
     function fitContainer(){
       const c=document.getElementById("mainContainer");
-      if (BARE_MODE){c.classList.remove("allow-scroll");c.style.maxHeight = "none";return;}
+      if(BARE_MODE){c.classList.remove("allow-scroll");c.style.maxHeight="none";return;}
       c.classList.remove("allow-scroll");
-      const viewport = window.innerHeight;
-      const max = Math.floor(viewport * 0.94);
-      c.style.maxHeight = `${max}px`;
-      requestAnimationFrame(()=>{const needsScroll = c.scrollHeight > c.clientHeight + 1; c.classList.toggle("allow-scroll", needsScroll);});
+      const max=Math.floor(innerHeight*.94); c.style.maxHeight=`${max}px`;
+      requestAnimationFrame(()=>{c.classList.toggle("allow-scroll", c.scrollHeight>c.clientHeight+1);});
     }
 
-    initModes();
-    initDevPanelVisibility();
-    update();
-    fitContainer();
-    window.addEventListener("resize", fitContainer);
-
-    setInterval(()=>{
-      update();
-      updateDevInfo();
-    },1000);
-
-    renderCalendar();
-    updateDevInfo();
+    initModes(); initDevPanelVisibility();
+    applyTheme("blue"); // starts continuous cycle immediately
+    update(); fitContainer();
+    addEventListener("resize", fitContainer);
+    setInterval(()=>{update(); updateDevInfo();},1000);
+    renderCalendar(); updateDevInfo();
   </script>
 </body>
 </html>
