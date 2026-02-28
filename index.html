@@ -263,7 +263,6 @@
         <span class="mono" style="font-size:.8rem;opacity:.9;">Sim Speed: <strong id="simSpeedValue">1x</strong></span>
       </div>
 
-      <!-- NEW: direct cycle duration control -->
       <div class="dev-row" style="margin-top:8px;">
         <span class="mono" style="font-size:.8rem;opacity:.9;">Cycle seconds (1x):</span>
         <input id="cycleSecondsInput" class="dev-num mono" type="number" min="5" max="3600" step="1" value="600" />
@@ -323,14 +322,16 @@
 
   <script>
     let DEV_MODE=false, BARE_MODE=false, SIM_SPEED=1;
-    let BASE_CYCLE_MS=600000; // user editable in dev panel
-    let currentThemeName="blue", activeShotsCount=0, shotsSpawnedLast60s=[], currentDensity=1;
+    let BASE_CYCLE_MS=600000; // 10 min default
+    let currentThemeName="blue", currentTargetThemeName="violet";
+    let activeShotsCount=0, shotsSpawnedLast60s=[], currentDensity=1;
     let reducedMotion=window.matchMedia('(prefers-reduced-motion: reduce)').matches;
     let TEST_NOW=null,devRunning=false,devAnchorRealMs=null,devAnchorSimMs=null;
 
     let colorCycleRAF=null, cycleFrom=null, cycleTo=null, cycleStart=0, cycleDurationMs=600000;
-    const cycleThemeKeys=["blue","violet","teal","sunset","emerald","crimson","arctic"];
+    let cycleProgress=0;
 
+    const cycleThemeKeys=["blue","violet","teal","sunset","emerald","crimson","arctic"];
     const themePresets={
       blue:{start:["#071327","#0d214a","#153571"]},
       violet:{start:["#1a153f","#2f266f","#4d3f96"]},
@@ -347,6 +348,13 @@
     function toHex([r,g,b]){const h=v=>Math.max(0,Math.min(255,Math.round(v))).toString(16).padStart(2,"0");return `#${h(r)}${h(g)}${h(b)}`;}
     function lerp(a,b,t){return [a[0]+(b[0]-a[0])*t,a[1]+(b[1]-a[1])*t,a[2]+(b[2]-a[2])*t];}
     function setBgTriplet(arr){setRootVar('--bg1',arr[0]);setRootVar('--bg2',arr[1]);setRootVar('--bg3',arr[2]);}
+
+    function formatHMS(seconds){
+      seconds=Math.max(0,Math.floor(seconds));
+      const h=Math.floor(seconds/3600), m=Math.floor((seconds%3600)/60), s=seconds%60;
+      if(h>0) return `${h}h ${m}m ${s}s`;
+      return `${m}m ${s}s`;
+    }
 
     function getNow(){
       if(!TEST_NOW) return new Date();
@@ -366,26 +374,40 @@
 
       cycleFrom=[parseHex(cssVar('--bg1')),parseHex(cssVar('--bg2')),parseHex(cssVar('--bg3'))];
       const idx=Math.max(0,cycleThemeKeys.indexOf(currentThemeName));
-      const nextName=cycleThemeKeys[(idx+1)%cycleThemeKeys.length];
-      const target=themePresets[nextName].start;
+      currentTargetThemeName=cycleThemeKeys[(idx+1)%cycleThemeKeys.length];
+      const target=themePresets[currentTargetThemeName].start;
       cycleTo=[parseHex(target[0]),parseHex(target[1]),parseHex(target[2])];
 
       cycleStart=performance.now();
       cycleDurationMs=getEffectiveCycleMs();
+      cycleProgress=0;
 
       const tick=(ts)=>{
-        const t=Math.min(1,(ts-cycleStart)/cycleDurationMs);
-        setBgTriplet([toHex(lerp(cycleFrom[0],cycleTo[0],t)),toHex(lerp(cycleFrom[1],cycleTo[1],t)),toHex(lerp(cycleFrom[2],cycleTo[2],t))]);
+        cycleProgress=Math.min(1,(ts-cycleStart)/cycleDurationMs);
 
-        if(t<1){colorCycleRAF=requestAnimationFrame(tick);return;}
+        // This is continuous shift throughout entire duration:
+        setBgTriplet([
+          toHex(lerp(cycleFrom[0],cycleTo[0],cycleProgress)),
+          toHex(lerp(cycleFrom[1],cycleTo[1],cycleProgress)),
+          toHex(lerp(cycleFrom[2],cycleTo[2],cycleProgress))
+        ]);
 
-        currentThemeName=nextName;
+        if(cycleProgress<1){
+          colorCycleRAF=requestAnimationFrame(tick);
+          return;
+        }
+
+        currentThemeName=currentTargetThemeName;
         cycleFrom=cycleTo;
+
         const n2=cycleThemeKeys[(cycleThemeKeys.indexOf(currentThemeName)+1)%cycleThemeKeys.length];
+        currentTargetThemeName=n2;
         const t2=themePresets[n2].start;
         cycleTo=[parseHex(t2[0]),parseHex(t2[1]),parseHex(t2[2])];
+
         cycleStart=performance.now();
         cycleDurationMs=getEffectiveCycleMs();
+        cycleProgress=0;
         colorCycleRAF=requestAnimationFrame(tick);
       };
 
@@ -426,6 +448,7 @@
       BASE_CYCLE_MS=v*1000;
       const eff=document.getElementById("effectiveCycleSeconds");
       if(eff) eff.textContent=`${(getEffectiveCycleMs()/1000).toFixed(2)}s`;
+
       startContinuousColorCycle(currentThemeName);
       updateDevInfo();
     }
@@ -436,12 +459,15 @@
       const params=new URLSearchParams(location.search),cut=Date.now()-60000;
       shotsSpawnedLast60s=shotsSpawnedLast60s.filter(t=>t>=cut);
 
+      const remainSec=((1-cycleProgress)*cycleDurationMs)/1000;
+
       el.innerHTML=`
         <div><span class="k">time:</span> <span class="v">${nowLocalString(getNow())}</span></div>
         <div><span class="k">params:</span> <span class="v">dev=${params.get("dev")||"0"} b=${params.get("b")||"0"}</span></div>
         <div><span class="k">sim speed:</span> <span class="v">${SIM_SPEED}x</span></div>
         <div><span class="k">cycle (base/effective):</span> <span class="v">${(BASE_CYCLE_MS/1000).toFixed(2)}s / ${(getEffectiveCycleMs()/1000).toFixed(2)}s</span></div>
-        <div><span class="k">theme:</span> <span class="v">${currentThemeName}</span></div>
+        <div><span class="k">current → next:</span> <span class="v">${currentThemeName} → ${currentTargetThemeName}</span></div>
+        <div><span class="k">time to next full color:</span> <span class="v">${formatHMS(remainSec)}</span></div>
         <div><span class="k">bg:</span> <span class="v">${cssVar('--bg1')} | ${cssVar('--bg2')} | ${cssVar('--bg3')}</span></div>
         <div><span class="k">shooting:</span> <span class="v">active=${activeShotsCount} rate≈${shotsSpawnedLast60s.length}/min</span></div>
         <div><span class="k">screen:</span> <span class="v">${innerWidth}x${innerHeight} dpr=${Math.min(devicePixelRatio||1,2)}</span></div>
@@ -606,10 +632,10 @@
     }
 
     initModes(); initDevPanelVisibility();
-    applyTheme("blue"); // starts continuous cycle immediately
+    applyTheme("blue"); // starts continuous shift immediately
     update(); fitContainer();
     addEventListener("resize", fitContainer);
-    setInterval(()=>{update(); updateDevInfo();},1000);
+    setInterval(()=>{update(); updateDevInfo();},250); // faster refresh for countdown smoothness
     renderCalendar(); updateDevInfo();
   </script>
 </body>
