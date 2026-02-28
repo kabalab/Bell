@@ -49,11 +49,7 @@
     .top-grid.calendar-visible{grid-template-columns:1.2fr 1fr}
     @media (max-width:860px){.top-grid.calendar-visible{grid-template-columns:1fr}}
 
-    .actions{
-      display:flex;
-      flex-wrap:wrap;
-      gap:2px;
-    }
+    .actions{display:flex;flex-wrap:wrap;gap:2px}
     button{
       margin:2px 0 0;
       padding:9px 14px;
@@ -61,13 +57,8 @@
       background:var(--accent);color:#fff;font-size:.93em;
       transition:transform .12s ease, box-shadow .2s ease, filter .2s ease;
     }
-    button:hover{
-      filter:brightness(1.08);
-      transform:translateY(-1px);
-    }
-    button:active{
-      transform:scale(0.97);
-    }
+    button:hover{filter:brightness(1.08);transform:translateY(-1px)}
+    button:active{transform:scale(0.97)}
 
     .panel{
       margin-top:14px;max-height:0;overflow:hidden;opacity:0;padding:0 14px;border-radius:12px;
@@ -80,49 +71,28 @@
     .badge{font-size:.76rem;padding:2px 8px;border-radius:999px;background:rgba(255,255,255,.14);margin-left:8px}
 
     .schedule-link{
-      width:100%;
-      text-align:left;
-      margin:2px 0;
-      padding:10px 12px;
-      border-radius:10px;
+      width:100%;text-align:left;margin:2px 0;padding:10px 12px;border-radius:10px;
       background:rgba(255,255,255,.12);
       transition:transform .18s ease, background .22s ease, box-shadow .22s ease;
     }
-    .schedule-link:hover{
-      transform:translateY(-1px);
-      background:rgba(255,255,255,.18);
-    }
-    .schedule-link.active-btn{
-      background:rgba(76,125,255,.45);
-      border:1px solid rgba(255,255,255,.35);
-    }
-    .schedule-link.click-animate{
-      animation:scheduleButtonClick .42s ease;
-    }
+    .schedule-link:hover{transform:translateY(-1px);background:rgba(255,255,255,.18)}
+    .schedule-link.active-btn{background:rgba(76,125,255,.45);border:1px solid rgba(255,255,255,.35)}
+    .schedule-link.click-animate{animation:scheduleButtonClick .42s ease}
     @keyframes scheduleButtonClick{
-      0%   { transform:scale(1); box-shadow:0 0 0 rgba(76,125,255,0); }
-      35%  { transform:scale(1.04); box-shadow:0 0 20px rgba(76,125,255,.55); }
-      70%  { transform:scale(.99); box-shadow:0 0 8px rgba(76,125,255,.28); }
-      100% { transform:scale(1); box-shadow:0 0 0 rgba(76,125,255,0); }
+      0%{transform:scale(1);box-shadow:0 0 0 rgba(76,125,255,0)}
+      35%{transform:scale(1.04);box-shadow:0 0 20px rgba(76,125,255,.55)}
+      70%{transform:scale(.99);box-shadow:0 0 8px rgba(76,125,255,.28)}
+      100%{transform:scale(1);box-shadow:0 0 0 rgba(76,125,255,0)}
     }
 
     .inline-detail{
-      margin:2px 0 10px 0;
-      border-radius:10px;background:rgba(255,255,255,.08);
-      border:1px solid rgba(255,255,255,.15);
-      overflow:hidden;
-      max-height:0;
-      opacity:0;
+      margin:2px 0 10px 0;border-radius:10px;background:rgba(255,255,255,.08);
+      border:1px solid rgba(255,255,255,.15);overflow:hidden;max-height:0;opacity:0;
       transform:translateY(-8px);
       transition:max-height .45s ease, opacity .35s ease, transform .35s ease, padding .35s ease;
       padding:0 12px;
     }
-    .inline-detail.show{
-      max-height:700px;
-      opacity:1;
-      transform:translateY(0);
-      padding:10px 12px;
-    }
+    .inline-detail.show{max-height:700px;opacity:1;transform:translateY(0);padding:10px 12px}
 
     .calendar-card{background:rgba(0,0,0,.22);border-radius:14px;padding:12px}
     .calendar-card.hidden{display:none}
@@ -130,59 +100,30 @@
     .cal-nav{background:rgba(255,255,255,.14);border:none;color:#fff;border-radius:8px;padding:4px 8px;margin-left:4px}
     .cal-grid{display:grid;grid-template-columns:repeat(7,1fr);gap:6px}
     .cal-dow{text-align:center;font-size:.75rem;opacity:.8}
-    .cal-day{
-      border:none;border-radius:8px;min-height:38px;color:#fff;background:rgba(255,255,255,.08);cursor:pointer;font-size:.82rem
-    }
+    .cal-day{border:none;border-radius:8px;min-height:38px;color:#fff;background:rgba(255,255,255,.08);cursor:pointer;font-size:.82rem}
     .cal-day.muted{opacity:.35;cursor:default;background:rgba(255,255,255,.04)}
     .cal-day.today{outline:2px solid #8fb3ff}
     .cal-day.selected{outline:2px solid #fff}
     .cal-day.filled-finals{background:rgba(255,111,111,.35)}
     .cal-day.filled-rally{background:rgba(102,169,255,.35)}
     .cal-day.filled-noschool{background:rgba(255,204,102,.40)}
-    .cal-day.filled-multi{
-      background:linear-gradient(135deg,rgba(255,111,111,.35),rgba(102,169,255,.32),rgba(255,204,102,.40))
-    }
+    .cal-day.filled-multi{background:linear-gradient(135deg,rgba(255,111,111,.35),rgba(102,169,255,.32),rgba(255,204,102,.40))}
     .legend{margin-top:8px;font-size:.75rem;display:flex;gap:12px;flex-wrap:wrap}
     .legend-swatch{width:12px;height:12px;border-radius:3px;display:inline-block;margin-right:5px;vertical-align:middle}
     #calendarInfo{margin-top:10px;font-size:.85rem;line-height:1.35}
 
-    .dev-panel{
-      margin-bottom:14px;
-      border:1px solid rgba(255,255,255,.16);
-      border-radius:12px;
-      background:rgba(0,0,0,.22);
-      padding:10px 12px;
-    }
+    .dev-panel{margin-bottom:14px;border:1px solid rgba(255,255,255,.16);border-radius:12px;background:rgba(0,0,0,.22);padding:10px 12px}
     .dev-title{font-size:.88rem;opacity:.9;margin-bottom:8px}
-    .dev-row{display:flex;flex-wrap:wrap;gap:6px}
-    .dev-btn{
-      background:rgba(143,179,255,.25);
-      border:1px solid rgba(255,255,255,.25);
-      border-radius:999px;
-      padding:6px 10px;
-      font-size:.8rem;
-      color:#fff;
-      cursor:pointer;
-    }
+    .dev-row{display:flex;flex-wrap:wrap;gap:6px;align-items:center}
+    .dev-btn{background:rgba(143,179,255,.25);border:1px solid rgba(255,255,255,.25);border-radius:999px;padding:6px 10px;font-size:.8rem;color:#fff;cursor:pointer}
     .dev-btn.real{background:rgba(255,204,102,.24)}
-    .dev-status{
-      margin-top:8px;
-      font-size:.82rem;
-      opacity:.92;
-    }
+    .dev-status{margin-top:8px;font-size:.82rem;opacity:.92}
     .mono{font-family:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace}
-    .dev-input{
-      background:rgba(255,255,255,.12);
-      border:1px solid rgba(255,255,255,.28);
-      color:#fff;
-      border-radius:8px;
-      padding:6px 8px;
-      font-size:.82rem;
+    .dev-input,.dev-sec{
+      background:rgba(255,255,255,.12);border:1px solid rgba(255,255,255,.28);color:#fff;border-radius:8px;padding:6px 8px;font-size:.82rem
     }
-    .dev-input::-webkit-calendar-picker-indicator{
-      filter:invert(1);
-      cursor:pointer;
-    }
+    .dev-sec{width:70px}
+    .dev-input::-webkit-calendar-picker-indicator{filter:invert(1);cursor:pointer}
   </style>
 </head>
 <body>
@@ -194,16 +135,18 @@
         <button class="dev-btn" onclick="setTestNow('2026-03-02T10:00:00')">Mon During Class</button>
         <button class="dev-btn" onclick="setTestNow('2026-03-03T10:46:00')">Passing Period</button>
         <button class="dev-btn" onclick="setTestNow('2026-03-04T07:30:00')">Before School</button>
+      </div>
+      <div class="dev-row">
         <button class="dev-btn" onclick="setTestNow('2026-12-17T09:30:00')">Finals Day</button>
         <button class="dev-btn" onclick="setTestNow('2026-10-24T11:00:00')">Weekend</button>
       </div>
 
-      <div class="dev-row" style="margin-top:8px;align-items:center;">
-        <input id="devDateTimeInput" type="datetime-local" class="dev-input" />
+      <div class="dev-row" style="margin-top:8px;">
+        <input id="devDateTimeInput" type="datetime-local" class="dev-input" step="1" />
+        <input id="devSecondInput" type="number" min="0" max="59" value="0" class="dev-sec" title="Seconds" />
         <button class="dev-btn" onclick="applyCustomDevTime()">Set Time</button>
         <button class="dev-btn" onclick="startDevRun()">Start Run</button>
         <button class="dev-btn" onclick="pauseDevRun()">Pause</button>
-        <button class="dev-btn" onclick="resetDevRun()">Reset Run</button>
       </div>
 
       <div class="dev-status" id="devStatus">Mode: Real Time</div>
@@ -254,114 +197,68 @@
     function fullDate(s){return new Date(s+"T00:00:00").toLocaleDateString(undefined,{weekday:"long",month:"long",day:"numeric",year:"numeric"});}
     function nthWeekday(year,month,weekday,n){const first=new Date(year,month,1);let off=(7+weekday-first.getDay())%7;off+=7*(n-1);return new Date(year,month,1+off);}
     function lastWeekday(year,month,weekday){const last=new Date(year,month+1,0);const off=(7+last.getDay()-weekday)%7;return new Date(year,month+1,0-off);}
-    function getPeriodLabel(name){
-      const m = name.match(/Period\s+\d+/i);
-      return m ? m[0] : name;
-    }
+    function getPeriodLabel(name){const m=name.match(/Period\s+\d+/i);return m?m[0]:name;}
 
-    let lastMainLabel = "";
+    let lastMainLabel="";
     function setMainLabel(nextLabel){
-      const el = document.getElementById("currentPeriod");
-      if(nextLabel !== lastMainLabel){
-        el.classList.remove("period-flash");
-        void el.offsetWidth;
-        el.classList.add("period-flash");
-        lastMainLabel = nextLabel;
+      const el=document.getElementById("currentPeriod");
+      if(nextLabel!==lastMainLabel){
+        el.classList.remove("period-flash"); void el.offsetWidth; el.classList.add("period-flash");
+        lastMainLabel=nextLabel;
       }
-      el.innerHTML = nextLabel;
+      el.innerHTML=nextLabel;
     }
 
-    let TEST_NOW = null;
-    let devRunning = false;
-    let devAnchorRealMs = null;
-    let devAnchorSimMs = null;
+    let TEST_NOW=null,devRunning=false,devAnchorRealMs=null,devAnchorSimMs=null;
 
     function toLocalInputValue(dateObj){
-      const pad = n => String(n).padStart(2,"0");
-      const y = dateObj.getFullYear();
-      const m = pad(dateObj.getMonth()+1);
-      const d = pad(dateObj.getDate());
-      const hh = pad(dateObj.getHours());
-      const mm = pad(dateObj.getMinutes());
-      return `${y}-${m}-${d}T${hh}:${mm}`;
-    }
-
-    function parseInputToDate(value){
-      return value ? new Date(value) : null;
+      const pad=n=>String(n).padStart(2,"0");
+      return `${dateObj.getFullYear()}-${pad(dateObj.getMonth()+1)}-${pad(dateObj.getDate())}T${pad(dateObj.getHours())}:${pad(dateObj.getMinutes())}:${pad(dateObj.getSeconds())}`;
     }
 
     function getNow(){
       if(!TEST_NOW) return new Date();
       if(devRunning && devAnchorRealMs!==null && devAnchorSimMs!==null){
-        const elapsed = Date.now() - devAnchorRealMs;
-        return new Date(devAnchorSimMs + elapsed);
+        return new Date(devAnchorSimMs + (Date.now()-devAnchorRealMs));
       }
       return new Date(TEST_NOW);
     }
 
     function refreshDevStatus(){
-      const status = document.getElementById("devStatus");
-      if(!TEST_NOW){
-        status.textContent = "Mode: Real Time";
-        return;
-      }
-      const mode = devRunning ? "Simulated (Running)" : "Simulated (Paused)";
-      status.innerHTML = `Mode: ${mode} <span class="mono">${getNow().toISOString().replace("Z","")}</span>`;
+      const s=document.getElementById("devStatus");
+      if(!TEST_NOW){s.textContent="Mode: Real Time";return;}
+      s.innerHTML=`Mode: ${devRunning?"Simulated (Running)":"Simulated (Paused)"} <span class="mono">${getNow().toISOString().replace("Z","")}</span>`;
     }
 
     function setTestNow(iso){
-      TEST_NOW = iso;
-      devRunning = false;
-      devAnchorRealMs = null;
-      devAnchorSimMs = null;
-
+      TEST_NOW=iso;devRunning=false;devAnchorRealMs=null;devAnchorSimMs=null;
       if(TEST_NOW){
-        const d = new Date(TEST_NOW);
-        document.getElementById("devDateTimeInput").value = toLocalInputValue(d);
+        const d=new Date(TEST_NOW);
+        document.getElementById("devDateTimeInput").value=toLocalInputValue(d);
+        document.getElementById("devSecondInput").value=d.getSeconds();
       }
-
-      refreshDevStatus();
-      update();
-      if(document.getElementById("todayPanel").classList.contains("show")){
-        toggleToday();
-        toggleToday();
-      }
-      if(calendarVisible) renderCalendar();
+      refreshDevStatus(); update(); if(calendarVisible) renderCalendar();
     }
 
     function applyCustomDevTime(){
-      const input = document.getElementById("devDateTimeInput").value;
-      const d = parseInputToDate(input);
-      if(!d || Number.isNaN(d.getTime())) return;
+      const input=document.getElementById("devDateTimeInput").value;
+      if(!input) return;
+      const secRaw=Number(document.getElementById("devSecondInput").value||0);
+      const sec=Math.max(0,Math.min(59,secRaw));
+      let d=new Date(input);
+      if(Number.isNaN(d.getTime())) return;
+      d.setSeconds(sec,0);
       setTestNow(d.toISOString());
     }
 
     function startDevRun(){
-      if(!TEST_NOW){
-        setTestNow(new Date().toISOString());
-      }
-      const currentSim = getNow();
-      devRunning = true;
-      devAnchorRealMs = Date.now();
-      devAnchorSimMs = currentSim.getTime();
-      refreshDevStatus();
+      if(!TEST_NOW) setTestNow(new Date().toISOString());
+      const sim=getNow(); devRunning=true; devAnchorRealMs=Date.now(); devAnchorSimMs=sim.getTime(); refreshDevStatus();
     }
-
     function pauseDevRun(){
       if(!TEST_NOW) return;
-      if(devRunning){
-        TEST_NOW = getNow().toISOString();
-      }
-      devRunning = false;
-      devAnchorRealMs = null;
-      devAnchorSimMs = null;
-      refreshDevStatus();
-    }
-
-    function resetDevRun(){
-      pauseDevRun();
-      update();
-      if(calendarVisible) renderCalendar();
+      if(devRunning) TEST_NOW=getNow().toISOString();
+      devRunning=false; devAnchorRealMs=null; devAnchorSimMs=null; refreshDevStatus();
     }
 
     const scheduleCatalog={
@@ -374,15 +271,13 @@
       finalsP56:{title:"Minimum Day Finals (P5 & P6)",blocks:[["Period 5 Final","08:45","10:45"],["Period 6 Final","11:11","13:11"]]}
     };
 
-    const yearDataCache = new Map();
+    const yearDataCache=new Map();
     function buildSchoolYearData(startYear){
       const y1=startYear,y2=startYear+1;
       const d={label:`${y1}-${y2}`,classesBegin:`${y1}-08-11`,classesEnd:`${y2}-05-28`,mondayNoBroadcast:new Set(),pepRallyDays:new Set(),finalsMap:{},noSchoolReasons:{}};
 
-      let c=new Date(d.classesBegin+"T00:00:00");
-      while(c.getDay()!==1) c.setDate(c.getDate()+1);
+      let c=new Date(d.classesBegin+"T00:00:00"); while(c.getDay()!==1) c.setDate(c.getDate()+1);
       for(let i=0;i<3;i++){d.mondayNoBroadcast.add(formatDate(c));c.setDate(c.getDate()+7);}
-
       [nthWeekday(y1,9,5,4),lastWeekday(y2,0,5),nthWeekday(y2,3,5,4)].forEach(x=>d.pepRallyDays.add(formatDate(x)));
 
       d.finalsMap[`${y1}-12-17`]="finalsP12"; d.finalsMap[`${y1}-12-18`]="finalsP34"; d.finalsMap[`${y1}-12-19`]="finalsP56";
@@ -393,29 +288,22 @@
       d.noSchoolReasons[`${y1}-11-10`]="Non-Instructional Day (Estimated)";
       d.noSchoolReasons[`${y1}-11-11`]="Veterans Day";
 
-      const tg=nthWeekday(y1,10,4,4),m=new Date(tg),f=new Date(tg); m.setDate(tg.getDate()-3); f.setDate(tg.getDate()+1);
+      const tg=nthWeekday(y1,10,4,4),m=new Date(tg),f=new Date(tg);m.setDate(tg.getDate()-3);f.setDate(tg.getDate()+1);
       dateRange(formatDate(m),formatDate(f)).forEach(x=>d.noSchoolReasons[x]="Thanksgiving Break");
       dateRange(`${y1}-12-22`,`${y2}-01-02`).forEach(x=>d.noSchoolReasons[x]="Winter Break");
 
       d.noSchoolReasons[formatDate(nthWeekday(y2,0,1,3))]="Martin Luther King Jr. Day";
       const p=nthWeekday(y2,1,1,3),fri=new Date(p); fri.setDate(p.getDate()-3);
       d.noSchoolReasons[formatDate(fri)]="Presidents Weekend"; d.noSchoolReasons[formatDate(p)]="Presidents Weekend";
-
       d.noSchoolReasons[`${y2}-03-09`]="Non-Instructional Day (Estimated)";
       dateRange(`${y2}-03-30`,`${y2}-04-03`).forEach(x=>d.noSchoolReasons[x]="Spring Break");
       d.noSchoolReasons[formatDate(lastWeekday(y2,4,1))]="Memorial Day Observed";
       return d;
     }
-    function getSchoolYearData(startYear){
-      if(!yearDataCache.has(startYear)) yearDataCache.set(startYear, buildSchoolYearData(startYear));
-      return yearDataCache.get(startYear);
-    }
+    function getSchoolYearData(startYear){if(!yearDataCache.has(startYear)) yearDataCache.set(startYear,buildSchoolYearData(startYear)); return yearDataCache.get(startYear);}
     function getYearDataByDate(ds){
       const year=Number(ds.slice(0,4));
-      for(const s of [year-1,year]){
-        const yData=getSchoolYearData(s);
-        if(ds>=yData.classesBegin && ds<=yData.classesEnd) return yData;
-      }
+      for(const s of [year-1,year]){const yData=getSchoolYearData(s); if(ds>=yData.classesBegin && ds<=yData.classesEnd) return yData;}
       return null;
     }
 
@@ -429,129 +317,97 @@
       if(day===1) return y.mondayNoBroadcast.has(ds)?{type:"schedule",key:"mondayNoBroadcast",yearLabel:y.label}:{type:"schedule",key:"mondayBroadcast",yearLabel:y.label};
       return {type:"schedule",key:"regularTF",yearLabel:y.label};
     }
+
     function getMarkersForDate(dateObj){
       const ds=formatDate(dateObj),y=getYearDataByDate(ds);
       if(!y) return ["noschool"];
-      const marks=[];
-      if(y.finalsMap[ds]) marks.push("finals");
-      if(y.pepRallyDays.has(ds)) marks.push("rally");
-      if(y.noSchoolReasons[ds] || dateObj.getDay()===0 || dateObj.getDay()===6) marks.push("noschool");
-      return marks;
+      const marks=[]; if(y.finalsMap[ds]) marks.push("finals"); if(y.pepRallyDays.has(ds)) marks.push("rally");
+      if(y.noSchoolReasons[ds]||dateObj.getDay()===0||dateObj.getDay()===6) marks.push("noschool"); return marks;
     }
     function markerClass(m){
-      const f=m.includes("finals"),r=m.includes("rally"),n=m.includes("noschool");
-      const c=[f,r,n].filter(Boolean).length;
-      if(c>1) return "filled-multi";
-      if(f) return "filled-finals";
-      if(r) return "filled-rally";
-      if(n) return "filled-noschool";
-      return "";
+      const f=m.includes("finals"),r=m.includes("rally"),n=m.includes("noschool"),c=[f,r,n].filter(Boolean).length;
+      if(c>1) return "filled-multi"; if(f) return "filled-finals"; if(r) return "filled-rally"; if(n) return "filled-noschool"; return "";
     }
     function renderScheduleBlocks(s){return s.blocks.map(b=>`<div class="schedule-item"><strong>${b[0]}</strong> : ${toNormalTime(b[1])} - ${toNormalTime(b[2])}</div>`).join("");}
 
     function update(){
-      const now = getNow();
-      const todayText = fullDate(formatDate(now));
+      const now=getNow(),todayText=fullDate(formatDate(now));
+      const info=getScheduleKeyForDate(now),end=document.getElementById("endTime"),cd=document.getElementById("countdown");
 
-      const info=getScheduleKeyForDate(now),
-            end=document.getElementById("endTime"),
-            cd=document.getElementById("countdown");
+      if(info.type==="closed"){setMainLabel(`<span class="holiday">${info.reason}</span>`);end.innerText=todayText;cd.innerText="";return;}
 
-      if(info.type==="closed"){
-        setMainLabel(`<span class="holiday">${info.reason}</span>`);
-        end.innerText=todayText;
-        cd.innerText="";
-        return;
-      }
+      const sch=scheduleCatalog[info.key],nowSec=now.getHours()*3600+now.getMinutes()*60+now.getSeconds();
+      const firstSec=parseTimeToMinutes(sch.blocks[0][1])*60;
 
-      const sch=scheduleCatalog[info.key],mins=now.getHours()*60+now.getMinutes();
-      const first=parseTimeToMinutes(sch.blocks[0][1]);
-
-      if(mins<first){
-        const firstLabel = getPeriodLabel(sch.blocks[0][0]);
+      if(nowSec<firstSec){
+        const firstLabel=getPeriodLabel(sch.blocks[0][0]);
         setMainLabel("Before School");
         end.innerText=`${firstLabel} starts at ${toNormalTime(sch.blocks[0][1])}`;
-        let r=(first-mins)*60-now.getSeconds(); if(r<0) r=0;
+        const r=Math.max(0,firstSec-nowSec);
         cd.innerText=`Starts in: ${Math.floor(r/60)}m ${r%60}s`;
         return;
       }
 
       for(let i=0;i<sch.blocks.length;i++){
-        const [name,s,e]=sch.blocks[i],sm=parseTimeToMinutes(s),em=parseTimeToMinutes(e);
+        const [name,s,e]=sch.blocks[i],sm=parseTimeToMinutes(s)*60,em=parseTimeToMinutes(e)*60;
 
-        if(mins>=sm && mins<=em){
+        // class time: start inclusive, end exclusive
+        if(nowSec>=sm && nowSec<em){
           setMainLabel(name);
           end.innerText=`Ends at ${toNormalTime(e)}`;
-          let r=(em-mins)*60-now.getSeconds(); if(r<0) r=0;
+          const r=Math.max(0,em-nowSec);
           cd.innerText=`Time remaining: ${Math.floor(r/60)}m ${r%60}s`;
           return;
         }
 
         if(i<sch.blocks.length-1){
-          const next=sch.blocks[i+1],nm=parseTimeToMinutes(next[1]);
-          if(mins>em && mins<nm){
-            const nextLabel = getPeriodLabel(next[0]);
+          const next=sch.blocks[i+1],nm=parseTimeToMinutes(next[1])*60;
+          // passing time: end inclusive, next start exclusive
+          if(nowSec>=em && nowSec<nm){
+            const nextLabel=getPeriodLabel(next[0]);
             setMainLabel("Passing Period");
             end.innerText=`${nextLabel} starts at ${toNormalTime(next[1])}`;
-            let r=(nm-mins)*60-now.getSeconds(); if(r<0) r=0;
+            const r=Math.max(0,nm-nowSec);
             cd.innerText=`Next class in: ${Math.floor(r/60)}m ${r%60}s`;
             return;
           }
         }
       }
 
-      setMainLabel("School is Out");
-      end.innerText=todayText;
-      cd.innerText="";
+      setMainLabel("School is Out"); end.innerText=todayText; cd.innerText="";
     }
 
     function toggleToday(){
       const p=document.getElementById("todayPanel"); p.classList.toggle("show");
-      const now = getNow();
-      const info=getScheduleKeyForDate(now);
-      const dateLabel = prettyDate(formatDate(now));
-      if(info.type==="closed"){p.innerHTML=`<div class="schedule-item"><strong>${dateLabel}</strong></div><div class="schedule-item">${info.reason}</div>`; return;}
+      const now=getNow(),info=getScheduleKeyForDate(now),dateLabel=prettyDate(formatDate(now));
+      if(info.type==="closed"){p.innerHTML=`<div class="schedule-item"><strong>${dateLabel}</strong></div><div class="schedule-item">${info.reason}</div>`;return;}
       const sch=scheduleCatalog[info.key];
       p.innerHTML=`<div class="schedule-item"><strong>${sch.title}</strong><span class="badge">${dateLabel}</span></div>`+renderScheduleBlocks(sch);
     }
 
-    let activeScheduleKey = null;
+    let activeScheduleKey=null;
     function renderAllSchedulesList(){
-      const panel = document.getElementById("allPanel");
-      const keys = Object.keys(scheduleCatalog);
-
-      let html = `<div><strong>Click a schedule type:</strong></div>`;
+      const panel=document.getElementById("allPanel"),keys=Object.keys(scheduleCatalog);
+      let html=`<div><strong>Click a schedule type:</strong></div>`;
       for(const key of keys){
-        const sch = scheduleCatalog[key];
-        const active = activeScheduleKey===key;
-        html += `<button class="schedule-link ${active?'active-btn':''}" onclick="toggleInlineSchedule('${key}', event)">${sch.title}</button>`;
-        html += `<div class="inline-detail ${active?'show':''}">${active ? renderScheduleBlocks(sch) : ""}</div>`;
+        const sch=scheduleCatalog[key],active=activeScheduleKey===key;
+        html+=`<button class="schedule-link ${active?'active-btn':''}" onclick="toggleInlineSchedule('${key}', event)">${sch.title}</button>`;
+        html+=`<div class="inline-detail ${active?'show':''}">${active?renderScheduleBlocks(sch):""}</div>`;
       }
-      panel.innerHTML = html;
+      panel.innerHTML=html;
     }
-    function toggleInlineSchedule(key, ev){
-      if(ev && ev.currentTarget){
-        const btn = ev.currentTarget;
-        btn.classList.remove("click-animate");
-        void btn.offsetWidth;
-        btn.classList.add("click-animate");
-      }
-      activeScheduleKey = (activeScheduleKey===key) ? null : key;
-      renderAllSchedulesList();
+    function toggleInlineSchedule(key,ev){
+      if(ev&&ev.currentTarget){const btn=ev.currentTarget;btn.classList.remove("click-animate");void btn.offsetWidth;btn.classList.add("click-animate");}
+      activeScheduleKey=(activeScheduleKey===key)?null:key; renderAllSchedulesList();
     }
-    function toggleAll(){
-      const p=document.getElementById("allPanel");
-      p.classList.toggle("show");
-      if(p.classList.contains("show")) renderAllSchedulesList();
-    }
+    function toggleAll(){const p=document.getElementById("allPanel");p.classList.toggle("show");if(p.classList.contains("show")) renderAllSchedulesList();}
 
     let calendarViewDate=new Date(),selectedDateStr=null,calendarVisible=false;
     function monthName(m){return new Date(2000,m,1).toLocaleString(undefined,{month:"long"});}
     function renderCalendar(){
       const grid=document.getElementById("calGrid"),title=document.getElementById("calTitle");
       const y=calendarViewDate.getFullYear(),m=calendarViewDate.getMonth();
-      title.textContent=`${monthName(m)} ${y}`;
-      grid.innerHTML="";
+      title.textContent=`${monthName(m)} ${y}`; grid.innerHTML="";
       ["Sun","Mon","Tue","Wed","Thu","Fri","Sat"].forEach(d=>{const e=document.createElement("div");e.className="cal-dow";e.textContent=d;grid.appendChild(e);});
 
       const firstDay=new Date(y,m,1).getDay(),daysInMonth=new Date(y,m+1,0).getDate(),today=formatDate(getNow());
@@ -559,40 +415,25 @@
 
       for(let day=1;day<=daysInMonth;day++){
         const d=new Date(y,m,day),ds=formatDate(d),marks=getMarkersForDate(d);
-        const b=document.createElement("button"); b.className="cal-day"; b.textContent=day;
-        const mc=markerClass(marks); if(mc) b.classList.add(mc);
+        const b=document.createElement("button");b.className="cal-day";b.textContent=day;
+        const mc=markerClass(marks);if(mc) b.classList.add(mc);
         if(ds===today) b.classList.add("today");
         if(ds===selectedDateStr) b.classList.add("selected");
         b.onclick=()=>{selectedDateStr=ds;renderCalendar();showCalendarInfo(ds);};
         grid.appendChild(b);
       }
-
-      if(selectedDateStr){
-        showCalendarInfo(selectedDateStr);
-      } else {
-        document.getElementById("calendarInfo").innerHTML = "";
-      }
+      if(selectedDateStr) showCalendarInfo(selectedDateStr); else document.getElementById("calendarInfo").innerHTML="";
     }
+
     function showCalendarInfo(ds){
       const el=document.getElementById("calendarInfo"),d=new Date(ds+"T00:00:00"),info=getScheduleKeyForDate(d);
-      if(info.type==="closed"){
-        el.innerHTML=`<strong>${prettyDate(ds)}</strong><br>${info.reason}<br><span style="opacity:.8">${info.yearLabel}</span>`;
-        return;
-      }
+      if(info.type==="closed"){el.innerHTML=`<strong>${prettyDate(ds)}</strong><br>${info.reason}<br><span style="opacity:.8">${info.yearLabel}</span>`;return;}
       const sch=scheduleCatalog[info.key],lines=sch.blocks.map(b=>`${b[0]} ${toNormalTime(b[1])}-${toNormalTime(b[2])}`).join("<br>");
       el.innerHTML=`<strong>${prettyDate(ds)}</strong><br>${sch.title}<br><span style="opacity:.88">${lines}</span><br><span style="opacity:.8">${info.yearLabel}</span>`;
     }
-    function changeMonth(delta){
-      calendarViewDate=new Date(calendarViewDate.getFullYear(),calendarViewDate.getMonth()+delta,1);
-      selectedDateStr=null;
-      renderCalendar();
-    }
-    function goToCurrentMonth(){
-      const n=getNow();
-      calendarViewDate=new Date(n.getFullYear(),n.getMonth(),1);
-      selectedDateStr=null;
-      renderCalendar();
-    }
+
+    function changeMonth(delta){calendarViewDate=new Date(calendarViewDate.getFullYear(),calendarViewDate.getMonth()+delta,1);selectedDateStr=null;renderCalendar();}
+    function goToCurrentMonth(){const n=getNow();calendarViewDate=new Date(n.getFullYear(),n.getMonth(),1);selectedDateStr=null;renderCalendar();}
     function toggleCalendar(){
       calendarVisible=!calendarVisible;
       document.getElementById("calendarCard").classList.toggle("hidden",!calendarVisible);
@@ -602,20 +443,13 @@
     }
 
     function initDevPanelVisibility(){
-      const params = new URLSearchParams(window.location.search);
-      const devMode = params.get("dev") === "1";
-      const panel = document.getElementById("devPanel");
-      panel.style.display = devMode ? "block" : "none";
+      const devMode=new URLSearchParams(window.location.search).get("dev")==="1";
+      document.getElementById("devPanel").style.display=devMode?"block":"none";
     }
 
     initDevPanelVisibility();
     update();
-    setInterval(()=>{
-      update();
-      if(document.getElementById("devPanel").style.display !== "none"){
-        refreshDevStatus();
-      }
-    },1000);
+    setInterval(()=>{update(); if(document.getElementById("devPanel").style.display!=="none") refreshDevStatus();},1000);
     renderCalendar();
   </script>
 </body>
