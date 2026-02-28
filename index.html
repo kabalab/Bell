@@ -315,6 +315,14 @@
     function nthWeekday(year,month,weekday,n){const first=new Date(year,month,1);let off=(7+weekday-first.getDay())%7;off+=7*(n-1);return new Date(year,month,1+off);}
     function lastWeekday(year,month,weekday){const last=new Date(year,month+1,0);const off=(7+last.getDay()-weekday)%7;return new Date(year,month+1,0-off);}
     function getPeriodLabel(name){const m=name.match(/Period\s+\d+/i);return m?m[0]:name;}
+    function formatDuration(totalSeconds){
+      totalSeconds = Math.max(0, Math.floor(totalSeconds));
+      const h = Math.floor(totalSeconds / 3600);
+      const m = Math.floor((totalSeconds % 3600) / 60);
+      const s = totalSeconds % 60;
+      if (h > 0) return `${h}h ${m}m ${s}s`;
+      return `${m}m ${s}s`;
+    }
 
     let lastMainLabel="";
     function setMainLabel(nextLabel){
@@ -461,7 +469,7 @@
         setMainLabel("Before School");
         end.innerText=`${firstLabel} starts at ${toNormalTime(sch.blocks[0][1])}`;
         const r=Math.max(0,firstSec-nowSec);
-        cd.innerText=`Starts in: ${Math.floor(r/60)}m ${r%60}s`;
+        cd.innerText=`Starts in: ${formatDuration(r)}`;
         return;
       }
 
@@ -472,7 +480,7 @@
           setMainLabel(name);
           end.innerText=`Ends at ${toNormalTime(e)}`;
           const r=Math.max(0,em-nowSec);
-          cd.innerText=`Time remaining: ${Math.floor(r/60)}m ${r%60}s`;
+          cd.innerText=`Time remaining: ${formatDuration(r)}`;
           return;
         }
 
@@ -483,7 +491,7 @@
             setMainLabel("Passing Period");
             end.innerText=`${nextLabel} starts at ${toNormalTime(next[1])}`;
             const r=Math.max(0,nm-nowSec);
-            cd.innerText=`Next class in: ${Math.floor(r/60)}m ${r%60}s`;
+            cd.innerText=`Next class in: ${formatDuration(r)}`;
             return;
           }
         }
