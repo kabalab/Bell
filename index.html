@@ -6,13 +6,13 @@
   <title>PHHS Schedule</title>
   <style>
     :root{
-      --bg1:#0a1a3a;
-      --bg2:#112c66;
-      --bg3:#163a82;
+      --bg1:#071327;
+      --bg2:#0d214a;
+      --bg3:#153571;
 
-      --bg1-end:#1b123f;
-      --bg2-end:#3a2a78;
-      --bg3-end:#4c4aa8;
+      --bg1-end:#120d2f;
+      --bg2-end:#2a2360;
+      --bg3-end:#3f4690;
 
       --accent:#4c7dff;
       --text:#e6eeff;
@@ -22,25 +22,14 @@
     }
 
     *{box-sizing:border-box;}
-    html,body{
-      width:100%;
-      height:100%;
-      margin:0;
-      overflow:hidden;
-    }
-
+    html,body{width:100%;height:100%;margin:0;overflow:hidden;}
     body{
-      font-family:'Segoe UI',sans-serif;
-      color:var(--text);
+      font-family:'Segoe UI',sans-serif;color:var(--text);
       background:
         radial-gradient(1200px 800px at 20% 10%, rgba(76,125,255,.12), transparent 60%),
         radial-gradient(1000px 700px at 85% 85%, rgba(143,179,255,.10), transparent 60%),
         linear-gradient(135deg,var(--bg1),var(--bg2) 55%,var(--bg3));
-      display:flex;
-      justify-content:center;
-      align-items:center;
-      position:relative;
-      isolation:isolate;
+      display:flex;justify-content:center;align-items:center;position:relative;isolation:isolate;
       animation:skyBreath 24s ease-in-out infinite alternate;
       transition: --bg1 600s linear, --bg2 600s linear, --bg3 600s linear;
     }
@@ -137,36 +126,16 @@
       box-shadow:0 20px 60px rgba(0,0,0,.6);transition:max-height .25s ease,height .25s ease;
     }
     .container.allow-scroll{overflow:auto;}
-
-    /* b=1 mode: hide main content/chrome, keep dev panel if visible */
     body.bare-mode #topGrid{display:none !important;}
-    body.bare-mode .container{
-      width:auto;
-      min-height:0;
-      max-height:none;
-      padding:0;
-      border-radius:0;
-      box-shadow:none;
-      background:transparent;
-      backdrop-filter:none;
-      overflow:visible;
-    }
-    body.bare-mode #devPanel{
-      margin:0;
-      background:rgba(0,0,0,.28);
-      backdrop-filter:blur(10px);
-    }
+    body.bare-mode .container{width:auto;min-height:0;max-height:none;padding:0;border-radius:0;box-shadow:none;background:transparent;backdrop-filter:none;overflow:visible;}
+    body.bare-mode #devPanel{margin:0;background:rgba(0,0,0,.28);backdrop-filter:blur(10px);}
 
-    h1{margin:0;font-size:2.1em}
-    h2{margin:8px 0 4px;font-weight:400;opacity:.9}
-    #countdown{font-size:.95em;opacity:.9}
+    h1{margin:0;font-size:2.1em} h2{margin:8px 0 4px;font-weight:400;opacity:.9} #countdown{font-size:.95em;opacity:.9}
     #currentPeriod{transition:transform .2s ease,text-shadow .25s ease,opacity .2s ease;}
     .period-flash{animation:periodFlash .45s ease;}
-
     .top-grid{display:grid;grid-template-columns:1fr;gap:16px}
     .top-grid.calendar-visible{grid-template-columns:1.2fr 1fr}
     @media (max-width:860px){.top-grid.calendar-visible{grid-template-columns:1fr}}
-
     .actions{display:flex;flex-wrap:wrap;gap:2px}
     button{margin:2px 0 0;padding:9px 14px;border:none;border-radius:30px;cursor:pointer;background:var(--accent);color:#fff;font-size:.93em;transition:transform .12s ease,box-shadow .2s ease,filter .2s ease}
     button:hover{filter:brightness(1.08);transform:translateY(-1px)}
@@ -178,9 +147,10 @@
     .schedule-item:last-child{border-bottom:none}
     .holiday{color:var(--warn);font-size:1.16em}
     .badge{font-size:.76rem;padding:2px 8px;border-radius:999px;background:rgba(255,255,255,.14);margin-left:8px}
-    .schedule-link{width:100%;text-align:left;margin:2px 0;padding:10px 12px;border-radius:10px;background:rgba(255,255,255,.12);transition:transform .18s ease,background .22s ease,box-shadow .22s ease}
+    .schedule-link{width:100%;text-align:left;margin:2px 0;padding:10px 12px;border-radius:10px;background:rgba(255,255,255,.12);transition:transform .18s ease, background .22s ease, box-shadow .22s ease}
     .schedule-link:hover{transform:translateY(-1px);background:rgba(255,255,255,.18)}
     .schedule-link.active-btn{background:rgba(76,125,255,.45);border:1px solid rgba(255,255,255,.35)}
+    .schedule-link.click-animate{animation:scheduleButtonClick .42s ease}
     .inline-detail{margin:2px 0 10px 0;border-radius:10px;background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.15);overflow:hidden;max-height:0;opacity:0;transform:translateY(-8px);transition:max-height .45s ease, opacity .35s ease, transform .35s ease, padding .35s ease;padding:0 12px}
     .inline-detail.show{max-height:700px;opacity:1;transform:translateY(0);padding:10px 12px}
 
@@ -203,44 +173,36 @@
     #calendarInfo{margin-top:10px;font-size:.85rem;line-height:1.35}
 
     .dev-panel{margin-bottom:14px;border:1px solid rgba(255,255,255,.16);border-radius:12px;background:rgba(0,0,0,.22);padding:10px 12px}
-    .dev-title{font-size:.88rem;opacity:.9;margin-bottom:8px}
+    .dev-title{font-size:.88rem;opacity:.95;margin-bottom:8px}
     .dev-row{display:flex;flex-wrap:wrap;gap:6px;align-items:center}
     .dev-btn{background:rgba(143,179,255,.25);border:1px solid rgba(255,255,255,.25);border-radius:999px;padding:6px 10px;font-size:.8rem;color:#fff;cursor:pointer}
     .dev-btn.real{background:rgba(255,204,102,.24)}
-    .dev-status{margin-top:8px;font-size:.82rem;opacity:.92}
     .mono{font-family:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace}
     .dev-input,.dev-sec{background:rgba(255,255,255,.12);border:1px solid rgba(255,255,255,.28);color:#fff;border-radius:8px;padding:6px 8px;font-size:.82rem}
     .dev-sec{width:70px}
     .dev-input::-webkit-calendar-picker-indicator{filter:invert(1);cursor:pointer}
-
-    /* theme buttons */
-    .theme-btn{
-      border:1px solid rgba(255,255,255,.35);
-      border-radius:999px;
-      padding:6px 10px;
-      font-size:.78rem;
-      color:#fff;
-      background:rgba(255,255,255,.12);
-      cursor:pointer;
-    }
+    .theme-btn{border:1px solid rgba(255,255,255,.35);border-radius:999px;padding:6px 10px;font-size:.78rem;color:#fff;background:rgba(255,255,255,.12);cursor:pointer}
+    .dev-info{margin-top:8px;padding:8px 10px;background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.15);border-radius:8px;font-size:.78rem;line-height:1.35}
+    .dev-info .k{opacity:.78}
+    .dev-info .v{opacity:.98}
 
     @media (max-width:700px){
-      .fx{inset:-40%;}
+      .fx{inset:-40%}
       .container{width:100vw;max-height:100dvh;border-radius:0;padding:14px;box-shadow:none}
-      .top-grid,.top-grid.calendar-visible{grid-template-columns:1fr !important;gap:12px;}
-      h1{font-size:1.55rem;line-height:1.2;} h2{font-size:.98rem;margin-top:6px;} #countdown{font-size:.92rem;}
-      .actions{gap:6px;} .actions button{flex:1 1 100%;width:100%;font-size:.95rem;padding:10px 12px;border-radius:12px;}
-      .panel{margin-top:10px;border-radius:10px;} .schedule-link{font-size:.92rem;border-radius:10px;padding:10px;}
-      .calendar-card{padding:10px;border-radius:12px;} .cal-grid{gap:4px;}
-      .cal-day{min-height:34px;font-size:.78rem;border-radius:7px;padding:0;} .cal-dow{font-size:.7rem;}
-      .legend{font-size:.7rem;gap:8px;} .dev-panel{padding:10px;border-radius:10px;} .dev-title{font-size:.82rem;}
-      .dev-row{gap:6px;} .dev-btn{font-size:.76rem;padding:7px 9px;}
-      .dev-input,.dev-sec{width:100%;font-size:.86rem;}
-      .dev-row.custom-time-row{display:grid;grid-template-columns:1fr 90px;gap:6px;}
-      .dev-row.custom-time-row .dev-btn{grid-column:span 2;width:100%;}
+      .top-grid,.top-grid.calendar-visible{grid-template-columns:1fr !important;gap:12px}
+      h1{font-size:1.55rem;line-height:1.2} h2{font-size:.98rem;margin-top:6px} #countdown{font-size:.92rem}
+      .actions{gap:6px}.actions button{flex:1 1 100%;width:100%;font-size:.95rem;padding:10px 12px;border-radius:12px}
+      .panel{margin-top:10px;border-radius:10px}.schedule-link{font-size:.92rem;border-radius:10px;padding:10px}
+      .calendar-card{padding:10px;border-radius:12px}.cal-grid{gap:4px}
+      .cal-day{min-height:34px;font-size:.78rem;border-radius:7px;padding:0}.cal-dow{font-size:.7rem}
+      .legend{font-size:.7rem;gap:8px}.dev-panel{padding:10px;border-radius:10px}.dev-title{font-size:.82rem}
+      .dev-row{gap:6px}.dev-btn{font-size:.76rem;padding:7px 9px}
+      .dev-input,.dev-sec{width:100%;font-size:.86rem}
+      .dev-row.custom-time-row{display:grid;grid-template-columns:1fr 90px;gap:6px}
+      .dev-row.custom-time-row .dev-btn{grid-column:span 2;width:100%}
     }
 
-    @keyframes periodFlash{0%{transform:scale(1);opacity:.85;text-shadow:0 0 0 rgba(143,179,255,0);}35%{transform:scale(1.04);opacity:1;text-shadow:0 0 14px rgba(143,179,255,.7);}100%{transform:scale(1);opacity:1;text-shadow:0 0 0 rgba(143,179,255,0);}}
+    @keyframes periodFlash{0%{transform:scale(1);opacity:.85;text-shadow:0 0 0 rgba(143,179,255,0)}35%{transform:scale(1.04);opacity:1;text-shadow:0 0 14px rgba(143,179,255,.7)}100%{transform:scale(1);opacity:1;text-shadow:0 0 0 rgba(143,179,255,0)}}
     @keyframes scheduleButtonClick{0%{transform:scale(1);box-shadow:0 0 0 rgba(76,125,255,0)}35%{transform:scale(1.04);box-shadow:0 0 20px rgba(76,125,255,.55)}70%{transform:scale(.99);box-shadow:0 0 8px rgba(76,125,255,.28)}100%{transform:scale(1);box-shadow:0 0 0 rgba(76,125,255,0)}}
     @keyframes skyBreath{0%{filter:brightness(1)}100%{filter:brightness(1.03)}}
     @keyframes driftA{0%{transform:translate3d(0,0,0) rotate(0deg) scale(1)}25%{transform:translate3d(-22px,-14px,0) rotate(.2deg) scale(1.02)}50%{transform:translate3d(10px,-29px,0) rotate(-.15deg) scale(1.01)}75%{transform:translate3d(24px,-18px,0) rotate(.18deg) scale(1.03)}100%{transform:translate3d(-8px,-44px,0) rotate(-.1deg) scale(1.01)}}
@@ -277,7 +239,7 @@
 
   <div class="container" id="mainContainer">
     <div class="dev-panel" id="devPanel">
-      <div class="dev-title">Dev Test Panel (simulate date/time + theme testing)</div>
+      <div class="dev-title">Dev Tools (time + theme + diagnostics)</div>
       <div class="dev-row">
         <button class="dev-btn real" onclick="setTestNow(null)">Real Time</button>
         <button class="dev-btn" onclick="setTestNow('2026-03-02T10:00:00')">Mon During Class</button>
@@ -297,16 +259,18 @@
         <button class="dev-btn" onclick="pauseDevRun()">Pause</button>
       </div>
 
-      <!-- NEW: Dev color theme controls -->
       <div class="dev-row" id="themeRow" style="margin-top:8px; display:none;">
-        <button class="theme-btn" onclick="applyTheme('blue')">Blue</button>
+        <button class="theme-btn" onclick="applyTheme('blue')">Dark Blue</button>
         <button class="theme-btn" onclick="applyTheme('violet')">Violet</button>
         <button class="theme-btn" onclick="applyTheme('teal')">Teal</button>
         <button class="theme-btn" onclick="applyTheme('sunset')">Sunset</button>
+        <button class="theme-btn" onclick="applyTheme('emerald')">Emerald</button>
+        <button class="theme-btn" onclick="applyTheme('crimson')">Crimson</button>
+        <button class="theme-btn" onclick="applyTheme('arctic')">Arctic</button>
         <button class="theme-btn" onclick="resetThemeShift()">Reset + 10m Shift</button>
       </div>
 
-      <div class="dev-status" id="devStatus">Mode: Real Time</div>
+      <div class="dev-info mono" id="devInfo">Loading diagnostics…</div>
     </div>
 
     <div class="top-grid" id="topGrid">
@@ -348,17 +312,31 @@
   <script>
     let DEV_MODE = false;
     let BARE_MODE = false;
+    let currentThemeName = "blue";
+    let activeShotsCount = 0;
+    let shotsSpawnedLast60s = [];
+    let currentDensity = 1;
+    let reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 
     const themePresets = {
-      blue:   {start:["#0a1a3a","#112c66","#163a82"], end:["#1b123f","#3a2a78","#4c4aa8"]},
+      blue:   {start:["#071327","#0d214a","#153571"], end:["#120d2f","#2a2360","#3f4690"]},
       violet: {start:["#1a153f","#2f266f","#4d3f96"], end:["#28184f","#4b2c8f","#6f47bd"]},
       teal:   {start:["#0b1f2e","#12435b","#1b6f87"], end:["#123149","#1d5d74","#2b8899"]},
-      sunset: {start:["#2a1638","#4f2457","#7a3566"], end:["#3c1b28","#744023","#b2632c"]}
+      sunset: {start:["#2a1638","#4f2457","#7a3566"], end:["#3c1b28","#744023","#b2632c"]},
+      emerald:{start:["#0c2a21","#13503f","#1a7560"], end:["#113226","#1b5a46","#2f8e71"]},
+      crimson:{start:["#2a0f1d","#4d1733","#77224c"], end:["#3b1322","#68243c","#9a3a58"]},
+      arctic: {start:["#102338","#1a3f63","#275f88"], end:["#1b2f47","#285777","#3f7da3"]}
     };
+
+    function cssVar(name){return getComputedStyle(document.documentElement).getPropertyValue(name).trim();}
+    function nowLocalString(d){
+      return d.toLocaleString(undefined,{hour12:false,year:"numeric",month:"2-digit",day:"2-digit",hour:"2-digit",minute:"2-digit",second:"2-digit"});
+    }
 
     function applyTheme(name){
       const t = themePresets[name];
       if(!t) return;
+      currentThemeName = name;
       const root = document.documentElement;
       root.style.setProperty('--bg1', t.start[0]);
       root.style.setProperty('--bg2', t.start[1]);
@@ -367,19 +345,41 @@
       root.style.setProperty('--bg2-end', t.end[1]);
       root.style.setProperty('--bg3-end', t.end[2]);
       startTenMinuteColorShift();
+      updateDevInfo();
     }
 
-    function resetThemeShift(){
-      applyTheme('blue');
-    }
+    function resetThemeShift(){ applyTheme('blue'); }
 
     function startTenMinuteColorShift(){
       const root = document.documentElement;
       requestAnimationFrame(() => {
-        root.style.setProperty('--bg1', getComputedStyle(root).getPropertyValue('--bg1-end').trim());
-        root.style.setProperty('--bg2', getComputedStyle(root).getPropertyValue('--bg2-end').trim());
-        root.style.setProperty('--bg3', getComputedStyle(root).getPropertyValue('--bg3-end').trim());
+        root.style.setProperty('--bg1', cssVar('--bg1-end'));
+        root.style.setProperty('--bg2', cssVar('--bg2-end'));
+        root.style.setProperty('--bg3', cssVar('--bg3-end'));
       });
+    }
+
+    function updateDevInfo(){
+      const el = document.getElementById("devInfo");
+      if(!el || !DEV_MODE) return;
+      const params = new URLSearchParams(window.location.search);
+      const now = getNow();
+      const w = window.innerWidth, h = window.innerHeight, dpr = Math.min(window.devicePixelRatio || 1, 2);
+
+      const cutoff = Date.now() - 60000;
+      shotsSpawnedLast60s = shotsSpawnedLast60s.filter(ts => ts >= cutoff);
+      const shotsPerMin = shotsSpawnedLast60s.length;
+
+      el.innerHTML = `
+        <div><span class="k">time:</span> <span class="v">${nowLocalString(now)}</span></div>
+        <div><span class="k">params:</span> <span class="v">dev=${params.get("dev")||"0"} b=${params.get("b")||"0"}</span></div>
+        <div><span class="k">theme:</span> <span class="v">${currentThemeName}</span></div>
+        <div><span class="k">bg:</span> <span class="v">${cssVar('--bg1')} | ${cssVar('--bg2')} | ${cssVar('--bg3')}</span></div>
+        <div><span class="k">target:</span> <span class="v">${cssVar('--bg1-end')} | ${cssVar('--bg2-end')} | ${cssVar('--bg3-end')}</span></div>
+        <div><span class="k">shooting:</span> <span class="v">active=${activeShotsCount} rate≈${shotsPerMin}/min</span></div>
+        <div><span class="k">screen:</span> <span class="v">${w}x${h} dpr=${dpr}</span></div>
+        <div><span class="k">density/reducedMotion:</span> <span class="v">${currentDensity} / ${reducedMotion}</span></div>
+      `;
     }
 
     (function backgroundFX(){
@@ -394,6 +394,7 @@
         if (w < 480) d = 0.55;
         else if (w < 768) d = 0.72;
         else if (w < 1200) d = 0.88;
+        currentDensity = d;
         root.style.setProperty('--density', d.toString());
       }
 
@@ -415,6 +416,7 @@
         const len = 70 + Math.random() * 80;
         const angle = (Math.PI * 0.75) + (Math.random() - 0.5) * 0.22;
         shots.push({x:startX,y:startY,vx:Math.cos(angle)*speed,vy:Math.sin(angle)*speed,life:0,ttl:26+Math.random()*18,len,alpha:.35+Math.random()*.35});
+        shotsSpawnedLast60s.push(Date.now());
       }
 
       function drawShot(s) {
@@ -425,6 +427,7 @@
       }
 
       function loop() {
+        reducedMotion = mqReduce.matches;
         if (!mqReduce.matches) {
           ctx.clearRect(0, 0, w, h);
           const spawnChance = w < 700 ? 0.0007 : 0.0012;
@@ -435,11 +438,13 @@
             if (s.life >= s.ttl || s.x < -120 || s.y > h + 120) shots.splice(i, 1);
           }
         }
+        activeShotsCount = shots.length;
         requestAnimationFrame(loop);
       }
 
-      window.addEventListener('resize', () => { resizeCanvas(); updateDensity(); });
+      window.addEventListener('resize', () => { resizeCanvas(); updateDensity(); updateDevInfo(); });
       updateDensity(); resizeCanvas(); startTenMinuteColorShift(); loop();
+      setInterval(updateDevInfo, 1000);
     })();
 
     function formatDate(d){return d.getFullYear()+"-"+String(d.getMonth()+1).padStart(2,"0")+"-"+String(d.getDate()).padStart(2,"0");}
@@ -463,24 +468,14 @@
     let TEST_NOW=null,devRunning=false,devAnchorRealMs=null,devAnchorSimMs=null;
     function toLocalInputValue(dateObj){const pad=n=>String(n).padStart(2,"0");return `${dateObj.getFullYear()}-${pad(dateObj.getMonth()+1)}-${pad(dateObj.getDate())}T${pad(dateObj.getHours())}:${pad(dateObj.getMinutes())}:${pad(dateObj.getSeconds())}`;}
     function getNow(){if(!TEST_NOW) return new Date(); if(devRunning && devAnchorRealMs!==null && devAnchorSimMs!==null){return new Date(devAnchorSimMs + (Date.now()-devAnchorRealMs));} return new Date(TEST_NOW);}
-    function refreshDevStatus(){
-      const s=document.getElementById("devStatus");
-      if(!TEST_NOW){s.textContent=`Mode: ${DEV_MODE?"Dev ":""}Real Time${BARE_MODE?" | Bare Mode (b=1)":""}`;return;}
-      s.innerHTML=`Mode: ${devRunning?"Simulated (Running)":"Simulated (Paused)"} <span class="mono">${getNow().toISOString().replace("Z","")}</span>${BARE_MODE?' <span class="mono">| b=1</span>':''}`;
-    }
-
     function setTestNow(iso){
       TEST_NOW=iso;devRunning=false;devAnchorRealMs=null;devAnchorSimMs=null;
       if(TEST_NOW){const d=new Date(TEST_NOW);document.getElementById("devDateTimeInput").value=toLocalInputValue(d);document.getElementById("devSecondInput").value=d.getSeconds();}
-      refreshDevStatus(); update(); if(calendarVisible) renderCalendar(); fitContainer();
+      update(); if(calendarVisible) renderCalendar(); fitContainer(); updateDevInfo();
     }
-    function applyCustomDevTime(){
-      const input=document.getElementById("devDateTimeInput").value;if(!input) return;
-      const secRaw=Number(document.getElementById("devSecondInput").value||0),sec=Math.max(0,Math.min(59,secRaw));
-      let d=new Date(input); if(Number.isNaN(d.getTime())) return; d.setSeconds(sec,0); setTestNow(d.toISOString());
-    }
-    function startDevRun(){if(!TEST_NOW) setTestNow(new Date().toISOString());const sim=getNow();devRunning=true;devAnchorRealMs=Date.now();devAnchorSimMs=sim.getTime();refreshDevStatus();}
-    function pauseDevRun(){if(!TEST_NOW) return; if(devRunning) TEST_NOW=getNow().toISOString();devRunning=false;devAnchorRealMs=null;devAnchorSimMs=null;refreshDevStatus();}
+    function applyCustomDevTime(){const input=document.getElementById("devDateTimeInput").value;if(!input) return;const secRaw=Number(document.getElementById("devSecondInput").value||0),sec=Math.max(0,Math.min(59,secRaw));let d=new Date(input); if(Number.isNaN(d.getTime())) return; d.setSeconds(sec,0); setTestNow(d.toISOString());}
+    function startDevRun(){if(!TEST_NOW) setTestNow(new Date().toISOString());const sim=getNow();devRunning=true;devAnchorRealMs=Date.now();devAnchorSimMs=sim.getTime();updateDevInfo();}
+    function pauseDevRun(){if(!TEST_NOW) return; if(devRunning) TEST_NOW=getNow().toISOString();devRunning=false;devAnchorRealMs=null;devAnchorSimMs=null;updateDevInfo();}
 
     const scheduleCatalog={
       regularTF:{title:"Daily Schedule (Tue–Fri)",blocks:[["Period 1","08:45","09:42"],["Period 2","09:48","10:45"],["Period 3","10:51","11:48"],["Period 4","11:54","12:51"],["Lunch","12:57","13:27"],["Period 5","13:33","14:30"],["Period 6","14:36","15:33"]]},
@@ -538,7 +533,7 @@
     }
 
     function update(){
-      if (BARE_MODE) return; // no main panel updates in bare mode
+      if (BARE_MODE) return;
       const now=getNow(),todayText=fullDate(formatDate(now));
       const info=getScheduleKeyForDate(now),end=document.getElementById("endTime"),cd=document.getElementById("countdown");
       if(info.type==="closed"){setMainLabel(`<span class="holiday">${info.reason}</span>`);end.innerText=todayText;cd.innerText="";return;}
@@ -601,11 +596,7 @@
 
     function fitContainer(){
       const c=document.getElementById("mainContainer");
-      if (BARE_MODE){
-        c.classList.remove("allow-scroll");
-        c.style.maxHeight = "none";
-        return;
-      }
+      if (BARE_MODE){c.classList.remove("allow-scroll");c.style.maxHeight = "none";return;}
       c.classList.remove("allow-scroll");
       const viewport = window.innerHeight;
       const max = Math.floor(viewport * 0.94);
@@ -621,11 +612,11 @@
 
     setInterval(()=>{
       update();
-      if(document.getElementById("devPanel").style.display!=="none") refreshDevStatus();
+      updateDevInfo();
     },1000);
 
     renderCalendar();
-    refreshDevStatus();
+    updateDevInfo();
   </script>
 </body>
 </html>
