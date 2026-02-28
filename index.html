@@ -409,8 +409,8 @@
       d.finalsMap[`${y2}-05-26`]="finalsP12"; d.finalsMap[`${y2}-05-27`]="finalsP34"; d.finalsMap[`${y2}-05-28`]="finalsP56";
 
       d.noSchoolReasons[formatDate(nthWeekday(y1,8,1,1))]="Labor Day";
-      d.noSchoolReasons[`${y1}-10-13`]="Non-Instructional Day (Estimated)";
-      d.noSchoolReasons[`${y1}-11-10`]="Non-Instructional Day (Estimated)";
+      d.noSchoolReasons[`${y1}-10-13`]="Non-Instructional Day";
+      d.noSchoolReasons[`${y1}-11-10`]="Non-Instructional Day";
       d.noSchoolReasons[`${y1}-11-11`]="Veterans Day";
 
       const tg=nthWeekday(y1,10,4,4),m=new Date(tg),f=new Date(tg);m.setDate(tg.getDate()-3);f.setDate(tg.getDate()+1);
@@ -420,7 +420,7 @@
       d.noSchoolReasons[formatDate(nthWeekday(y2,0,1,3))]="Martin Luther King Jr. Day";
       const p=nthWeekday(y2,1,1,3),fri=new Date(p); fri.setDate(p.getDate()-3);
       d.noSchoolReasons[formatDate(fri)]="Presidents Weekend"; d.noSchoolReasons[formatDate(p)]="Presidents Weekend";
-      d.noSchoolReasons[`${y2}-03-09`]="Non-Instructional Day (Estimated)";
+      d.noSchoolReasons[`${y2}-03-09`]="Non-Instructional Day";
       dateRange(`${y2}-03-30`,`${y2}-04-03`).forEach(x=>d.noSchoolReasons[x]="Spring Break");
       d.noSchoolReasons[formatDate(lastWeekday(y2,4,1))]="Memorial Day Observed";
       return d;
