@@ -6,7 +6,7 @@
   <title>PHHS Smart Schedule</title>
   <style>
     :root{
-      --bg1:#0a1a3a; --bg2:#112c66;       --accent:#4c7dff; --text:#e6eeff; --warn:#ffcc66; --ok:#8fb3ff;
+      --bg1:#0a1a3a; --bg2:#112c66; --accent:#4c7dff; --text:#e6eeff; --warn:#ffcc66; --ok:#8fb3ff;
     }
     *{box-sizing:border-box;}
     body{
@@ -37,14 +37,25 @@
     .top-grid.calendar-visible{grid-template-columns:1.2fr 1fr}
     @media (max-width:860px){.top-grid.calendar-visible{grid-template-columns:1fr}}
 
-    .actions{display:flex;flex-wrap:wrap;gap:4px}
+    .actions{
+      display:flex;
+      flex-wrap:wrap;
+      gap:2px;
+    }
     button{
-      margin:6px 0 0;
+      margin:2px 0 0;
       padding:9px 14px;
       border:none;border-radius:30px;cursor:pointer;
       background:var(--accent);color:#fff;font-size:.93em;
+      transition:transform .12s ease, box-shadow .2s ease, filter .2s ease;
     }
-    button:hover{filter:brightness(1.08)}
+    button:hover{
+      filter:brightness(1.08);
+      transform:translateY(-1px);
+    }
+    button:active{
+      transform:scale(0.97);
+    }
 
     .panel{
       margin-top:14px;max-height:0;overflow:hidden;opacity:0;padding:0 14px;border-radius:12px;
@@ -57,7 +68,11 @@
     .badge{font-size:.76rem;padding:2px 8px;border-radius:999px;background:rgba(255,255,255,.14);margin-left:8px}
 
     .schedule-link{
-      width:100%;text-align:left;margin:6px 0;padding:10px 12px;border-radius:10px;
+      width:100%;
+      text-align:left;
+      margin:2px 0;
+      padding:10px 12px;
+      border-radius:10px;
       background:rgba(255,255,255,.12);
       transition:transform .18s ease, background .22s ease, box-shadow .22s ease;
     }
@@ -144,6 +159,18 @@
       opacity:.92;
     }
     .mono{font-family:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace}
+    .dev-input{
+      background:rgba(255,255,255,.12);
+      border:1px solid rgba(255,255,255,.28);
+      color:#fff;
+      border-radius:8px;
+      padding:6px 8px;
+      font-size:.82rem;
+    }
+    .dev-input::-webkit-calendar-picker-indicator{
+      filter:invert(1);
+      cursor:pointer;
+    }
   </style>
 </head>
 <body>
@@ -158,6 +185,15 @@
         <button class="dev-btn" onclick="setTestNow('2026-12-17T09:30:00')">Finals Day</button>
         <button class="dev-btn" onclick="setTestNow('2026-10-24T11:00:00')">Weekend</button>
       </div>
+
+      <div class="dev-row" style="margin-top:8px;align-items:center;">
+        <input id="devDateTimeInput" type="datetime-local" class="dev-input" />
+        <button class="dev-btn" onclick="applyCustomDevTime()">Set Time</button>
+        <button class="dev-btn" onclick="startDevRun()">Start Run</button>
+        <button class="dev-btn" onclick="pauseDevRun()">Pause</button>
+        <button class="dev-btn" onclick="resetDevRun()">Reset Run</button>
+      </div>
+
       <div class="dev-status" id="devStatus">Mode: Real Time</div>
     </div>
 
@@ -212,21 +248,95 @@
     }
 
     let TEST_NOW = null;
-    function getNow(){ return TEST_NOW ? new Date(TEST_NOW) : new Date(); }
+    let devRunning = false;
+    let devAnchorRealMs = null;
+    let devAnchorSimMs = null;
+
+    function toLocalInputValue(dateObj){
+      const pad = n => String(n).padStart(2,"0");
+      const y = dateObj.getFullYear();
+      const m = pad(dateObj.getMonth()+1);
+      const d = pad(dateObj.getDate());
+      const hh = pad(dateObj.getHours());
+      const mm = pad(dateObj.getMinutes());
+      return `${y}-${m}-${d}T${hh}:${mm}`;
+    }
+
+    function parseInputToDate(value){
+      return value ? new Date(value) : null;
+    }
+
+    function getNow(){
+      if(!TEST_NOW) return new Date();
+      if(devRunning && devAnchorRealMs!==null && devAnchorSimMs!==null){
+        const elapsed = Date.now() - devAnchorRealMs;
+        return new Date(devAnchorSimMs + elapsed);
+      }
+      return new Date(TEST_NOW);
+    }
+
+    function refreshDevStatus(){
+      const status = document.getElementById("devStatus");
+      if(!TEST_NOW){
+        status.textContent = "Mode: Real Time";
+        return;
+      }
+      const mode = devRunning ? "Simulated (Running)" : "Simulated (Paused)";
+      status.innerHTML = `Mode: ${mode} <span class="mono">${getNow().toISOString().replace("Z","")}</span>`;
+    }
 
     function setTestNow(iso){
       TEST_NOW = iso;
-      const status = document.getElementById("devStatus");
+      devRunning = false;
+      devAnchorRealMs = null;
+      devAnchorSimMs = null;
+
       if(TEST_NOW){
-        status.innerHTML = `Mode: Simulated <span class="mono">${TEST_NOW}</span>`;
-      } else {
-        status.textContent = "Mode: Real Time";
+        const d = new Date(TEST_NOW);
+        document.getElementById("devDateTimeInput").value = toLocalInputValue(d);
       }
+
+      refreshDevStatus();
       update();
       if(document.getElementById("todayPanel").classList.contains("show")){
         toggleToday();
         toggleToday();
       }
+      if(calendarVisible) renderCalendar();
+    }
+
+    function applyCustomDevTime(){
+      const input = document.getElementById("devDateTimeInput").value;
+      const d = parseInputToDate(input);
+      if(!d || Number.isNaN(d.getTime())) return;
+      setTestNow(d.toISOString());
+    }
+
+    function startDevRun(){
+      if(!TEST_NOW){
+        setTestNow(new Date().toISOString());
+      }
+      const currentSim = getNow();
+      devRunning = true;
+      devAnchorRealMs = Date.now();
+      devAnchorSimMs = currentSim.getTime();
+      refreshDevStatus();
+    }
+
+    function pauseDevRun(){
+      if(!TEST_NOW) return;
+      if(devRunning){
+        TEST_NOW = getNow().toISOString();
+      }
+      devRunning = false;
+      devAnchorRealMs = null;
+      devAnchorSimMs = null;
+      refreshDevStatus();
+    }
+
+    function resetDevRun(){
+      pauseDevRun();
+      update();
       if(calendarVisible) renderCalendar();
     }
 
@@ -477,7 +587,12 @@
 
     initDevPanelVisibility();
     update();
-    setInterval(update,1000);
+    setInterval(()=>{
+      update();
+      if(document.getElementById("devPanel").style.display !== "none"){
+        refreshDevStatus();
+      }
+    },1000);
     renderCalendar();
   </script>
 </body>
