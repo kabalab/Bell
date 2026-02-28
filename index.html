@@ -9,20 +9,23 @@
       --bg1:#0a1a3a; --bg2:#112c66; --accent:#4c7dff; --text:#e6eeff; --warn:#ffcc66; --ok:#8fb3ff;
     }
     *{box-sizing:border-box;}
-    body{
+    html,body{
+      width:100%;
+      height:100%;
       margin:0;
+      overflow:hidden; /* no page scroll */
+    }
+
+    body{
       font-family:'Segoe UI',sans-serif;
       color:var(--text);
       background:linear-gradient(135deg,var(--bg1),var(--bg2));
       display:flex;
       justify-content:center;
       align-items:center;
-      min-height:100vh;
-      overflow:hidden;
       position:relative;
     }
 
-    /* Layer 1 (soft, larger dots) */
     body::before{
       content:"";
       position:absolute;
@@ -36,12 +39,10 @@
         radial-gradient(circle at 42% 82%, rgba(255,255,255,.035) 2px, transparent 3px);
       background-size:210px 210px;
       animation:particleDriftA 65s ease-in-out infinite alternate;
-      will-change:transform;
       pointer-events:none;
       z-index:0;
     }
 
-    /* Layer 2 (finer, denser sparkle) */
     body::after{
       content:"";
       position:absolute;
@@ -58,80 +59,83 @@
       mix-blend-mode:screen;
       opacity:.65;
       animation:particleDriftB 48s ease-in-out infinite alternate-reverse;
-      will-change:transform, opacity;
       pointer-events:none;
       z-index:0;
     }
 
-    @keyframes particleDriftA{
-      0%{
-        transform:translate3d(0px, 0px, 0) scale(1) rotate(0deg);
-        opacity:.92;
-      }
-      20%{
-        transform:translate3d(-24px, -14px, 0) scale(1.015) rotate(.25deg);
-        opacity:1;
-      }
-      40%{
-        transform:translate3d(12px, -30px, 0) scale(1.005) rotate(-.2deg);
-        opacity:.95;
-      }
-      60%{
-        transform:translate3d(30px, -18px, 0) scale(1.02) rotate(.3deg);
-        opacity:1;
-      }
-      80%{
-        transform:translate3d(-10px, -36px, 0) scale(1.01) rotate(-.25deg);
-        opacity:.94;
-      }
-      100%{
-        transform:translate3d(18px, -48px, 0) scale(1) rotate(.15deg);
-        opacity:.9;
-      }
+    .fx{
+      position:fixed;
+      inset:-25%;
+      pointer-events:none;
+      z-index:0;
     }
-
-    @keyframes particleDriftB{
-      0%{
-        transform:translate3d(0px, 0px, 0) scale(1) rotate(0deg);
-        opacity:.58;
-      }
-      25%{
-        transform:translate3d(22px, -12px, 0) scale(1.03) rotate(-.35deg);
-        opacity:.72;
-      }
-      50%{
-        transform:translate3d(-16px, -28px, 0) scale(1.015) rotate(.25deg);
-        opacity:.62;
-      }
-      75%{
-        transform:translate3d(10px, -42px, 0) scale(1.035) rotate(-.3deg);
-        opacity:.74;
-      }
-      100%{
-        transform:translate3d(-26px, -54px, 0) scale(1.02) rotate(.2deg);
-        opacity:.6;
-      }
+    .fx-orbs{
+      background:
+        radial-gradient(circle at 15% 25%, rgba(143,179,255,.10) 0 18px, transparent 42px),
+        radial-gradient(circle at 75% 35%, rgba(255,255,255,.07) 0 14px, transparent 36px),
+        radial-gradient(circle at 45% 80%, rgba(76,125,255,.08) 0 16px, transparent 40px);
+      filter:blur(1px);
+      animation:fxOrbs 80s ease-in-out infinite alternate;
+      opacity:.55;
+    }
+    .fx-specks{
+      background-image:
+        radial-gradient(circle, rgba(255,255,255,.22) 0 1px, transparent 1.6px),
+        radial-gradient(circle, rgba(255,255,255,.14) 0 1px, transparent 1.7px);
+      background-size:130px 130px, 190px 190px;
+      background-position:0 0, 30px 50px;
+      mix-blend-mode:screen;
+      opacity:.35;
+      animation:fxSpecksDrift 52s linear infinite, fxSpecksPulse 6s ease-in-out infinite;
+    }
+    .fx-mist{
+      background:
+        radial-gradient(ellipse at 20% 30%, rgba(255,255,255,.06), transparent 55%),
+        radial-gradient(ellipse at 70% 60%, rgba(255,255,255,.05), transparent 60%),
+        radial-gradient(ellipse at 50% 85%, rgba(255,255,255,.04), transparent 58%);
+      filter:blur(18px);
+      opacity:.3;
+      animation:fxMist 95s ease-in-out infinite alternate;
+    }
+    .fx-grid{
+      background-image:
+        linear-gradient(120deg, rgba(255,255,255,.06) 0 1px, transparent 1px 100%),
+        linear-gradient(120deg, rgba(255,255,255,.035) 0 1px, transparent 1px 100%);
+      background-size:150px 150px, 260px 260px;
+      background-position:0 0, 60px 70px;
+      opacity:.2;
+      animation:fxGrid 70s ease-in-out infinite alternate-reverse;
     }
 
     .container{
-      position:relative;z-index:1;background:rgba(255,255,255,.05);backdrop-filter:blur(20px);
-      width:96%;max-width:980px;max-height:94vh;overflow:auto;padding:24px;border-radius:22px;
+      position:relative;
+      z-index:2;
+      background:rgba(255,255,255,.05);
+      backdrop-filter:blur(20px);
+      width:min(980px,96vw);
+      max-height:94dvh;
+      min-height:280px;
+      overflow:hidden; /* default no scroll */
+      padding:24px;
+      border-radius:22px;
       box-shadow:0 20px 60px rgba(0,0,0,.6);
+      transition:max-height .25s ease, height .25s ease;
     }
+
+    .container.allow-scroll{
+      overflow:auto; /* only when needed */
+    }
+
     h1{margin:0;font-size:2.1em}
     h2{margin:8px 0 4px;font-weight:400;opacity:.9}
     #countdown{font-size:.95em;opacity:.9}
 
-    #currentPeriod{
-      transition:transform .2s ease, text-shadow .25s ease, opacity .2s ease;
-    }
-    .period-flash{
-      animation:periodFlash .45s ease;
-    }
+    #currentPeriod{transition:transform .2s ease, text-shadow .25s ease, opacity .2s ease;}
+    .period-flash{animation:periodFlash .45s ease;}
     @keyframes periodFlash{
-      0%   { transform:scale(1); opacity:.85; text-shadow:0 0 0 rgba(143,179,255,0); }
-      35%  { transform:scale(1.04); opacity:1; text-shadow:0 0 14px rgba(143,179,255,.7); }
-      100% { transform:scale(1); opacity:1; text-shadow:0 0 0 rgba(143,179,255,0); }
+      0%{transform:scale(1);opacity:.85;text-shadow:0 0 0 rgba(143,179,255,0);}
+      35%{transform:scale(1.04);opacity:1;text-shadow:0 0 14px rgba(143,179,255,.7);}
+      100%{transform:scale(1);opacity:1;text-shadow:0 0 0 rgba(143,179,255,0);}
     }
 
     .top-grid{display:grid;grid-template-columns:1fr;gap:16px}
@@ -140,9 +144,7 @@
 
     .actions{display:flex;flex-wrap:wrap;gap:2px}
     button{
-      margin:2px 0 0;
-      padding:9px 14px;
-      border:none;border-radius:30px;cursor:pointer;
+      margin:2px 0 0;padding:9px 14px;border:none;border-radius:30px;cursor:pointer;
       background:var(--accent);color:#fff;font-size:.93em;
       transition:transform .12s ease, box-shadow .2s ease, filter .2s ease;
     }
@@ -160,8 +162,7 @@
     .badge{font-size:.76rem;padding:2px 8px;border-radius:999px;background:rgba(255,255,255,.14);margin-left:8px}
 
     .schedule-link{
-      width:100%;text-align:left;margin:2px 0;padding:10px 12px;border-radius:10px;
-      background:rgba(255,255,255,.12);
+      width:100%;text-align:left;margin:2px 0;padding:10px 12px;border-radius:10px;background:rgba(255,255,255,.12);
       transition:transform .18s ease, background .22s ease, box-shadow .22s ease;
     }
     .schedule-link:hover{transform:translateY(-1px);background:rgba(255,255,255,.18)}
@@ -176,10 +177,8 @@
 
     .inline-detail{
       margin:2px 0 10px 0;border-radius:10px;background:rgba(255,255,255,.08);
-      border:1px solid rgba(255,255,255,.15);overflow:hidden;max-height:0;opacity:0;
-      transform:translateY(-8px);
-      transition:max-height .45s ease, opacity .35s ease, transform .35s ease, padding .35s ease;
-      padding:0 12px;
+      border:1px solid rgba(255,255,255,.15);overflow:hidden;max-height:0;opacity:0;transform:translateY(-8px);
+      transition:max-height .45s ease, opacity .35s ease, transform .35s ease, padding .35s ease;padding:0 12px;
     }
     .inline-detail.show{max-height:700px;opacity:1;transform:translateY(0);padding:10px 12px}
 
@@ -208,132 +207,85 @@
     .dev-btn.real{background:rgba(255,204,102,.24)}
     .dev-status{margin-top:8px;font-size:.82rem;opacity:.92}
     .mono{font-family:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace}
-    .dev-input,.dev-sec{
-      background:rgba(255,255,255,.12);border:1px solid rgba(255,255,255,.28);color:#fff;border-radius:8px;padding:6px 8px;font-size:.82rem
-    }
+    .dev-input,.dev-sec{background:rgba(255,255,255,.12);border:1px solid rgba(255,255,255,.28);color:#fff;border-radius:8px;padding:6px 8px;font-size:.82rem}
     .dev-sec{width:70px}
     .dev-input::-webkit-calendar-picker-indicator{filter:invert(1);cursor:pointer}
 
-    /* ---------- Mobile optimization ---------- */
-    @media (max-width: 700px){
-      body{
-        align-items:flex-start;
-        overflow:auto;
-      }
-
+    @media (max-width:700px){
       .container{
-        width:100%;
-        max-width:none;
-        max-height:none;
-        min-height:100dvh;
+        width:100vw;
+        max-height:100dvh;
         border-radius:0;
         padding:14px;
         box-shadow:none;
       }
-
-      .top-grid,
-      .top-grid.calendar-visible{
-        grid-template-columns:1fr !important;
-        gap:12px;
-      }
-
-      h1{
-        font-size:1.55rem;
-        line-height:1.2;
-      }
-      h2{
-        font-size:.98rem;
-        margin-top:6px;
-      }
-      #countdown{
-        font-size:.92rem;
-      }
-
-      .actions{
-        gap:6px;
-      }
-
-      .actions button{
-        flex:1 1 100%;
-        width:100%;
-        font-size:.95rem;
-        padding:10px 12px;
-        border-radius:12px;
-      }
-
-      .panel{
-        margin-top:10px;
-        border-radius:10px;
-      }
-
-      .schedule-link{
-        font-size:.92rem;
-        border-radius:10px;
-        padding:10px;
-      }
-
-      .calendar-card{
-        padding:10px;
-        border-radius:12px;
-      }
-      .cal-grid{
-        gap:4px;
-      }
-      .cal-day{
-        min-height:34px;
-        font-size:.78rem;
-        border-radius:7px;
-        padding:0;
-      }
-      .cal-dow{
-        font-size:.7rem;
-      }
-      .legend{
-        font-size:.7rem;
-        gap:8px;
-      }
-
-      .dev-panel{
-        padding:10px;
-        border-radius:10px;
-      }
-      .dev-title{
-        font-size:.82rem;
-      }
-      .dev-row{
-        gap:6px;
-      }
-      .dev-btn{
-        font-size:.76rem;
-        padding:7px 9px;
-      }
-
-      .dev-input,
-      .dev-sec{
-        width:100%;
-        font-size:.86rem;
-      }
-
-      .dev-row.custom-time-row{
-        display:grid;
-        grid-template-columns:1fr 90px;
-        gap:6px;
-      }
-      .dev-row.custom-time-row .dev-btn{
-        grid-column:span 2;
-        width:100%;
-      }
+      .top-grid,.top-grid.calendar-visible{grid-template-columns:1fr !important;gap:12px;}
+      h1{font-size:1.55rem;line-height:1.2;}
+      h2{font-size:.98rem;margin-top:6px;}
+      #countdown{font-size:.92rem;}
+      .actions{gap:6px;}
+      .actions button{flex:1 1 100%;width:100%;font-size:.95rem;padding:10px 12px;border-radius:12px;}
+      .panel{margin-top:10px;border-radius:10px;}
+      .schedule-link{font-size:.92rem;border-radius:10px;padding:10px;}
+      .calendar-card{padding:10px;border-radius:12px;}
+      .cal-grid{gap:4px;}
+      .cal-day{min-height:34px;font-size:.78rem;border-radius:7px;padding:0;}
+      .cal-dow{font-size:.7rem;}
+      .legend{font-size:.7rem;gap:8px;}
+      .dev-panel{padding:10px;border-radius:10px;}
+      .dev-title{font-size:.82rem;}
+      .dev-row{gap:6px;}
+      .dev-btn{font-size:.76rem;padding:7px 9px;}
+      .dev-input,.dev-sec{width:100%;font-size:.86rem;}
+      .dev-row.custom-time-row{display:grid;grid-template-columns:1fr 90px;gap:6px;}
+      .dev-row.custom-time-row .dev-btn{grid-column:span 2;width:100%;}
     }
 
-    @media (max-width: 390px){
-      h1{font-size:1.35rem;}
-      .dev-btn{font-size:.72rem;}
-      .actions button{font-size:.9rem;}
+    @keyframes particleDriftA{
+      0%{transform:translate3d(0px,0px,0) scale(1) rotate(0deg);opacity:.92;}
+      20%{transform:translate3d(-24px,-14px,0) scale(1.015) rotate(.25deg);opacity:1;}
+      40%{transform:translate3d(12px,-30px,0) scale(1.005) rotate(-.2deg);opacity:.95;}
+      60%{transform:translate3d(30px,-18px,0) scale(1.02) rotate(.3deg);opacity:1;}
+      80%{transform:translate3d(-10px,-36px,0) scale(1.01) rotate(-.25deg);opacity:.94;}
+      100%{transform:translate3d(18px,-48px,0) scale(1) rotate(.15deg);opacity:.9;}
+    }
+    @keyframes particleDriftB{
+      0%{transform:translate3d(0px,0px,0) scale(1) rotate(0deg);opacity:.58;}
+      25%{transform:translate3d(22px,-12px,0) scale(1.03) rotate(-.35deg);opacity:.72;}
+      50%{transform:translate3d(-16px,-28px,0) scale(1.015) rotate(.25deg);opacity:.62;}
+      75%{transform:translate3d(10px,-42px,0) scale(1.035) rotate(-.3deg);opacity:.74;}
+      100%{transform:translate3d(-26px,-54px,0) scale(1.02) rotate(.2deg);opacity:.6;}
+    }
+    @keyframes fxOrbs{
+      0%{transform:translate3d(0,0,0) scale(1)}
+      50%{transform:translate3d(-26px,-18px,0) scale(1.03)}
+      100%{transform:translate3d(18px,-40px,0) scale(1.01)}
+    }
+    @keyframes fxSpecksDrift{
+      from{transform:translate3d(0,0,0)}
+      to{transform:translate3d(-40px,-55px,0)}
+    }
+    @keyframes fxSpecksPulse{
+      0%,100%{opacity:.22}
+      50%{opacity:.42}
+    }
+    @keyframes fxMist{
+      0%{transform:translate3d(0,0,0) scale(1)}
+      100%{transform:translate3d(24px,-30px,0) scale(1.04)}
+    }
+    @keyframes fxGrid{
+      0%{transform:translate3d(0,0,0) rotate(0deg)}
+      100%{transform:translate3d(-22px,-38px,0) rotate(.25deg)}
     }
   </style>
 </head>
 <body>
-  <div class="container">
+  <div class="fx fx-orbs"></div>
+  <div class="fx fx-specks"></div>
+  <div class="fx fx-mist"></div>
+  <div class="fx fx-grid"></div>
+
+  <div class="container" id="mainContainer">
     <div class="dev-panel" id="devPanel">
       <div class="dev-title">Dev Test Panel (simulate date/time)</div>
       <div class="dev-row">
@@ -403,7 +355,7 @@
     function fullDate(s){return new Date(s+"T00:00:00").toLocaleDateString(undefined,{weekday:"long",month:"long",day:"numeric",year:"numeric"});}
     function nthWeekday(year,month,weekday,n){const first=new Date(year,month,1);let off=(7+weekday-first.getDay())%7;off+=7*(n-1);return new Date(year,month,1+off);}
     function lastWeekday(year,month,weekday){const last=new Date(year,month+1,0);const off=(7+last.getDay()-weekday)%7;return new Date(year,month+1,0-off);}
-    function getPeriodLabel(name){const m=name.match(/Period\s+\d+/i);return m?m[0]:name;}
+    function getPeriodLabel(name){const m=name.match(/Period\\s+\\d+/i);return m?m[0]:name;}
     function formatDuration(totalSeconds){
       totalSeconds = Math.max(0, Math.floor(totalSeconds));
       const h = Math.floor(totalSeconds / 3600);
@@ -451,7 +403,7 @@
         document.getElementById("devDateTimeInput").value=toLocalInputValue(d);
         document.getElementById("devSecondInput").value=d.getSeconds();
       }
-      refreshDevStatus(); update(); if(calendarVisible) renderCalendar();
+      refreshDevStatus(); update(); if(calendarVisible) renderCalendar(); fitContainer();
     }
 
     function applyCustomDevTime(){
@@ -517,7 +469,10 @@
     function getSchoolYearData(startYear){if(!yearDataCache.has(startYear)) yearDataCache.set(startYear,buildSchoolYearData(startYear)); return yearDataCache.get(startYear);}
     function getYearDataByDate(ds){
       const year=Number(ds.slice(0,4));
-      for(const s of [year-1,year]){const yData=getSchoolYearData(s); if(ds>=yData.classesBegin && ds<=yData.classesEnd) return yData;}
+      for(const s of [year-1,year]){
+        const yData=getSchoolYearData(s);
+        if(ds>=yData.classesBegin && ds<=yData.classesEnd) return yData;
+      }
       return null;
     }
 
@@ -536,13 +491,28 @@
       const ds=formatDate(dateObj),y=getYearDataByDate(ds);
       if(!y) return ["noschool"];
       const marks=[]; if(y.finalsMap[ds]) marks.push("finals"); if(y.pepRallyDays.has(ds)) marks.push("rally");
-      if(y.noSchoolReasons[ds]||dateObj.getDay()===0||dateObj.getDay()===6) marks.push("noschool"); return marks;
+      if(y.noSchoolReasons[ds]||dateObj.getDay()===0||dateObj.getDay()===6) marks.push("noschool");
+      return marks;
     }
+
     function markerClass(m){
       const f=m.includes("finals"),r=m.includes("rally"),n=m.includes("noschool"),c=[f,r,n].filter(Boolean).length;
       if(c>1) return "filled-multi"; if(f) return "filled-finals"; if(r) return "filled-rally"; if(n) return "filled-noschool"; return "";
     }
     function renderScheduleBlocks(s){return s.blocks.map(b=>`<div class="schedule-item"><strong>${b[0]}</strong> : ${toNormalTime(b[1])} - ${toNormalTime(b[2])}</div>`).join("");}
+
+    function isWeekendNowOrAfterSchoolToWeekend(dateObj, info){
+      const day = dateObj.getDay();
+      if (day === 0 || day === 6) return true;
+      if (day === 5 && info.type === "schedule") {
+        const sch = scheduleCatalog[info.key];
+        const lastBlock = sch.blocks[sch.blocks.length - 1];
+        const lastEndSec = parseTimeToMinutes(lastBlock[2]) * 60;
+        const nowSec = dateObj.getHours()*3600 + dateObj.getMinutes()*60 + dateObj.getSeconds();
+        if (nowSec >= lastEndSec) return true;
+      }
+      return false;
+    }
 
     function update(){
       const now=getNow(),todayText=fullDate(formatDate(now));
@@ -557,8 +527,7 @@
         const firstLabel=getPeriodLabel(sch.blocks[0][0]);
         setMainLabel("Before School");
         end.innerText=`${firstLabel} starts at ${toNormalTime(sch.blocks[0][1])}`;
-        const r=Math.max(0,firstSec-nowSec);
-        cd.innerText=`Starts in: ${formatDuration(r)}`;
+        cd.innerText=`Starts in: ${formatDuration(Math.max(0,firstSec-nowSec))}`;
         return;
       }
 
@@ -568,33 +537,37 @@
         if(nowSec>=sm && nowSec<em){
           setMainLabel(name);
           end.innerText=`Ends at ${toNormalTime(e)}`;
-          const r=Math.max(0,em-nowSec);
-          cd.innerText=`Time remaining: ${formatDuration(r)}`;
+          cd.innerText=`Time remaining: ${formatDuration(Math.max(0,em-nowSec))}`;
           return;
         }
 
         if(i<sch.blocks.length-1){
           const next=sch.blocks[i+1],nm=parseTimeToMinutes(next[1])*60;
           if(nowSec>=em && nowSec<nm){
-            const nextLabel=getPeriodLabel(next[0]);
             setMainLabel("Passing Period");
-            end.innerText=`${nextLabel} starts at ${toNormalTime(next[1])}`;
-            const r=Math.max(0,nm-nowSec);
-            cd.innerText=`Next class in: ${formatDuration(r)}`;
+            end.innerText=`${getPeriodLabel(next[0])} starts at ${toNormalTime(next[1])}`;
+            cd.innerText=`Next class in: ${formatDuration(Math.max(0,nm-nowSec))}`;
             return;
           }
         }
       }
 
-      setMainLabel("School is Out"); end.innerText=todayText; cd.innerText="";
+      if (isWeekendNowOrAfterSchoolToWeekend(now, info)) {
+        setMainLabel(`<span class="holiday">Weekend</span>`);
+      } else {
+        setMainLabel("School is Out");
+      }
+      end.innerText=todayText;
+      cd.innerText="";
     }
 
     function toggleToday(){
       const p=document.getElementById("todayPanel"); p.classList.toggle("show");
       const now=getNow(),info=getScheduleKeyForDate(now),dateLabel=prettyDate(formatDate(now));
-      if(info.type==="closed"){p.innerHTML=`<div class="schedule-item"><strong>${dateLabel}</strong></div><div class="schedule-item">${info.reason}</div>`;return;}
+      if(info.type==="closed"){p.innerHTML=`<div class="schedule-item"><strong>${dateLabel}</strong></div><div class="schedule-item">${info.reason}</div>`;fitContainer();return;}
       const sch=scheduleCatalog[info.key];
       p.innerHTML=`<div class="schedule-item"><strong>${sch.title}</strong><span class="badge">${dateLabel}</span></div>`+renderScheduleBlocks(sch);
+      fitContainer();
     }
 
     let activeScheduleKey=null;
@@ -607,12 +580,24 @@
         html+=`<div class="inline-detail ${active?'show':''}">${active?renderScheduleBlocks(sch):""}</div>`;
       }
       panel.innerHTML=html;
+      fitContainer();
     }
     function toggleInlineSchedule(key,ev){
-      if(ev&&ev.currentTarget){const btn=ev.currentTarget;btn.classList.remove("click-animate");void btn.offsetWidth;btn.classList.add("click-animate");}
-      activeScheduleKey=(activeScheduleKey===key)?null:key; renderAllSchedulesList();
+      if(ev&&ev.currentTarget){
+        const btn=ev.currentTarget;
+        btn.classList.remove("click-animate");
+        void btn.offsetWidth;
+        btn.classList.add("click-animate");
+      }
+      activeScheduleKey=(activeScheduleKey===key)?null:key;
+      renderAllSchedulesList();
     }
-    function toggleAll(){const p=document.getElementById("allPanel");p.classList.toggle("show");if(p.classList.contains("show")) renderAllSchedulesList();}
+    function toggleAll(){
+      const p=document.getElementById("allPanel");
+      p.classList.toggle("show");
+      if(p.classList.contains("show")) renderAllSchedulesList();
+      fitContainer();
+    }
 
     let calendarViewDate=new Date(),selectedDateStr=null,calendarVisible=false;
     function monthName(m){return new Date(2000,m,1).toLocaleString(undefined,{month:"long"});}
@@ -620,7 +605,9 @@
       const grid=document.getElementById("calGrid"),title=document.getElementById("calTitle");
       const y=calendarViewDate.getFullYear(),m=calendarViewDate.getMonth();
       title.textContent=`${monthName(m)} ${y}`; grid.innerHTML="";
-      ["Sun","Mon","Tue","Wed","Thu","Fri","Sat"].forEach(d=>{const e=document.createElement("div");e.className="cal-dow";e.textContent=d;grid.appendChild(e);});
+      ["Sun","Mon","Tue","Wed","Thu","Fri","Sat"].forEach(d=>{
+        const e=document.createElement("div"); e.className="cal-dow"; e.textContent=d; grid.appendChild(e);
+      });
 
       const firstDay=new Date(y,m,1).getDay(),daysInMonth=new Date(y,m+1,0).getDate(),today=formatDate(getNow());
       for(let i=0;i<firstDay;i++){const b=document.createElement("button");b.className="cal-day muted";b.disabled=true;grid.appendChild(b);}
@@ -631,10 +618,11 @@
         const mc=markerClass(marks);if(mc) b.classList.add(mc);
         if(ds===today) b.classList.add("today");
         if(ds===selectedDateStr) b.classList.add("selected");
-        b.onclick=()=>{selectedDateStr=ds;renderCalendar();showCalendarInfo(ds);};
+        b.onclick=()=>{selectedDateStr=ds;renderCalendar();showCalendarInfo(ds);fitContainer();};
         grid.appendChild(b);
       }
       if(selectedDateStr) showCalendarInfo(selectedDateStr); else document.getElementById("calendarInfo").innerHTML="";
+      fitContainer();
     }
 
     function showCalendarInfo(ds){
@@ -652,16 +640,38 @@
       document.getElementById("topGrid").classList.toggle("calendar-visible",calendarVisible);
       document.getElementById("calendarToggleBtn").innerText=calendarVisible?"Hide Calendar":"Show Calendar";
       if(calendarVisible) renderCalendar();
+      fitContainer();
     }
 
     function initDevPanelVisibility(){
       const devMode=new URLSearchParams(window.location.search).get("dev")==="1";
       document.getElementById("devPanel").style.display=devMode?"block":"none";
+      fitContainer();
+    }
+
+    function fitContainer(){
+      const c=document.getElementById("mainContainer");
+      c.classList.remove("allow-scroll");
+
+      const viewport = window.innerHeight;
+      const max = Math.floor(viewport * 0.94);
+      c.style.maxHeight = `${max}px`;
+
+      requestAnimationFrame(()=>{
+        const needsScroll = c.scrollHeight > c.clientHeight + 1;
+        c.classList.toggle("allow-scroll", needsScroll);
+      });
     }
 
     initDevPanelVisibility();
     update();
-    setInterval(()=>{update(); if(document.getElementById("devPanel").style.display!=="none") refreshDevStatus();},1000);
+    fitContainer();
+    window.addEventListener("resize", fitContainer);
+
+    setInterval(()=>{
+      update();
+      if(document.getElementById("devPanel").style.display!=="none") refreshDevStatus();
+    },1000);
     renderCalendar();
   </script>
 </body>
