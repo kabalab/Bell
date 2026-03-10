@@ -3,6 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="theme-color" content="#0d214a" />
   <title>PHHS Schedule</title>
   <style>
     :root{
@@ -17,7 +18,14 @@
     }
 
     *{box-sizing:border-box;}
-    html,body{width:100%;height:100%;margin:0;overflow:hidden;}
+    html,body{
+      width:100%;
+      height:100%;
+      margin:0;
+      overflow:hidden;
+      touch-action:manipulation;
+      -webkit-text-size-adjust:100%;
+    }
     body{
       font-family:'Segoe UI',sans-serif;color:var(--text);
       background:
@@ -219,17 +227,22 @@
     .dev-info{margin-top:8px;padding:8px 10px;background:rgba(255,255,255,.12);border:1px solid rgba(255,255,255,.2);border-radius:8px;font-size:.78rem;line-height:1.35}
     .dev-info .k{opacity:.78}.dev-info .v{opacity:.98}
 
-    /* IMPROVED MOBILE UI */
     @media (max-width:700px){
       .fx{inset:-46%;}
+      .fx-grid,.fx-streaks,.fx-glints{display:none;}
+      .fx-mist,.fx-bokeh{opacity:.22;}
+      #shootingCanvas{opacity:.55;}
 
       .container{
         width:100vw;
         max-height:100dvh;
         min-height:100dvh;
         border-radius:0;
-        padding:12px 12px 16px;
         box-shadow:none;
+        padding-top:12px;
+        padding-left:max(12px, env(safe-area-inset-left));
+        padding-right:max(12px, env(safe-area-inset-right));
+        padding-bottom:max(16px, env(safe-area-inset-bottom));
       }
 
       .top-grid,
@@ -258,7 +271,7 @@
       .actions{
         display:grid;
         grid-template-columns:1fr;
-        gap:7px;
+        gap:8px;
         margin-top:8px;
       }
 
@@ -277,7 +290,7 @@
       }
 
       .panel.show{
-        padding:10px;
+        padding:12px;
       }
 
       .schedule-item{
@@ -324,7 +337,7 @@
       }
 
       .cal-day{
-        min-height:36px;
+        min-height:44px;
         font-size:.76rem;
         border-radius:7px;
         padding:0;
@@ -337,7 +350,7 @@
 
       #calendarInfo{
         margin-top:8px;
-        font-size:.78rem;
+        font-size:.86rem;
         line-height:1.28;
       }
 
@@ -361,6 +374,7 @@
         font-size:.74rem;
         padding:7px 9px;
         border-radius:999px;
+        min-height:44px;
       }
 
       .dev-input,
@@ -368,7 +382,7 @@
       .dev-num{
         width:100%;
         font-size:.84rem;
-        min-height:36px;
+        min-height:44px;
       }
 
       .dev-row.custom-time-row{
@@ -392,6 +406,14 @@
         padding-bottom:env(safe-area-inset-bottom);
       }
     }
+
+    @media (max-width:380px){
+      h1{font-size:1.2rem;}
+      h2,#countdown{font-size:.84rem;}
+      .cal-day{font-size:.72rem;}
+    }
+
+    button,.cal-day,.schedule-link,.cal-nav{min-height:44px;}
 
     @keyframes periodFlash{0%{transform:scale(1);opacity:.85;text-shadow:0 0 0 rgba(143,179,255,0)}35%{transform:scale(1.04);opacity:1;text-shadow:0 0 14px rgba(143,179,255,.7)}100%{transform:scale(1);opacity:1;text-shadow:0 0 0 rgba(143,179,255,0)}}
     @keyframes scheduleButtonClick{0%{transform:scale(1);box-shadow:0 0 0 rgba(76,125,255,0)}35%{transform:scale(1.04);box-shadow:0 0 20px rgba(76,125,255,.55)}70%{transform:scale(.99);box-shadow:0 0 8px rgba(76,125,255,.28)}100%{transform:scale(1);box-shadow:0 0 0 rgba(76,125,255,0)}}
@@ -531,6 +553,7 @@
     let activeShotsCount=0, shotsSpawnedLast60s=[], currentDensity=1;
     let reducedMotion=window.matchMedia('(prefers-reduced-motion: reduce)').matches;
     let TEST_NOW=null,devRunning=false,devAnchorRealMs=null,devAnchorSimMs=null;
+    window.__MOBILE_DPR_CAP__ = Math.min((window.devicePixelRatio || 1), window.matchMedia('(max-width:700px)').matches ? 1.5 : 2);
 
     let colorCycleRAF=null, cycleFrom=null, cycleTo=null, cycleStart=0, cycleDurationMs=600000, cycleProgress=0;
 
@@ -665,9 +688,19 @@
         <div><span class="k">time to next full color:</span> <span class="v">${formatHMS(remainSec)}</span></div>
         <div><span class="k">bg:</span> <span class="v">${cssVar('--bg1')} | ${cssVar('--bg2')} | ${cssVar('--bg3')}</span></div>
         <div><span class="k">shooting:</span> <span class="v">active=${activeShotsCount} rate≈${shotsSpawnedLast60s.length}/min</span></div>
-        <div><span class="k">screen:</span> <span class="v">${innerWidth}x${innerHeight} dpr=${Math.min(devicePixelRatio||1,2)}</span></div>
+        <div><span class="k">screen:</span> <span class="v">${innerWidth}x${innerHeight} dpr=${Math.min(window.__MOBILE_DPR_CAP__ || (devicePixelRatio||1),2)}</span></div>
         <div><span class="k">density/reducedMotion:</span> <span class="v">${currentDensity} / ${reducedMotion}</span></div>`;
     }
+
+    (function optimizeForMobilePerformance(){
+      const isMobile = window.matchMedia('(max-width:700px)').matches;
+      const prefersReduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+      if(isMobile && !prefersReduced){
+        BASE_CYCLE_MS = 900000;
+        const cycleInput = document.getElementById("cycleSecondsInput");
+        if(cycleInput) cycleInput.value = String(BASE_CYCLE_MS/1000);
+      }
+    })();
 
     (function backgroundFX(){
       const root=document.documentElement;
@@ -676,9 +709,13 @@
       const ctx=canvas.getContext('2d');
 
       function updateDensity(){const w=innerWidth;let d=1;if(w<480)d=.6;else if(w<768)d=.78;else if(w<1200)d=.92;currentDensity=d;root.style.setProperty('--density',d);}
-      let w=0,h=0,dpr=Math.min(devicePixelRatio||1,2),shots=[];
+      let w=0,h=0,dpr=Math.min(window.__MOBILE_DPR_CAP__ || (devicePixelRatio||1),2),shots=[];
 
-      function resizeCanvas(){w=innerWidth;h=innerHeight;dpr=Math.min(devicePixelRatio||1,2);canvas.width=Math.floor(w*dpr);canvas.height=Math.floor(h*dpr);canvas.style.width=w+'px';canvas.style.height=h+'px';ctx.setTransform(dpr,0,0,dpr,0,0);}
+      function resizeCanvas(){
+        w=innerWidth;h=innerHeight;
+        dpr=Math.min(window.__MOBILE_DPR_CAP__ || (devicePixelRatio||1),2);
+        canvas.width=Math.floor(w*dpr);canvas.height=Math.floor(h*dpr);canvas.style.width=w+'px';canvas.style.height=h+'px';ctx.setTransform(dpr,0,0,dpr,0,0);
+      }
 
       function spawnShot(){
         const x=Math.random()*w*.85 + w*.1;
