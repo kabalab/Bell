@@ -376,7 +376,7 @@
       <div class="dev-row custom-time-row" style="margin-top:8px;">
         <input id="devDateTimeInput" type="datetime-local" class="dev-input" step="1" />
         <input id="devSecondInput" type="number" min="0" max="59" value="0" class="dev-sec" title="Seconds" />
-        <button class="dev-btn" onclick="applyCustomDevTime()">Set Time</button>
+        <button class="dev-btn" onclick="CustomDevTime()">Set Time</button>
         <button class="dev-btn" onclick="startDevRun()">Start Run</button>
         <button class="dev-btn" onclick="pauseDevRun()">Pause</button>
       </div>
@@ -892,7 +892,7 @@
     }
 
     initModes(); initDevPanelVisibility();
-    applyTheme("blue");
+    applyTheme(cycleThemeKeys[Math.floor(Math.random() * cycleThemeKeys.length)]);
     update(); fitContainer();
     addEventListener("resize", fitContainer);
     setInterval(()=>{update(); updateDevInfo();},250);
