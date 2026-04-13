@@ -36,121 +36,6 @@
       animation:skyBreath 18s ease-in-out infinite alternate;
     }
 
-    .fx{position:fixed;inset:-35%;pointer-events:none;z-index:0;will-change:transform,opacity}
-    .fx-orbs{
-      background:
-        radial-gradient(circle at 6% 14%, rgba(143,179,255,.11) 0 19px, transparent 46px),
-        radial-gradient(circle at 17% 73%, rgba(255,255,255,.08) 0 14px, transparent 34px),
-        radial-gradient(circle at 31% 42%, rgba(76,125,255,.09) 0 16px, transparent 38px),
-        radial-gradient(circle at 44% 9%, rgba(255,255,255,.07) 0 13px, transparent 31px),
-        radial-gradient(circle at 58% 66%, rgba(143,179,255,.1) 0 15px, transparent 36px),
-        radial-gradient(circle at 69% 26%, rgba(255,255,255,.07) 0 12px, transparent 30px),
-        radial-gradient(circle at 83% 84%, rgba(76,125,255,.09) 0 16px, transparent 37px),
-        radial-gradient(circle at 95% 41%, rgba(255,255,255,.08) 0 14px, transparent 34px),
-        radial-gradient(circle at 26% 86%, rgba(150,190,255,.08) 0 12px, transparent 30px),
-        radial-gradient(circle at 75% 12%, rgba(255,255,255,.07) 0 11px, transparent 29px);
-      filter:blur(1px);opacity:.62;animation:driftA 68s ease-in-out infinite alternate
-    }
-    .fx-specks{
-      background:
-        radial-gradient(circle at 4% 18%, rgba(255,255,255,.28) 0 1px, transparent 1.7px),
-        radial-gradient(circle at 11% 57%, rgba(255,255,255,.2) 0 .9px, transparent 1.6px),
-        radial-gradient(circle at 23% 33%, rgba(255,255,255,.25) 0 1px, transparent 1.7px),
-        radial-gradient(circle at 29% 82%, rgba(200,225,255,.2) 0 .9px, transparent 1.6px),
-        radial-gradient(circle at 37% 46%, rgba(255,255,255,.23) 0 1px, transparent 1.7px),
-        radial-gradient(circle at 48% 12%, rgba(255,255,255,.18) 0 .8px, transparent 1.5px),
-        radial-gradient(circle at 56% 71%, rgba(255,255,255,.26) 0 1px, transparent 1.7px),
-        radial-gradient(circle at 63% 27%, rgba(180,210,255,.2) 0 .9px, transparent 1.6px),
-        radial-gradient(circle at 74% 16%, rgba(255,255,255,.25) 0 1px, transparent 1.7px),
-        radial-gradient(circle at 82% 63%, rgba(255,255,255,.2) 0 .9px, transparent 1.6px),
-        radial-gradient(circle at 91% 35%, rgba(255,255,255,.24) 0 1px, transparent 1.7px),
-        radial-gradient(circle at 96% 75%, rgba(220,235,255,.2) 0 .9px, transparent 1.6px);
-      mix-blend-mode:screen;opacity:calc(.42 * var(--density));animation:driftB 44s linear infinite, twinkleA 4.6s ease-in-out infinite
-    }
-    .fx-mist{
-      background:
-        radial-gradient(ellipse at 12% 24%, rgba(255,255,255,.08), transparent 57%),
-        radial-gradient(ellipse at 39% 81%, rgba(220,235,255,.07), transparent 58%),
-        radial-gradient(ellipse at 72% 35%, rgba(255,255,255,.06), transparent 60%),
-        radial-gradient(ellipse at 89% 78%, rgba(170,205,255,.05), transparent 57%);
-      filter:blur(21px);opacity:.34;animation:driftC 82s ease-in-out infinite alternate
-    }
-    .fx-grid{
-      background-image:
-        linear-gradient(120deg, rgba(255,255,255,.06) 0 1px, transparent 1px 100%),
-        linear-gradient(120deg, rgba(255,255,255,.04) 0 1px, transparent 1px 100%);
-      background-size:150px 150px, 230px 230px;
-      background-position:13px 17px, 86px 63px;
-      opacity:.2;animation:driftD 58s ease-in-out infinite alternate-reverse
-    }
-    .fx-bokeh{
-      background:
-        radial-gradient(circle at 9% 77%, rgba(255,255,255,.1) 0 22px, transparent 50px),
-        radial-gradient(circle at 27% 21%, rgba(143,179,255,.1) 0 18px, transparent 42px),
-        radial-gradient(circle at 51% 63%, rgba(255,255,255,.08) 0 19px, transparent 45px),
-        radial-gradient(circle at 68% 28%, rgba(170,205,255,.09) 0 16px, transparent 40px),
-        radial-gradient(circle at 86% 73%, rgba(255,255,255,.08) 0 17px, transparent 42px);
-      filter:blur(2px);opacity:.33;animation:driftE 72s ease-in-out infinite alternate-reverse
-    }
-    .fx-stars{
-      background:
-        radial-gradient(circle at 6% 33%, rgba(255,255,255,.34) 0 .9px, transparent 1.4px),
-        radial-gradient(circle at 15% 91%, rgba(255,255,255,.24) 0 .8px, transparent 1.3px),
-        radial-gradient(circle at 27% 22%, rgba(255,255,255,.3) 0 .9px, transparent 1.4px),
-        radial-gradient(circle at 36% 69%, rgba(200,225,255,.22) 0 .8px, transparent 1.3px),
-        radial-gradient(circle at 48% 14%, rgba(255,255,255,.28) 0 .9px, transparent 1.4px),
-        radial-gradient(circle at 57% 82%, rgba(255,255,255,.23) 0 .8px, transparent 1.3px),
-        radial-gradient(circle at 66% 38%, rgba(255,255,255,.28) 0 .9px, transparent 1.4px),
-        radial-gradient(circle at 77% 11%, rgba(180,210,255,.22) 0 .8px, transparent 1.3px),
-        radial-gradient(circle at 86% 58%, rgba(255,255,255,.29) 0 .9px, transparent 1.4px),
-        radial-gradient(circle at 95% 26%, rgba(255,255,255,.22) 0 .8px, transparent 1.3px);
-      opacity:calc(.3 * var(--density));animation:driftF 45s linear infinite
-    }
-    .fx-dust{
-      background:
-        radial-gradient(circle at 8% 25%, rgba(255,255,255,.2) 0 1.1px, transparent 1.9px),
-        radial-gradient(circle at 21% 83%, rgba(255,255,255,.17) 0 1px, transparent 1.8px),
-        radial-gradient(circle at 34% 57%, rgba(190,220,255,.17) 0 1px, transparent 1.8px),
-        radial-gradient(circle at 49% 11%, rgba(255,255,255,.16) 0 .9px, transparent 1.7px),
-        radial-gradient(circle at 62% 76%, rgba(170,205,255,.16) 0 1px, transparent 1.8px),
-        radial-gradient(circle at 78% 34%, rgba(255,255,255,.16) 0 .9px, transparent 1.7px),
-        radial-gradient(circle at 93% 89%, rgba(200,225,255,.16) 0 .9px, transparent 1.7px);
-      opacity:calc(.31 * var(--density));animation:driftG 50s linear infinite, twinkleB 5.8s ease-in-out infinite
-    }
-    .fx-streaks{
-      background:
-        linear-gradient(116deg, rgba(255,255,255,.14) 0 1.2px, transparent 1.2px) 7% 16% / 14px 14px no-repeat,
-        linear-gradient(116deg, rgba(190,220,255,.12) 0 1px, transparent 1px) 19% 73% / 12px 12px no-repeat,
-        linear-gradient(116deg, rgba(255,255,255,.13) 0 1.1px, transparent 1.1px) 33% 44% / 13px 13px no-repeat,
-        linear-gradient(116deg, rgba(170,205,255,.11) 0 1px, transparent 1px) 48% 85% / 11px 11px no-repeat,
-        linear-gradient(116deg, rgba(255,255,255,.13) 0 1.1px, transparent 1.1px) 61% 24% / 13px 13px no-repeat,
-        linear-gradient(116deg, rgba(190,220,255,.12) 0 1px, transparent 1px) 74% 58% / 11px 11px no-repeat,
-        linear-gradient(116deg, rgba(255,255,255,.13) 0 1.1px, transparent 1.1px) 88% 13% / 12px 12px no-repeat,
-        linear-gradient(116deg, rgba(170,205,255,.11) 0 1px, transparent 1px) 96% 67% / 11px 11px no-repeat;
-      opacity:calc(.22 * var(--density));filter:blur(.2px);animation:driftH 60s ease-in-out infinite alternate
-    }
-    .fx-glints{
-      background:
-        radial-gradient(circle at 7% 52%, rgba(255,255,255,.62) 0 .8px, transparent 1.4px),
-        radial-gradient(circle at 18% 22%, rgba(210,230,255,.52) 0 .7px, transparent 1.3px),
-        radial-gradient(circle at 30% 74%, rgba(255,255,255,.58) 0 .8px, transparent 1.4px),
-        radial-gradient(circle at 43% 35%, rgba(220,235,255,.50) 0 .7px, transparent 1.3px),
-        radial-gradient(circle at 57% 86%, rgba(255,255,255,.56) 0 .8px, transparent 1.4px),
-        radial-gradient(circle at 69% 19%, rgba(210,230,255,.50) 0 .7px, transparent 1.3px),
-        radial-gradient(circle at 82% 61%, rgba(255,255,255,.56) 0 .8px, transparent 1.4px),
-        radial-gradient(circle at 94% 29%, rgba(220,235,255,.50) 0 .7px, transparent 1.3px);
-      mix-blend-mode:screen;opacity:calc(.3 * var(--density));animation:driftI 34s linear infinite, shimmer 2.8s ease-in-out infinite
-    }
-    .fx-aurora{
-      background:
-        radial-gradient(ellipse at 15% 40%, rgba(120,170,255,.14), transparent 52%),
-        radial-gradient(ellipse at 65% 20%, rgba(200,130,255,.11), transparent 55%),
-        radial-gradient(ellipse at 80% 70%, rgba(90,220,200,.10), transparent 58%);
-      filter:blur(28px);opacity:.45;animation:driftAurora 26s ease-in-out infinite alternate;
-    }
-
-    #shootingCanvas{position:fixed;inset:0;width:100%;height:100%;z-index:1;pointer-events:none;opacity:.88}
-
     .container{
       position:relative;
       z-index:2;
@@ -171,28 +56,71 @@
     body.bare-mode .container{width:auto;min-height:0;max-height:none;padding:0;border-radius:0;box-shadow:none;background:transparent;backdrop-filter:none;overflow:visible;}
     body.bare-mode #devPanel{margin:0;background:rgba(0,0,0,.28);backdrop-filter:blur(10px);}
 
-    h1{margin:0;font-size:2.1em} h2{margin:8px 0 4px;font-weight:400;opacity:.9} #countdown{font-size:.95em;opacity:.9}
+    h1{margin:0;font-size:2.1em}
+    h2{margin:8px 0 4px;font-weight:400;opacity:.9}
+    #countdown{font-size:.95em;opacity:.9}
     #currentPeriod{transition:transform .2s ease,text-shadow .25s ease,opacity .2s ease;}
     .period-flash{animation:periodFlash .45s ease;}
     .top-grid{display:grid;grid-template-columns:1fr;gap:16px}
     .top-grid.calendar-visible{grid-template-columns:1.2fr 1fr}
     @media (max-width:860px){.top-grid.calendar-visible{grid-template-columns:1fr}}
+
     .actions{display:flex;flex-wrap:wrap;gap:2px}
-    button{margin:2px 0 0;padding:9px 14px;border:none;border-radius:30px;cursor:pointer;background:var(--accent);color:#fff;font-size:.93em;transition:transform .12s ease,box-shadow .2s ease,filter .2s ease}
+    button{
+      margin:2px 0 0;
+      padding:9px 14px;
+      border:none;
+      border-radius:30px;
+      cursor:pointer;
+      background:var(--accent);
+      color:#fff;
+      font-size:.93em;
+      transition:transform .12s ease,box-shadow .2s ease,filter .2s ease;
+    }
     button:hover{filter:brightness(1.08);transform:translateY(-1px)}
     button:active{transform:scale(0.97)}
 
-    .panel{margin-top:14px;max-height:0;overflow:hidden;opacity:0;padding:0 14px;border-radius:12px;background:rgba(0,0,0,.35);transition:max-height .6s ease,opacity .35s ease,padding .25s ease}
+    .panel{
+      margin-top:14px;
+      max-height:0;
+      overflow:hidden;
+      opacity:0;
+      padding:0 14px;
+      border-radius:12px;
+      background:rgba(0,0,0,.35);
+      transition:max-height .6s ease,opacity .35s ease,padding .25s ease;
+    }
     .panel.show{max-height:1300px;opacity:1;padding:14px}
     .schedule-item{padding:6px 0;border-bottom:1px solid rgba(255,255,255,.12)}
     .schedule-item:last-child{border-bottom:none}
     .holiday{color:var(--warn);font-size:1.16em}
     .badge{font-size:.76rem;padding:2px 8px;border-radius:999px;background:rgba(255,255,255,.18);margin-left:8px}
-    .schedule-link{width:100%;text-align:left;margin:2px 0;padding:10px 12px;border-radius:10px;background:rgba(255,255,255,.16);transition:transform .18s ease, background .22s ease, box-shadow .22s ease}
+
+    .schedule-link{
+      width:100%;
+      text-align:left;
+      margin:2px 0;
+      padding:10px 12px;
+      border-radius:10px;
+      background:rgba(255,255,255,.16);
+      transition:transform .18s ease, background .22s ease, box-shadow .22s ease;
+    }
     .schedule-link:hover{transform:translateY(-1px);background:rgba(255,255,255,.22)}
     .schedule-link.active-btn{background:rgba(76,125,255,.52);border:1px solid rgba(255,255,255,.45)}
     .schedule-link.click-animate{animation:scheduleButtonClick .42s ease}
-    .inline-detail{margin:2px 0 10px 0;border-radius:10px;background:rgba(255,255,255,.12);border:1px solid rgba(255,255,255,.2);overflow:hidden;max-height:0;opacity:0;transform:translateY(-8px);transition:max-height .45s ease, opacity .35s ease, transform .35s ease, padding .35s ease;padding:0 12px}
+
+    .inline-detail{
+      margin:2px 0 10px 0;
+      border-radius:10px;
+      background:rgba(255,255,255,.12);
+      border:1px solid rgba(255,255,255,.2);
+      overflow:hidden;
+      max-height:0;
+      opacity:0;
+      transform:translateY(-8px);
+      transition:max-height .36s ease,opacity .26s ease,transform .26s ease,padding .22s ease;
+      padding:0 12px;
+    }
     .inline-detail.show{max-height:700px;opacity:1;transform:translateY(0);padding:10px 12px}
 
     .calendar-card{background:rgba(0,0,0,.28);border-radius:14px;padding:12px}
@@ -225,14 +153,10 @@
     .dev-input::-webkit-calendar-picker-indicator{filter:invert(1);cursor:pointer}
     .theme-btn{border:1px solid rgba(255,255,255,.38);border-radius:999px;padding:6px 10px;font-size:.78rem;color:#fff;background:rgba(255,255,255,.16);cursor:pointer}
     .dev-info{margin-top:8px;padding:8px 10px;background:rgba(255,255,255,.12);border:1px solid rgba(255,255,255,.2);border-radius:8px;font-size:.78rem;line-height:1.35}
-    .dev-info .k{opacity:.78}.dev-info .v{opacity:.98}
+    .dev-info .k{opacity:.78}
+    .dev-info .v{opacity:.98}
 
     @media (max-width:700px){
-      .fx{inset:-46%;}
-      .fx-grid,.fx-streaks,.fx-glints{display:none;}
-      .fx-mist,.fx-bokeh{opacity:.22;}
-      #shootingCanvas{opacity:.55;}
-
       .container{
         width:100vw;
         max-height:100dvh;
@@ -415,42 +339,25 @@
 
     button,.cal-day,.schedule-link,.cal-nav{min-height:44px;}
 
-    @keyframes periodFlash{0%{transform:scale(1);opacity:.85;text-shadow:0 0 0 rgba(143,179,255,0)}35%{transform:scale(1.04);opacity:1;text-shadow:0 0 14px rgba(143,179,255,.7)}100%{transform:scale(1);opacity:1;text-shadow:0 0 0 rgba(143,179,255,0)}}
-    @keyframes scheduleButtonClick{0%{transform:scale(1);box-shadow:0 0 0 rgba(76,125,255,0)}35%{transform:scale(1.04);box-shadow:0 0 20px rgba(76,125,255,.55)}70%{transform:scale(.99);box-shadow:0 0 8px rgba(76,125,255,.28)}100%{transform:scale(1);box-shadow:0 0 0 rgba(76,125,255,0)}}
+    @keyframes periodFlash{
+      0%{transform:scale(1);opacity:.85;text-shadow:0 0 0 rgba(143,179,255,0)}
+      35%{transform:scale(1.04);opacity:1;text-shadow:0 0 14px rgba(143,179,255,.7)}
+      100%{transform:scale(1);opacity:1;text-shadow:0 0 0 rgba(143,179,255,0)}
+    }
+    @keyframes scheduleButtonClick{
+      0%{transform:scale(1);box-shadow:0 0 0 rgba(76,125,255,0)}
+      35%{transform:scale(1.04);box-shadow:0 0 20px rgba(76,125,255,.55)}
+      70%{transform:scale(.99);box-shadow:0 0 10px rgba(76,125,255,.28)}
+      100%{transform:scale(1);box-shadow:0 0 0 rgba(76,125,255,0)}
+    }
     @keyframes skyBreath{0%{filter:brightness(1)}100%{filter:brightness(1.06)}}
-    @keyframes driftA{0%{transform:translate3d(0,0,0) rotate(0deg) scale(1)}25%{transform:translate3d(-26px,-16px,0) rotate(.24deg) scale(1.03)}50%{transform:translate3d(12px,-34px,0) rotate(-.2deg) scale(1.02)}75%{transform:translate3d(30px,-22px,0) rotate(.22deg) scale(1.04)}100%{transform:translate3d(-10px,-52px,0) rotate(-.12deg) scale(1.02)}}
-    @keyframes driftB{from{transform:translate3d(0,0,0)}to{transform:translate3d(-58px,-78px,0)}}
-    @keyframes twinkleA{0%,100%{opacity:.28}35%{opacity:.52}68%{opacity:.34}}
-    @keyframes driftC{0%{transform:translate3d(0,0,0) scale(1)}50%{transform:translate3d(20px,-23px,0) scale(1.05)}100%{transform:translate3d(38px,-46px,0) scale(1.09)}}
-    @keyframes driftD{0%{transform:translate3d(0,0,0) rotate(0deg)}100%{transform:translate3d(-30px,-45px,0) rotate(.3deg)}}
-    @keyframes driftE{0%{transform:translate3d(0,0,0) scale(1)}100%{transform:translate3d(-26px,-40px,0) scale(1.05)}}
-    @keyframes driftF{from{transform:translate3d(0,0,0)}to{transform:translate3d(-44px,-62px,0)}}
-    @keyframes driftG{from{transform:translate3d(0,0,0)}to{transform:translate3d(-38px,-54px,0)}}
-    @keyframes twinkleB{0%,100%{opacity:.2}50%{opacity:.42}}
-    @keyframes driftH{0%{transform:translate3d(0,0,0)}100%{transform:translate3d(-34px,-49px,0)}}
-    @keyframes driftI{0%{transform:translate3d(0,0,0)}100%{transform:translate3d(52px,-36px,0)}}
-    @keyframes shimmer{0%,100%{opacity:.2}30%{opacity:.45}62%{opacity:.28}}
-    @keyframes driftAurora{0%{transform:translate3d(0,0,0) scale(1)}50%{transform:translate3d(18px,-22px,0) scale(1.04)}100%{transform:translate3d(-16px,-38px,0) scale(1.08)}}
 
     @media (prefers-reduced-motion: reduce){
-      body,.fx{animation:none !important}
-      #shootingCanvas{display:none}
+      body{animation:none !important}
     }
   </style>
 </head>
 <body>
-  <div class="fx fx-aurora"></div>
-  <div class="fx fx-orbs"></div>
-  <div class="fx fx-specks"></div>
-  <div class="fx fx-mist"></div>
-  <div class="fx fx-grid"></div>
-  <div class="fx fx-bokeh"></div>
-  <div class="fx fx-stars"></div>
-  <div class="fx fx-dust"></div>
-  <div class="fx fx-streaks"></div>
-  <div class="fx fx-glints"></div>
-  <canvas id="shootingCanvas"></canvas>
-
   <div class="container" id="mainContainer">
     <div class="dev-panel" id="devPanel">
       <div class="dev-title">Dev Tools (random color cycle + diagnostics)</div>
@@ -550,7 +457,7 @@
     let DEV_MODE=false, BARE_MODE=false, SIM_SPEED=1;
     let BASE_CYCLE_MS=600000;
     let currentThemeName="blue", currentTargetThemeName="violet";
-    let activeShotsCount=0, shotsSpawnedLast60s=[], currentDensity=1;
+    let currentDensity=1;
     let reducedMotion=window.matchMedia('(prefers-reduced-motion: reduce)').matches;
     let TEST_NOW=null,devRunning=false,devAnchorRealMs=null,devAnchorSimMs=null;
     window.__MOBILE_DPR_CAP__ = Math.min((window.devicePixelRatio || 1), window.matchMedia('(max-width:700px)').matches ? 1.5 : 2);
@@ -675,8 +582,7 @@
     function nowLocalString(d){return d.toLocaleString(undefined,{hour12:false,year:"numeric",month:"2-digit",day:"2-digit",hour:"2-digit",minute:"2-digit",second:"2-digit"});}
     function updateDevInfo(){
       const el=document.getElementById("devInfo"); if(!el||!DEV_MODE) return;
-      const params=new URLSearchParams(location.search),cut=Date.now()-60000;
-      shotsSpawnedLast60s=shotsSpawnedLast60s.filter(t=>t>=cut);
+      const params=new URLSearchParams(location.search);
       const remainSec=((1-cycleProgress)*cycleDurationMs)/1000;
 
       el.innerHTML=`
@@ -687,7 +593,6 @@
         <div><span class="k">current → random next:</span> <span class="v">${currentThemeName} → ${currentTargetThemeName}</span></div>
         <div><span class="k">time to next full color:</span> <span class="v">${formatHMS(remainSec)}</span></div>
         <div><span class="k">bg:</span> <span class="v">${cssVar('--bg1')} | ${cssVar('--bg2')} | ${cssVar('--bg3')}</span></div>
-        <div><span class="k">shooting:</span> <span class="v">active=${activeShotsCount} rate≈${shotsSpawnedLast60s.length}/min</span></div>
         <div><span class="k">screen:</span> <span class="v">${innerWidth}x${innerHeight} dpr=${Math.min(window.__MOBILE_DPR_CAP__ || (devicePixelRatio||1),2)}</span></div>
         <div><span class="k">density/reducedMotion:</span> <span class="v">${currentDensity} / ${reducedMotion}</span></div>`;
     }
@@ -702,77 +607,6 @@
       }
     })();
 
-    (function backgroundFX(){
-      const root=document.documentElement;
-      const mqReduce=window.matchMedia('(prefers-reduced-motion: reduce)');
-      const canvas=document.getElementById('shootingCanvas');
-      const ctx=canvas.getContext('2d');
-
-      function updateDensity(){const w=innerWidth;let d=1;if(w<480)d=.6;else if(w<768)d=.78;else if(w<1200)d=.92;currentDensity=d;root.style.setProperty('--density',d);}
-      let w=0,h=0,dpr=Math.min(window.__MOBILE_DPR_CAP__ || (devicePixelRatio||1),2),shots=[];
-
-      function resizeCanvas(){
-        w=innerWidth;h=innerHeight;
-        dpr=Math.min(window.__MOBILE_DPR_CAP__ || (devicePixelRatio||1),2);
-        canvas.width=Math.floor(w*dpr);canvas.height=Math.floor(h*dpr);canvas.style.width=w+'px';canvas.style.height=h+'px';ctx.setTransform(dpr,0,0,dpr,0,0);
-      }
-
-      function spawnShot(){
-        const x=Math.random()*w*.85 + w*.1;
-        const y=Math.random()*h*.45;
-        const s=4+Math.random()*6;
-        const l=60+Math.random()*110;
-        const a=(Math.PI*.75)+(Math.random()-.5)*.5;
-        shots.push({x,y,vx:Math.cos(a)*s,vy:Math.sin(a)*s,life:0,ttl:22+Math.random()*24,len:l,alpha:.32+Math.random()*.45});
-        shotsSpawnedLast60s.push(Date.now());
-      }
-
-      function drawShot(s){
-        const ex=s.x-s.vx*(s.len/10),ey=s.y-s.vy*(s.len/10);
-        const g=ctx.createLinearGradient(s.x,s.y,ex,ey),a=s.alpha*(1-s.life/s.ttl);
-        g.addColorStop(0,`rgba(255,255,255,${a})`);
-        g.addColorStop(.5,`rgba(190,220,255,${a*.55})`);
-        g.addColorStop(1,'rgba(180,210,255,0)');
-        ctx.strokeStyle=g;ctx.lineWidth=1.3;ctx.beginPath();ctx.moveTo(s.x,s.y);ctx.lineTo(ex,ey);ctx.stroke();
-      }
-
-      const sparkles = Array.from({length:22},()=>({
-        x:Math.random()*1,y:Math.random()*1,r:.7+Math.random()*1.5,a:.1+Math.random()*.25,p:Math.random()*Math.PI*2
-      }));
-
-      function drawSparkles(ts){
-        const t=ts*0.001;
-        for(const sp of sparkles){
-          const x=(sp.x + Math.sin(t*0.03+sp.p)*0.02)*w;
-          const y=(sp.y + Math.cos(t*0.02+sp.p)*0.02)*h;
-          const alpha=sp.a + Math.sin(t*1.5+sp.p)*0.08;
-          ctx.fillStyle=`rgba(230,240,255,${Math.max(0,alpha)})`;
-          ctx.beginPath(); ctx.arc(x,y,sp.r,0,Math.PI*2); ctx.fill();
-        }
-      }
-
-      function loop(ts){
-        reducedMotion=mqReduce.matches;
-        if(!mqReduce.matches){
-          ctx.clearRect(0,0,w,h);
-          const spawnChance = w<700 ? 0.0016 : 0.0026;
-          if(Math.random()<spawnChance) spawnShot();
-          for(let i=shots.length-1;i>=0;i--){
-            const s=shots[i];
-            s.x+=s.vx; s.y+=s.vy; s.life++;
-            drawShot(s);
-            if(s.life>=s.ttl||s.x<-140||s.y>h+140) shots.splice(i,1);
-          }
-          drawSparkles(ts);
-        }
-        activeShotsCount=shots.length;
-        requestAnimationFrame(loop);
-      }
-
-      addEventListener('resize',()=>{resizeCanvas();updateDensity();updateDevInfo();});
-      updateDensity();resizeCanvas();loop(0);
-    })();
-
     function formatDate(d){return d.getFullYear()+"-"+String(d.getMonth()+1).padStart(2,"0")+"-"+String(d.getDate()).padStart(2,"0");}
     function parseTimeToMinutes(hhmm){const [h,m]=hhmm.split(":").map(Number);return h*60+m;}
     function toNormalTime(hhmm){const [h,m]=hhmm.split(":").map(Number);const ap=h>=12?"PM":"AM";let hr=h%12; if(hr===0) hr=12; return `${hr}:${String(m).padStart(2,"0")} ${ap}`;}
@@ -781,21 +615,57 @@
     function fullDate(s){return new Date(s+"T00:00:00").toLocaleDateString(undefined,{weekday:"long",month:"long",day:"numeric",year:"numeric"});}
     function nthWeekday(year,month,weekday,n){const first=new Date(year,month,1);let off=(7+weekday-first.getDay())%7;off+=7*(n-1);return new Date(year,month,1+off);}
     function lastWeekday(year,month,weekday){const last=new Date(year,month+1,0);const off=(7+last.getDay()-weekday)%7;return new Date(year,month+1,0-off);}
-    function getPeriodLabel(name){const m=name.match(/Period\\s+\\d+/i);return m?m[0]:name;}
+    function getPeriodLabel(name){const m=name.match(/Period\s+\d+/i);return m?m[0]:name;}
     function formatDuration(totalSeconds){totalSeconds=Math.max(0,Math.floor(totalSeconds));const h=Math.floor(totalSeconds/3600),m=Math.floor((totalSeconds%3600)/60),s=totalSeconds%60;return h>0?`${h}h ${m}m ${s}s`:`${m}m ${s}s`;}
 
     let lastMainLabel="";
-    function setMainLabel(nextLabel){const el=document.getElementById("currentPeriod");if(nextLabel!==lastMainLabel){el.classList.remove("period-flash");void el.offsetWidth;el.classList.add("period-flash");lastMainLabel=nextLabel;}el.innerHTML=nextLabel;}
-    function toLocalInputValue(dateObj){const pad=n=>String(n).padStart(2,"0");return `${dateObj.getFullYear()}-${pad(dateObj.getMonth()+1)}-${pad(dateObj.getDate())}T${pad(dateObj.getHours())}:${pad(dateObj.getMinutes())}:${pad(dateObj.getSeconds())}`;}
-    function setTestNow(iso){TEST_NOW=iso;devRunning=false;devAnchorRealMs=null;devAnchorSimMs=null;if(TEST_NOW){const d=new Date(TEST_NOW);document.getElementById("devDateTimeInput").value=toLocalInputValue(d);document.getElementById("devSecondInput").value=d.getSeconds();}update();if(calendarVisible)renderCalendar();fitContainer();updateDevInfo();}
-    function applyCustomDevTime(){const input=document.getElementById("devDateTimeInput").value;if(!input)return;const secRaw=Number(document.getElementById("devSecondInput").value||0),sec=Math.max(0,Math.min(59,secRaw));let d=new Date(input);if(Number.isNaN(d.getTime()))return;d.setSeconds(sec,0);setTestNow(d.toISOString());}
-    function startDevRun(){if(!TEST_NOW)setTestNow(new Date().toISOString());const sim=getNow();devRunning=true;devAnchorRealMs=Date.now();devAnchorSimMs=sim.getTime();updateDevInfo();}
-    function pauseDevRun(){if(!TEST_NOW)return;if(devRunning)TEST_NOW=getNow().toISOString();devRunning=false;devAnchorRealMs=null;devAnchorSimMs=null;updateDevInfo();}
+    function setMainLabel(nextLabel){
+      const el=document.getElementById("currentPeriod");
+      if(nextLabel!==lastMainLabel){
+        el.classList.remove("period-flash");void el.offsetWidth;el.classList.add("period-flash");
+      }
+      el.innerHTML=nextLabel;
+      lastMainLabel=nextLabel;
+    }
+
+    function toLocalInputValue(dateObj){
+      const pad=n=>String(n).padStart(2,"0");
+      return `${dateObj.getFullYear()}-${pad(dateObj.getMonth()+1)}-${pad(dateObj.getDate())}T${pad(dateObj.getHours())}:${pad(dateObj.getMinutes())}`;
+    }
+
+    function setTestNow(iso){
+      TEST_NOW=iso;devRunning=false;devAnchorRealMs=null;devAnchorSimMs=null;
+      if(TEST_NOW){
+        const d=new Date(TEST_NOW);
+        document.getElementById("devDateTimeInput").value=toLocalInputValue(d);
+        document.getElementById("devSecondInput").value=String(d.getSeconds());
+      }
+      update();updateDevInfo();
+    }
+
+    function applyCustomDevTime(){
+      const input=document.getElementById("devDateTimeInput").value;if(!input)return;
+      const secRaw=Number(document.getElementById("devSecondInput").value||0),sec=Math.max(0,Math.min(59,Math.floor(secRaw)));
+      const base=new Date(input);
+      base.setSeconds(sec,0);
+      setTestNow(base.toISOString());
+    }
+
+    function startDevRun(){
+      if(!TEST_NOW)setTestNow(new Date().toISOString());
+      const sim=getNow();devRunning=true;devAnchorRealMs=Date.now();devAnchorSimMs=sim.getTime();updateDevInfo();
+    }
+
+    function pauseDevRun(){
+      if(!TEST_NOW)return;
+      if(devRunning)TEST_NOW=getNow().toISOString();
+      devRunning=false;devAnchorRealMs=null;devAnchorSimMs=null;updateDevInfo();
+    }
 
     const scheduleCatalog={
       regularTF:{title:"Daily Schedule (Tue–Fri)",blocks:[["Period 1","08:45","09:42"],["Period 2","09:48","10:45"],["Period 3","10:51","11:48"],["Period 4","11:54","12:51"],["Lunch","12:57","13:27"],["Period 5","13:33","14:30"],["Period 6","14:36","15:33"]]},
-      mondayBroadcast:{title:"Monday Late Start (with PHHS Broadcast News)",blocks:[["Period 1","09:20","10:10"],["Period 2","10:16","11:06"],["Period 3","11:12","12:02"],["Period 4","12:08","12:58"],["Lunch","13:04","13:34"],["Period 5","13:40","14:39"],["Period 6","14:45","15:35"]]},
-      mondayNoBroadcast:{title:"Monday Late Start (w/o Broadcast: first 3 Mondays)",blocks:[["Period 1","09:20","10:11"],["Period 2","10:17","11:08"],["Period 3","11:14","12:05"],["Period 4","12:11","13:02"],["Lunch","13:08","13:41"],["Period 5","13:47","14:38"],["Period 6","14:44","15:35"]]},
+      mondayBroadcast:{title:"Monday Late Start (with PHHS Broadcast News)",blocks:[["Period 1","09:20","10:10"],["Period 2","10:16","11:06"],["Period 3","11:12","12:02"],["Period 4","12:08","12:58"],["Lunch","13:04","13:34"],["Period 5","13:40","14:30"],["Period 6","14:36","15:26"]]},
+      mondayNoBroadcast:{title:"Monday Late Start (w/o Broadcast: first 3 Mondays)",blocks:[["Period 1","09:20","10:11"],["Period 2","10:17","11:08"],["Period 3","11:14","12:05"],["Period 4","12:11","13:02"],["Lunch","13:08","13:38"],["Period 5","13:44","14:35"],["Period 6","14:41","15:32"]]},
       pepRally:{title:"Pep Rally Schedule",blocks:[["Period 1","08:45","09:32"],["Period 2","09:38","10:25"],["Period 3","10:31","11:18"],["Rally","11:25","12:17"],["Period 4","12:24","13:11"],["Lunch","13:17","13:47"],["Period 5","13:53","14:40"],["Period 6","14:46","15:33"]]},
       finalsP12:{title:"Minimum Day Finals (P1 & P2)",blocks:[["Period 1 Final","08:45","10:45"],["Period 2 Final","11:11","13:11"]]},
       finalsP34:{title:"Minimum Day Finals (P3 & P4)",blocks:[["Period 3 Final","08:45","10:45"],["Period 4 Final","11:11","13:11"]]},
@@ -822,8 +692,21 @@
       d.noSchoolReasons[`${y2}-03-09`]="Non-Instructional Day"; dateRange(`${y2}-03-30`,`${y2}-04-03`).forEach(x=>d.noSchoolReasons[x]="Spring Break");
       d.noSchoolReasons[formatDate(lastWeekday(y2,4,1))]="Memorial Day Observed"; return d;
     }
-    function getSchoolYearData(startYear){if(!yearDataCache.has(startYear)) yearDataCache.set(startYear,buildSchoolYearData(startYear)); return yearDataCache.get(startYear);}
-    function getYearDataByDate(ds){const year=Number(ds.slice(0,4));for(const s of [year-1,year]){const yData=getSchoolYearData(s);if(ds>=yData.classesBegin && ds<=yData.classesEnd) return yData;}return null;}
+
+    function getSchoolYearData(startYear){
+      if(!yearDataCache.has(startYear)) yearDataCache.set(startYear,buildSchoolYearData(startYear));
+      return yearDataCache.get(startYear);
+    }
+
+    function getYearDataByDate(ds){
+      const year=Number(ds.slice(0,4));
+      for(const s of [year-1,year]){
+        const yData=getSchoolYearData(s);
+        if(ds>=yData.classesBegin && ds<=yData.classesEnd) return yData;
+      }
+      return null;
+    }
+
     function getScheduleKeyForDate(dateObj){
       const ds=formatDate(dateObj),y=getYearDataByDate(ds),day=dateObj.getDay();
       if(!y) return {type:"closed",reason:"No School (Outside School Year)",yearLabel:"Outside School Year"};
@@ -834,16 +717,28 @@
       if(day===1) return y.mondayNoBroadcast.has(ds)?{type:"schedule",key:"mondayNoBroadcast",yearLabel:y.label}:{type:"schedule",key:"mondayBroadcast",yearLabel:y.label};
       return {type:"schedule",key:"regularTF",yearLabel:y.label};
     }
+
     function getMarkersForDate(dateObj){
       const ds=formatDate(dateObj),y=getYearDataByDate(ds); if(!y) return ["noschool"];
       const marks=[]; if(y.finalsMap[ds]) marks.push("finals"); if(y.pepRallyDays.has(ds)) marks.push("rally");
       if(y.noSchoolReasons[ds]||dateObj.getDay()===0||dateObj.getDay()===6) marks.push("noschool"); return marks;
     }
-    function markerClass(m){const f=m.includes("finals"),r=m.includes("rally"),n=m.includes("noschool"),c=[f,r,n].filter(Boolean).length;if(c>1) return "filled-multi"; if(f) return "filled-finals"; if(r) return "filled-rally"; if(n) return "filled-noschool"; return "";}
-    function renderScheduleBlocks(s){return s.blocks.map(b=>`<div class="schedule-item"><strong>${b[0]}</strong> : ${toNormalTime(b[1])} - ${toNormalTime(b[2])}</div>`).join("");}
+
+    function markerClass(m){
+      const f=m.includes("finals"),r=m.includes("rally"),n=m.includes("noschool"),c=[f,r,n].filter(Boolean).length;
+      if(c>1) return "filled-multi"; if(f) return "filled-finals"; if(r) return "filled-rally"; if(n) return "filled-noschool"; return "";
+    }
+
+    function renderScheduleBlocks(s){
+      return s.blocks.map(b=>`<div class="schedule-item"><strong>${b[0]}</strong> : ${toNormalTime(b[1])} - ${toNormalTime(b[2])}</div>`).join("");
+    }
+
     function isWeekendNowOrAfterSchoolToWeekend(dateObj, info){
       const day = dateObj.getDay(); if (day === 0 || day === 6) return true;
-      if (day === 5 && info.type === "schedule") {const sch = scheduleCatalog[info.key],lastBlock = sch.blocks[sch.blocks.length - 1],lastEndSec = parseTimeToMinutes(lastBlock[2]) * 60,nowSec = dateObj.getHours()*3600 + dateObj.getMinutes()*60 + dateObj.getSeconds(); if (nowSec >= lastEndSec) return true;}
+      if (day === 5 && info.type === "schedule") {
+        const sch = scheduleCatalog[info.key],lastBlock = sch.blocks[sch.blocks.length - 1],lastEndSec = parseTimeToMinutes(lastBlock[2]) * 60,nowSec = dateObj.getHours()*3600 + dateObj.getMinutes()*60 + dateObj.getSeconds();
+        if (nowSec >= lastEndSec) return true;
+      }
       return false;
     }
 
@@ -851,26 +746,87 @@
       if (BARE_MODE) return;
       const now=getNow(),todayText=fullDate(formatDate(now));
       const info=getScheduleKeyForDate(now),end=document.getElementById("endTime"),cd=document.getElementById("countdown");
-      if(info.type==="closed"){setMainLabel(`<span class="holiday">${info.reason}</span>`);end.innerText=todayText;cd.innerText="";return;}
+
+      if(info.type==="closed"){
+        setMainLabel(`<span class="holiday">${info.reason}</span>`);end.innerText=todayText;cd.innerText="";return;
+      }
+
       const sch=scheduleCatalog[info.key],nowSec=now.getHours()*3600+now.getMinutes()*60+now.getSeconds(),firstSec=parseTimeToMinutes(sch.blocks[0][1])*60;
-      if(nowSec<firstSec){const firstLabel=getPeriodLabel(sch.blocks[0][0]);setMainLabel("Before School");end.innerText=`${firstLabel} starts at ${toNormalTime(sch.blocks[0][1])}`;cd.innerText=`Starts in: ${formatDuration(Math.max(0,firstSec-nowSec))}`;return;}
+      if(nowSec<firstSec){
+        const firstLabel=getPeriodLabel(sch.blocks[0][0]);
+        setMainLabel("Before School");
+        end.innerText=`${firstLabel} starts at ${toNormalTime(sch.blocks[0][1])}`;
+        cd.innerText=`Starts in: ${formatDuration(firstSec-nowSec)}`;
+        return;
+      }
+
       for(let i=0;i<sch.blocks.length;i++){
         const [name,s,e]=sch.blocks[i],sm=parseTimeToMinutes(s)*60,em=parseTimeToMinutes(e)*60;
-        if(nowSec>=sm && nowSec<em){setMainLabel(name);end.innerText=`Ends at ${toNormalTime(e)}`;cd.innerText=`Time remaining: ${formatDuration(Math.max(0,em-nowSec))}`;return;}
-        if(i<sch.blocks.length-1){const next=sch.blocks[i+1],nm=parseTimeToMinutes(next[1])*60;if(nowSec>=em && nowSec<nm){setMainLabel("Passing Period");end.innerText=`${getPeriodLabel(next[0])} starts at ${toNormalTime(next[1])}`;cd.innerText=`Next class in: ${formatDuration(Math.max(0,nm-nowSec))}`;return;}}
+        if(nowSec>=sm && nowSec<em){
+          setMainLabel(name);end.innerText=`Ends at ${toNormalTime(e)}`;cd.innerText=`Time remaining: ${formatDuration(Math.max(0,em-nowSec))}`;return;
+        }
+        if(i<sch.blocks.length-1){
+          const next=sch.blocks[i+1],nm=parseTimeToMinutes(next[1])*60;
+          if(nowSec>=em && nowSec<nm){
+            setMainLabel("Passing Period");
+            end.innerText=`${getPeriodLabel(next[0])} starts at ${toNormalTime(next[1])}`;
+            cd.innerText=`Starts in: ${formatDuration(Math.max(0,nm-nowSec))}`;
+            return;
+          }
+        }
       }
-      if (isWeekendNowOrAfterSchoolToWeekend(now, info)) setMainLabel(`<span class="holiday">Weekend</span>`); else setMainLabel("School is Out");
+
+      if (isWeekendNowOrAfterSchoolToWeekend(now, info)) setMainLabel(`<span class="holiday">Weekend</span>`);
+      else setMainLabel("School is Out");
       end.innerText=todayText; cd.innerText="";
     }
 
-    function toggleToday(){const p=document.getElementById("todayPanel"); p.classList.toggle("show"); const now=getNow(),info=getScheduleKeyForDate(now),dateLabel=prettyDate(formatDate(now)); if(info.type==="closed"){p.innerHTML=`<div class="schedule-item"><strong>${dateLabel}</strong></div><div class="schedule-item">${info.reason}</div>`;fitContainer();return;} const sch=scheduleCatalog[info.key]; p.innerHTML=`<div class="schedule-item"><strong>${sch.title}</strong><span class="badge">${dateLabel}</span></div>`+renderScheduleBlocks(sch); fitContainer();}
+    function toggleToday(){
+      const p=document.getElementById("todayPanel");
+      p.classList.toggle("show");
+      const now=getNow(),info=getScheduleKeyForDate(now),dateLabel=prettyDate(formatDate(now));
+
+      if(info.type==="closed"){
+        p.innerHTML=`<div class="schedule-item"><strong>${dateLabel}</strong><span class="badge">${info.yearLabel}</span></div><div class="schedule-item holiday">${info.reason}</div>`;
+      }else{
+        const s=scheduleCatalog[info.key];
+        p.innerHTML=`<div class="schedule-item"><strong>${s.title}</strong><span class="badge">${info.yearLabel}</span></div>${renderScheduleBlocks(s)}`;
+      }
+      fitContainer();
+    }
+
     let activeScheduleKey=null;
-    function renderAllSchedulesList(){const panel=document.getElementById("allPanel"),keys=Object.keys(scheduleCatalog);let html=`<div><strong>Click a schedule type:</strong></div>`;for(const key of keys){const sch=scheduleCatalog[key],active=activeScheduleKey===key;html+=`<button class="schedule-link ${active?'active-btn':''}" onclick="toggleInlineSchedule('${key}', event)">${sch.title}</button>`;html+=`<div class="inline-detail ${active?'show':''}">${active?renderScheduleBlocks(sch):""}</div>`;}panel.innerHTML=html;fitContainer();}
-    function toggleInlineSchedule(key,ev){if(ev&&ev.currentTarget){const btn=ev.currentTarget;btn.classList.remove("click-animate");void btn.offsetWidth;btn.classList.add("click-animate");}activeScheduleKey=(activeScheduleKey===key)?null:key;renderAllSchedulesList();}
-    function toggleAll(){const p=document.getElementById("allPanel");p.classList.toggle("show");if(p.classList.contains("show")) renderAllSchedulesList();fitContainer();}
+    function renderAllSchedulesList(){
+      const panel=document.getElementById("allPanel"),keys=Object.keys(scheduleCatalog);
+      let html=`<div><strong>Click a schedule type:</strong></div>`;
+      for(const key of keys){
+        const s=scheduleCatalog[key];
+        html+=`
+          <button class="schedule-link ${activeScheduleKey===key?'active-btn':''}" onclick="toggleInlineSchedule('${key}',event)">${s.title}</button>
+          <div class="inline-detail ${activeScheduleKey===key?'show':''}" id="detail-${key}">
+            ${renderScheduleBlocks(s)}
+          </div>`;
+      }
+      panel.innerHTML=html;
+    }
+
+    function toggleInlineSchedule(key,ev){
+      if(ev&&ev.currentTarget){
+        const btn=ev.currentTarget;btn.classList.remove("click-animate");void btn.offsetWidth;btn.classList.add("click-animate");
+      }
+      activeScheduleKey=(activeScheduleKey===key)?null:key;
+      renderAllSchedulesList();fitContainer();
+    }
+
+    function toggleAll(){
+      const p=document.getElementById("allPanel");p.classList.toggle("show");
+      if(p.classList.contains("show")) renderAllSchedulesList();
+      fitContainer();
+    }
 
     let calendarViewDate=new Date(),selectedDateStr=null,calendarVisible=false;
     function monthName(m){return new Date(2000,m,1).toLocaleString(undefined,{month:"long"});}
+
     function renderCalendar(){
       if (BARE_MODE) return;
       const grid=document.getElementById("calGrid"),title=document.getElementById("calTitle");
@@ -878,27 +834,47 @@
       title.textContent=`${monthName(m)} ${y}`; grid.innerHTML="";
       ["Sun","Mon","Tue","Wed","Thu","Fri","Sat"].forEach(d=>{const e=document.createElement("div"); e.className="cal-dow"; e.textContent=d; grid.appendChild(e);});
       const firstDay=new Date(y,m,1).getDay(),daysInMonth=new Date(y,m+1,0).getDate(),today=formatDate(getNow());
+
       for(let i=0;i<firstDay;i++){const b=document.createElement("button");b.className="cal-day muted";b.disabled=true;grid.appendChild(b);}
+
       for(let day=1;day<=daysInMonth;day++){
         const d=new Date(y,m,day),ds=formatDate(d),marks=getMarkersForDate(d);
         const b=document.createElement("button");b.className="cal-day";b.textContent=day;
         const mc=markerClass(marks);if(mc) b.classList.add(mc); if(ds===today) b.classList.add("today"); if(ds===selectedDateStr) b.classList.add("selected");
         b.onclick=()=>{selectedDateStr=ds;renderCalendar();showCalendarInfo(ds);fitContainer();}; grid.appendChild(b);
       }
+
       if(selectedDateStr) showCalendarInfo(selectedDateStr); else document.getElementById("calendarInfo").innerHTML="";
       fitContainer();
     }
 
-    function showCalendarInfo(ds){const el=document.getElementById("calendarInfo"),d=new Date(ds+"T00:00:00"),info=getScheduleKeyForDate(d);if(info.type==="closed"){el.innerHTML=`<strong>${prettyDate(ds)}</strong><br>${info.reason}<br><span style="opacity:.8">${info.yearLabel}</span>`;return;}const sch=scheduleCatalog[info.key],lines=sch.blocks.map(b=>`${b[0]} ${toNormalTime(b[1])}-${toNormalTime(b[2])}`).join("<br>");el.innerHTML=`<strong>${prettyDate(ds)}</strong><br>${sch.title}<br><span style="opacity:.88">${lines}</span><br><span style="opacity:.8">${info.yearLabel}</span>`;}
+    function showCalendarInfo(ds){
+      const el=document.getElementById("calendarInfo"),d=new Date(ds+"T00:00:00"),info=getScheduleKeyForDate(d);
+      if(info.type==="closed"){
+        el.innerHTML=`<strong>${prettyDate(ds)}</strong><br><span class="holiday">${info.reason}</span>`;
+      }else{
+        const s=scheduleCatalog[info.key];
+        el.innerHTML=`<strong>${prettyDate(ds)}</strong><br>${s.title}`;
+      }
+    }
+
     function changeMonth(delta){calendarViewDate=new Date(calendarViewDate.getFullYear(),calendarViewDate.getMonth()+delta,1);selectedDateStr=null;renderCalendar();}
     function goToCurrentMonth(){const n=getNow();calendarViewDate=new Date(n.getFullYear(),n.getMonth(),1);selectedDateStr=null;renderCalendar();}
-    function toggleCalendar(){if (BARE_MODE) return;calendarVisible=!calendarVisible;document.getElementById("calendarCard").classList.toggle("hidden",!calendarVisible);document.getElementById("topGrid").classList.toggle("calendar-visible",calendarVisible);document.getElementById("calendarToggleBtn").innerText=calendarVisible?"Hide Calendar":"Show Calendar";if(calendarVisible) renderCalendar();fitContainer();}
+    function toggleCalendar(){
+      if (BARE_MODE) return;
+      calendarVisible=!calendarVisible;
+      document.getElementById("calendarCard").classList.toggle("hidden",!calendarVisible);
+      document.getElementById("topGrid").classList.toggle("calendar-visible",calendarVisible);
+      document.getElementById("calendarToggleBtn").textContent=calendarVisible?"Hide Calendar":"Show Calendar";
+      fitContainer();
+    }
 
     function initModes(){
       const params=new URLSearchParams(location.search);
       DEV_MODE=params.get("dev")==="1"; BARE_MODE=params.get("b")==="1";
       if(BARE_MODE) document.body.classList.add("bare-mode");
     }
+
     function initDevPanelVisibility(){
       const devPanel=document.getElementById("devPanel"),themeRow=document.getElementById("themeRow");
       devPanel.style.display=DEV_MODE?"block":"none"; themeRow.style.display=DEV_MODE?"flex":"none";
@@ -906,6 +882,7 @@
       const eff=document.getElementById("effectiveCycleSeconds"); if(eff) eff.textContent=`${(getEffectiveCycleMs()/1000).toFixed(2)}s`;
       fitContainer();
     }
+
     function fitContainer(){
       const c=document.getElementById("mainContainer");
       if(BARE_MODE){c.classList.remove("allow-scroll");c.style.maxHeight="none";return;}
