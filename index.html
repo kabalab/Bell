@@ -53,6 +53,27 @@
 
     .container.allow-scroll{overflow:auto;}
 
+    .bell-toast{
+      position:sticky;
+      top:10px;
+      z-index:5;
+      margin-bottom:10px;
+      padding:10px 14px;
+      border-radius:12px;
+      background:rgba(0,0,0,.6);
+      border:1px solid rgba(255,255,255,.18);
+      opacity:0;
+      transform:translateY(-8px);
+      transition:opacity .25s ease, transform .25s ease;
+      pointer-events:none;
+      font-weight:600;
+      text-align:center;
+    }
+    .bell-toast.show{
+      opacity:1;
+      transform:translateY(0);
+    }
+
     h1{margin:0;font-size:2.1em}
     h2{margin:8px 0 4px;font-weight:400;opacity:.9}
     #countdown{font-size:.95em;opacity:.9}
@@ -293,6 +314,8 @@
 </head>
 <body>
   <div class="container" id="mainContainer">
+    <div class="bell-toast" id="bellToast" aria-live="polite"></div>
+
     <div class="top-grid" id="topGrid">
       <div>
         <h1 id="currentPeriod">Loading...</h1>
@@ -346,7 +369,7 @@
     function nthWeekday(year,month,weekday,n){const first=new Date(year,month,1);let off=(7+weekday-first.getDay())%7;off+=7*(n-1);return new Date(year,month,1+off);}
     function lastWeekday(year,month,weekday){const last=new Date(year,month+1,0);const off=(7+last.getDay()-weekday)%7;return new Date(year,month+1,0-off);}
     function getPeriodLabel(name){const m=name.match(/Period\s+\d+/i);return m?m[0]:name;}
-    function formatDuration(totalSeconds){totalSeconds=Math.max(0,Math.floor(totalSeconds));const h=Math.floor(totalSeconds/3600),m=Math.floor((totalSeconds%3600)/60),s=totalSeconds%60;return h>0?`${h}h ${m}m ${s}s`:`${m}m ${s}s`;}
+    function formatDuration(totalSeconds){totalSeconds=Math.max(0,Math.floor(totalSeconds));const h=Math.floor(totalSeconds/3600),m=Math.floor((totalSeconds%3600)/60),s=totalSeconds%60;return h>0?`${h}:${String(m).padStart(2,"0")}:${String(s).padStart(2,"0")}`:`${m}:${String(s).padStart(2,"0")}`;}
 
     let lastMainLabel="";
     function setMainLabel(nextLabel){
@@ -356,6 +379,75 @@
       }
       el.innerHTML=nextLabel;
       lastMainLabel=nextLabel;
+    }
+
+    let bellAudioContext=null;
+    let bellToastTimeout=null;
+    let lastBellKey=null;
+
+    function initBellAudio(){
+      if(!bellAudioContext){
+        const Ctx=window.AudioContext||window.webkitAudioContext;
+        if(Ctx) bellAudioContext=new Ctx();
+      }
+    }
+
+    function playBellTone(){
+      if(!bellAudioContext) return;
+      const now=bellAudioContext.currentTime;
+      const baseFreq=233.08;
+
+      const osc=bellAudioContext.createOscillator();
+      const gain=bellAudioContext.createGain();
+      const filter=bellAudioContext.createBiquadFilter();
+
+      osc.type="square";
+      osc.frequency.setValueAtTime(baseFreq, now);
+
+      filter.type="bandpass";
+      filter.frequency.setValueAtTime(900, now);
+      filter.Q.setValueAtTime(2.8, now);
+
+      gain.gain.setValueAtTime(0.0001, now);
+      gain.gain.exponentialRampToValueAtTime(0.5, now+0.02);
+      gain.gain.exponentialRampToValueAtTime(0.0001, now+1.5);
+
+      osc.connect(filter).connect(gain).connect(bellAudioContext.destination);
+      osc.start(now);
+      osc.stop(now+1.5);
+
+      const osc2=bellAudioContext.createOscillator();
+      const gain2=bellAudioContext.createGain();
+      osc2.type="square";
+      osc2.frequency.setValueAtTime(baseFreq, now+0.35);
+      gain2.gain.setValueAtTime(0.0001, now+0.35);
+      gain2.gain.exponentialRampToValueAtTime(0.4, now+0.37);
+      gain2.gain.exponentialRampToValueAtTime(0.0001, now+1.2);
+      osc2.connect(filter).connect(gain2).connect(bellAudioContext.destination);
+      osc2.start(now+0.35);
+      osc2.stop(now+1.2);
+    }
+
+    function showBellToast(text){
+      const toast=document.getElementById("bellToast");
+      toast.textContent=`🔔 ${text}`;
+      toast.classList.add("show");
+      clearTimeout(bellToastTimeout);
+      bellToastTimeout=setTimeout(()=>toast.classList.remove("show"),2500);
+    }
+
+    function ringBell(text){
+      playBellTone();
+      showBellToast(text);
+    }
+
+    function maybeRingBell(key,label){
+      if(key && key!==lastBellKey){
+        if(key.startsWith("period:") || key.startsWith("passing:") || key.startsWith("day-end:")){
+          ringBell(label);
+        }
+        lastBellKey=key;
+      }
     }
 
     const scheduleCatalog={
@@ -438,53 +530,114 @@
       return false;
     }
 
+    function applyState({labelHtml,toastLabel,endText,cdText,bellKey}){
+      setMainLabel(labelHtml);
+      document.getElementById("endTime").innerText=endText;
+      document.getElementById("countdown").innerText=cdText;
+      maybeRingBell(bellKey,toastLabel);
+    }
+
     function update(){
       const now=getNow(),todayText=fullDate(formatDate(now));
-      const info=getScheduleKeyForDate(now),end=document.getElementById("endTime"),cd=document.getElementById("countdown");
-    
+      const info=getScheduleKeyForDate(now);
+
       if(info.type==="closed"){
-        setMainLabel(`<span class="holiday">${info.reason}</span>`);end.innerText=todayText;cd.innerText="";return;
+        applyState({
+          labelHtml:`<span class="holiday">${info.reason}</span>`,
+          toastLabel:"",
+          endText:todayText,
+          cdText:"",
+          bellKey:"closed"
+        });
+        return;
       }
-    
+
       const sch=scheduleCatalog[info.key],
             nowSec=now.getHours()*3600+now.getMinutes()*60+now.getSeconds(),
             firstSec=parseTimeToMinutes(sch.blocks[0][1])*60,
-            passingBeforeFirstSec=firstSec - (6*60);
-    
+            passingBeforeFirstSec=firstSec - (6*60),
+            lastEndSec=parseTimeToMinutes(sch.blocks[sch.blocks.length-1][2])*60,
+            dayEndKey=nowSec>=lastEndSec ? `day-end:${formatDate(now)}` : null;
+
       if(nowSec < firstSec){
         if(nowSec >= passingBeforeFirstSec){
           const firstLabel=getPeriodLabel(sch.blocks[0][0]);
-          setMainLabel("Passing Period");
-          end.innerText=`${firstLabel} starts at ${toNormalTime(sch.blocks[0][1])}`;
-          cd.innerText=`Starts in: ${formatDuration(firstSec-nowSec)}`;
+          applyState({
+            labelHtml:"Passing Period",
+            toastLabel:"Passing Period",
+            endText:`${firstLabel} starts at ${toNormalTime(sch.blocks[0][1])}`,
+            cdText:`Starts in: ${formatDuration(firstSec-nowSec)}`,
+            bellKey:`passing:${firstLabel}`
+          });
           return;
         }
-        const firstLabel=getPeriodLabel(sch.blocks[0][0]);
-        setMainLabel("Before School");
-        end.innerText=`${firstLabel} starts at ${toNormalTime(sch.blocks[0][1])}`;
-        cd.innerText=`Starts in: ${formatDuration(firstSec-nowSec)}`;
+
+        const passingStartSec = passingBeforeFirstSec;
+        const passingStartTime = toNormalTime(
+          `${String(Math.floor(passingStartSec/3600)).padStart(2,"0")}:${String(Math.floor((passingStartSec%3600)/60)).padStart(2,"0")}`
+        );
+
+        applyState({
+          labelHtml:"Before School",
+          toastLabel:"",
+          endText:`Passing Period starts at ${passingStartTime}`,
+          cdText:`Starts in: ${formatDuration(passingStartSec-nowSec)}`,
+          bellKey:"before-school"
+        });
         return;
       }
-    
+
       for(let i=0;i<sch.blocks.length;i++){
         const [name,s,e]=sch.blocks[i],sm=parseTimeToMinutes(s)*60,em=parseTimeToMinutes(e)*60;
         if(nowSec>=sm && nowSec<em){
-          setMainLabel(name);end.innerText=`Ends at ${toNormalTime(e)}`;cd.innerText=`Time remaining: ${formatDuration(Math.max(0,em-nowSec))}`;return;
+          applyState({
+            labelHtml:name,
+            toastLabel:name,
+            endText:`Ends at ${toNormalTime(e)}`,
+            cdText:`Time remaining: ${formatDuration(Math.max(0,em-nowSec))}`,
+            bellKey:`period:${name}`
+          });
+          return;
         }
         if(i<sch.blocks.length-1){
           const next=sch.blocks[i+1],nm=parseTimeToMinutes(next[1])*60;
           if(nowSec>=em && nowSec<nm){
-            setMainLabel("Passing Period");
-            end.innerText=`${getPeriodLabel(next[0])} starts at ${toNormalTime(next[1])}`;
-            cd.innerText=`Starts in: ${formatDuration(Math.max(0,nm-nowSec))}`;
+            const nextLabel=getPeriodLabel(next[0]);
+            applyState({
+              labelHtml:"Passing Period",
+              toastLabel:"Passing Period",
+              endText:`${nextLabel} starts at ${toNormalTime(next[1])}`,
+              cdText:`Starts in: ${formatDuration(Math.max(0,nm-nowSec))}`,
+              bellKey:`passing:${nextLabel}`
+            });
             return;
           }
         }
       }
-    
-      if (isWeekendNowOrAfterSchoolToWeekend(now, info)) setMainLabel(`<span class="holiday">Weekend</span>`);
-      else setMainLabel("School is Out");
-      end.innerText=todayText; cd.innerText="";
+
+      if (isWeekendNowOrAfterSchoolToWeekend(now, info)){
+        applyState({
+          labelHtml:`<span class="holiday">Weekend</span>`,
+          toastLabel: dayEndKey ? "Day ended" : "",
+          endText:todayText,
+          cdText:"",
+          bellKey: dayEndKey || "weekend"
+        });
+      }else{
+        applyState({
+          labelHtml:"School is Out",
+          toastLabel: dayEndKey ? "Day ended" : "",
+          endText:todayText,
+          cdText:"",
+          bellKey: dayEndKey || "school-out"
+        });
+      }
+    }
+
+    function scheduleFit(){
+      fitContainer();
+      setTimeout(fitContainer, 300);
+      setTimeout(fitContainer, 700);
     }
 
     function toggleToday(){
@@ -498,7 +651,7 @@
         const s=scheduleCatalog[info.key];
         p.innerHTML=`<div class="schedule-item"><strong>${s.title}</strong><span class="badge">${info.yearLabel}</span></div>${renderScheduleBlocks(s)}`;
       }
-      fitContainer();
+      scheduleFit();
     }
 
     let activeScheduleKey=null;
@@ -521,13 +674,13 @@
         const btn=ev.currentTarget;btn.classList.remove("click-animate");void btn.offsetWidth;btn.classList.add("click-animate");
       }
       activeScheduleKey=(activeScheduleKey===key)?null:key;
-      renderAllSchedulesList();fitContainer();
+      renderAllSchedulesList();scheduleFit();
     }
 
     function toggleAll(){
       const p=document.getElementById("allPanel");p.classList.toggle("show");
       if(p.classList.contains("show")) renderAllSchedulesList();
-      fitContainer();
+      scheduleFit();
     }
 
     let calendarViewDate=new Date(),selectedDateStr=null,calendarVisible=false;
@@ -570,7 +723,7 @@
       document.getElementById("calendarCard").classList.toggle("hidden",!calendarVisible);
       document.getElementById("topGrid").classList.toggle("calendar-visible",calendarVisible);
       document.getElementById("calendarToggleBtn").textContent=calendarVisible?"Hide Calendar":"Show Calendar";
-      fitContainer();
+      scheduleFit();
     }
 
     function fitContainer(){
@@ -580,8 +733,15 @@
       requestAnimationFrame(()=>{c.classList.toggle("allow-scroll", c.scrollHeight>c.clientHeight+1);});
     }
 
-    update(); fitContainer();
+    document.getElementById("mainContainer").addEventListener("transitionend",(event)=>{
+      if(event.target?.classList?.contains("panel") || event.target?.classList?.contains("inline-detail")){
+        fitContainer();
+      }
+    });
+
     addEventListener("resize", fitContainer);
+    addEventListener("pointerdown", initBellAudio, {once:true});
+    update(); fitContainer();
     setInterval(()=>{update();},250);
     renderCalendar();
   </script>
