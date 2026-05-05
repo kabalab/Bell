@@ -147,7 +147,10 @@
     .cal-nav{background:rgba(255,255,255,.18);border:none;color:#fff;border-radius:8px;padding:4px 8px;margin-left:4px}
     .cal-grid{display:grid;grid-template-columns:repeat(7,1fr);gap:6px}
     .cal-dow{text-align:center;font-size:.75rem;opacity:.8}
-    .cal-day{border:none;border-radius:8px;min-height:38px;color:#fff;background:rgba(255,255,255,.12);cursor:pointer;font-size:.82rem}
+    .cal-day{
+      border:none;border-radius:8px;min-height:38px;color:#fff;background:rgba(255,255,255,.12);
+      cursor:pointer;font-size:.82rem;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:2px;
+    }
     .cal-day.muted{opacity:.35;cursor:default;background:rgba(255,255,255,.06)}
     .cal-day.today{outline:2px solid #8fb3ff}
     .cal-day.selected{outline:2px solid #fff}
@@ -155,9 +158,15 @@
     .cal-day.filled-rally{background:rgba(102,169,255,.35)}
     .cal-day.filled-noschool{background:rgba(255,204,102,.4)}
     .cal-day.filled-multi{background:linear-gradient(135deg,rgba(255,111,111,.35),rgba(102,169,255,.32),rgba(255,204,102,.4))}
+    .event-dots{display:flex;gap:2px;flex-wrap:wrap;justify-content:center}
+    .event-dot{width:6px;height:6px;border-radius:50%;background:#fff;opacity:.9;box-shadow:0 0 0 1px rgba(0,0,0,.25)}
     .legend{margin-top:8px;font-size:.75rem;display:flex;gap:12px;flex-wrap:wrap}
     .legend-swatch{width:12px;height:12px;border-radius:3px;display:inline-block;margin-right:5px;vertical-align:middle}
     #calendarInfo{margin-top:10px;font-size:.85rem;line-height:1.35}
+    .event-list{margin-top:8px}
+    .event-item{padding:4px 0;border-bottom:1px solid rgba(255,255,255,.1)}
+    .event-item:last-child{border-bottom:none}
+    .event-time{font-weight:600;margin-right:6px;opacity:.9}
 
     @media (max-width:700px){
       .container{
@@ -353,8 +362,11 @@
   </div>
 
   <script>
+    const CALENDAR_ICS_URL="https://r.jina.ai/http://calendar.google.com/calendar/ical/patrickhenryhs.net_l9rvi05c4sq4qk48dklvmvjc40@group.calendar.google.com/public/basic.ics";
+
     let currentDensity=1;
     let reducedMotion=window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    let calendarEventsByDate=new Map();
 
     function getNow(){
       return new Date();
@@ -370,6 +382,100 @@
     function lastWeekday(year,month,weekday){const last=new Date(year,month+1,0);const off=(7+last.getDay()-weekday)%7;return new Date(year,month+1,0-off);}
     function getPeriodLabel(name){const m=name.match(/Period\s+\d+/i);return m?m[0]:name;}
     function formatDuration(totalSeconds){totalSeconds=Math.max(0,Math.floor(totalSeconds));const h=Math.floor(totalSeconds/3600),m=Math.floor((totalSeconds%3600)/60),s=totalSeconds%60;return h>0?`${h}:${String(m).padStart(2,"0")}:${String(s).padStart(2,"0")}`:`${m}:${String(s).padStart(2,"0")}`;}
+
+    function escapeHtml(str){
+      return str.replace(/[&<>"']/g,(c)=>({ "&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;" }[c]));
+    }
+
+    function parseIcsDate(value){
+      if(!value) return null;
+      if(/^\d{8}$/.test(value)){
+        const y=Number(value.slice(0,4)),m=Number(value.slice(4,6)),d=Number(value.slice(6,8));
+        return {date:new Date(y,m-1,d),allDay:true};
+      }
+      if(/^\d{8}T\d{6}Z$/.test(value)){
+        const iso=`${value.slice(0,4)}-${value.slice(4,6)}-${value.slice(6,8)}T${value.slice(9,11)}:${value.slice(11,13)}:${value.slice(13,15)}Z`;
+        return {date:new Date(iso),allDay:false};
+      }
+      if(/^\d{8}T\d{6}$/.test(value)){
+        const y=Number(value.slice(0,4)),m=Number(value.slice(4,6)),d=Number(value.slice(6,8));
+        const h=Number(value.slice(9,11)),mi=Number(value.slice(11,13)),s=Number(value.slice(13,15));
+        return {date:new Date(y,m-1,d,h,mi,s),allDay:false};
+      }
+      return null;
+    }
+
+    function parseIcs(text){
+      const raw=text.replace(/\r/g,"").split("\n");
+      const lines=[];
+      for(const line of raw){
+        if(line.startsWith(" ") || line.startsWith("\t")){
+          lines[lines.length-1]+=line.trim();
+        }else{
+          lines.push(line.trim());
+        }
+      }
+      const events=[];
+      let current=null;
+      for(const line of lines){
+        if(line==="BEGIN:VEVENT"){current={};continue;}
+        if(line==="END:VEVENT"){
+          if(current?.start){events.push(current);}
+          current=null;continue;
+        }
+        if(!current) continue;
+        const idx=line.indexOf(":");
+        if(idx===-1) continue;
+        const key=line.slice(0,idx);
+        const value=line.slice(idx+1);
+        if(key.startsWith("SUMMARY")) current.summary=value.trim();
+        if(key.startsWith("DTSTART")){
+          const parsed=parseIcsDate(value.trim());
+          if(parsed){current.start=parsed.date;current.allDay=parsed.allDay;}
+        }
+        if(key.startsWith("DTEND")){
+          const parsed=parseIcsDate(value.trim());
+          if(parsed){current.end=parsed.date;}
+        }
+      }
+      return events;
+    }
+
+    function indexCalendarEvents(events){
+      calendarEventsByDate=new Map();
+      for(const evt of events){
+        const dateStr=formatDate(evt.start);
+        const timeLabel=evt.allDay ? "" : evt.start.toLocaleTimeString([], {hour:"numeric", minute:"2-digit"});
+        const item={
+          summary: evt.summary || "Event",
+          dateStr,
+          startMs: evt.start.getTime(),
+          allDay: evt.allDay,
+          timeLabel
+        };
+
+        if(!calendarEventsByDate.has(dateStr)) calendarEventsByDate.set(dateStr, []);
+        calendarEventsByDate.get(dateStr).push(item);
+      }
+
+      for(const [key,arr] of calendarEventsByDate){
+        arr.sort((a,b)=>a.startMs-b.startMs);
+      }
+    }
+
+    function loadCalendarEvents(){
+      fetch(CALENDAR_ICS_URL)
+        .then(res=>res.text())
+        .then(text=>{
+          const events=parseIcs(text);
+          indexCalendarEvents(events);
+          renderCalendar();
+          if(selectedDateStr) showCalendarInfo(selectedDateStr);
+        })
+        .catch(()=>{
+          // silent fail
+        });
+    }
 
     let lastMainLabel="";
     function setMainLabel(nextLabel){
@@ -452,8 +558,8 @@
 
     const scheduleCatalog={
       regularTF:{title:"Daily Schedule (Tue–Fri)",blocks:[["Period 1","08:45","09:42"],["Period 2","09:48","10:45"],["Period 3","10:51","11:48"],["Period 4","11:54","12:51"],["Lunch","12:57","13:27"],["Period 5","13:33","14:30"],["Period 6","14:36","15:33"]]},
-      mondayBroadcast:{title:"Monday Late Start (with PHHS Broadcast News)",blocks:[["Period 1","09:20","10:10"],["Period 2","10:16","11:06"],["Period 3","11:12","12:02"],["Period 4","12:08","12:58"],["Lunch","13:04","13:34"],["Period 5","13:40","14:39"],["Period 6","14:45","15:35"]]},
-      mondayNoBroadcast:{title:"Monday Late Start (w/o Broadcast: first 3 Mondays)",blocks:[["Period 1","09:20","10:11"],["Period 2","10:17","11:08"],["Period 3","11:14","12:05"],["Period 4","12:11","13:02"],["Lunch","13:08","13:38"],["Period 5","13:44","14:35"],["Period 6","14:41","15:32"]]},
+      mondayBroadcast:{title:"Monday Late Start (with PHHS Broadcast News)",blocks:[["Period 1","09:20","10:10"],["Period 2","10:16","11:06"],["Period 3","11:12","12:02"],["Period 4","12:08","12:58"],["Lunch","13:04","13:35"],["Period 5","13:41","20:54"],["Period 6","14:37","20:55"]]},
+      mondayNoBroadcast:{title:"Monday Late Start (w/o Broadcast: first 3 Mondays)",blocks:[["Period 1","09:20","10:11"],["Period 2","10:17","11:08"],["Period 3","11:14","12:05"],["Period 4","12:11","13:02"],["Lunch","13:08","13:39"],["Period 5","13:45","14:36"],["Period 6","14:42","15:33"]]},
       pepRally:{title:"Pep Rally Schedule",blocks:[["Period 1","08:45","09:32"],["Period 2","09:38","10:25"],["Period 3","10:31","11:18"],["Rally","11:25","12:17"],["Period 4","12:24","13:11"],["Lunch","13:17","13:47"],["Period 5","13:53","14:40"],["Period 6","14:46","15:33"]]},
       finalsP12:{title:"Minimum Day Finals (P1 & P2)",blocks:[["Period 1 Final","08:45","10:45"],["Period 2 Final","11:11","13:11"]]},
       finalsP34:{title:"Minimum Day Finals (P3 & P4)",blocks:[["Period 3 Final","08:45","10:45"],["Period 4 Final","11:11","13:11"]]},
@@ -697,9 +803,23 @@
 
       for(let day=1;day<=daysInMonth;day++){
         const d=new Date(y,m,day),ds=formatDate(d),marks=getMarkersForDate(d);
-        const b=document.createElement("button");b.className="cal-day";b.textContent=day;
+        const b=document.createElement("button");b.className="cal-day";
         const mc=markerClass(marks);if(mc) b.classList.add(mc); if(ds===today) b.classList.add("today"); if(ds===selectedDateStr) b.classList.add("selected");
-        b.onclick=()=>{selectedDateStr=ds;renderCalendar();showCalendarInfo(ds);fitContainer();}; grid.appendChild(b);
+
+        const dayNum=document.createElement("div");
+        dayNum.textContent=day;
+        b.appendChild(dayNum);
+
+        const events=calendarEventsByDate.get(ds) || [];
+        if(events.length){
+          const dots=document.createElement("div");
+          dots.className="event-dots";
+          events.forEach(()=>{const dot=document.createElement("span");dot.className="event-dot";dots.appendChild(dot);});
+          b.appendChild(dots);
+        }
+
+        b.onclick=()=>{selectedDateStr=ds;renderCalendar();showCalendarInfo(ds);fitContainer();};
+        grid.appendChild(b);
       }
 
       if(selectedDateStr) showCalendarInfo(selectedDateStr); else document.getElementById("calendarInfo").innerHTML="";
@@ -708,12 +828,21 @@
 
     function showCalendarInfo(ds){
       const el=document.getElementById("calendarInfo"),d=new Date(ds+"T00:00:00"),info=getScheduleKeyForDate(d);
+      let html="";
       if(info.type==="closed"){
-        el.innerHTML=`<strong>${prettyDate(ds)}</strong><br><span class="holiday">${info.reason}</span>`;
+        html=`<strong>${prettyDate(ds)}</strong><br><span class="holiday">${info.reason}</span>`;
       }else{
         const s=scheduleCatalog[info.key];
-        el.innerHTML=`<strong>${prettyDate(ds)}</strong><br>${s.title}`;
+        html=`<strong>${prettyDate(ds)}</strong><br>${s.title}`;
       }
+
+      const events=calendarEventsByDate.get(ds) || [];
+      if(events.length){
+        const list=events.map(evt=>`<div class="event-item"><span class="event-time">${evt.timeLabel}</span>${escapeHtml(evt.summary)}</div>`).join("");
+        html+=`<div class="event-list">${list}</div>`;
+      }
+
+      el.innerHTML=html;
     }
 
     function changeMonth(delta){calendarViewDate=new Date(calendarViewDate.getFullYear(),calendarViewDate.getMonth()+delta,1);selectedDateStr=null;renderCalendar();}
@@ -744,6 +873,7 @@
     update(); fitContainer();
     setInterval(()=>{update();},250);
     renderCalendar();
+    loadCalendarEvents();
   </script>
 </body>
 </html>
