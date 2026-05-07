@@ -337,6 +337,18 @@
           <button onclick="toggleCalendar()" id="calendarToggleBtn">Show Calendar</button>
         </div>
 
+        <div class="panel" id="devPanel">
+          <div class="schedule-item"><strong>Dev Time Override</strong></div>
+          <div class="schedule-item">
+            <label for="devTimeInput">HHMMSS:</label>
+            <input id="devTimeInput" type="text" placeholder="093015" maxlength="6" style="margin-left:8px; width:110px; padding:6px; border-radius:8px; border:1px solid rgba(255,255,255,.2); background:rgba(255,255,255,.1); color:#fff;">
+          </div>
+          <div class="actions">
+            <button onclick="setDevTime()">Set Time</button>
+            <button onclick="resetDevTime()">Reset Time</button>
+          </div>
+        </div>
+
         <div id="todayPanel" class="panel"></div>
         <div id="allPanel" class="panel"></div>
       </div>
@@ -363,13 +375,18 @@
 
   <script>
     const CALENDAR_ICS_URL="https://r.jina.ai/http://calendar.google.com/calendar/ical/patrickhenryhs.net_l9rvi05c4sq4qk48dklvmvjc40@group.calendar.google.com/public/basic.ics";
+    const RELOAD_TOAST_MESSAGE=""; // set to a custom message; leave blank for no toast on reload
+
+    const devMode=new URLSearchParams(location.search).get("dev")==="1";
+    let devTimeOffsetMs=0;
+    let devTimeActive=false;
 
     let currentDensity=1;
     let reducedMotion=window.matchMedia('(prefers-reduced-motion: reduce)').matches;
     let calendarEventsByDate=new Map();
 
     function getNow(){
-      return new Date();
+      return devTimeActive ? new Date(Date.now() + devTimeOffsetMs) : new Date();
     }
 
     function formatDate(d){return d.getFullYear()+"-"+String(d.getMonth()+1).padStart(2,"0")+"-"+String(d.getDate()).padStart(2,"0");}
@@ -490,6 +507,7 @@
     let bellAudioContext=null;
     let bellToastTimeout=null;
     let lastBellKey=null;
+    let suppressInitialBell=true;
 
     function initBellAudio(){
       if(!bellAudioContext){
@@ -534,9 +552,9 @@
       osc2.stop(now+1.2);
     }
 
-    function showBellToast(text){
+    function showBellToast(text, withBell=true){
       const toast=document.getElementById("bellToast");
-      toast.textContent=`🔔 ${text}`;
+      toast.textContent=withBell ? `🔔 ${text}` : text;
       toast.classList.add("show");
       clearTimeout(bellToastTimeout);
       bellToastTimeout=setTimeout(()=>toast.classList.remove("show"),2500);
@@ -544,11 +562,16 @@
 
     function ringBell(text){
       playBellTone();
-      showBellToast(text);
+      showBellToast(text, true);
     }
 
     function maybeRingBell(key,label){
       if(key && key!==lastBellKey){
+        if(suppressInitialBell){
+          lastBellKey=key;
+          suppressInitialBell=false;
+          return;
+        }
         if(key.startsWith("period:") || key.startsWith("passing:") || key.startsWith("day-end:")){
           ringBell(label);
         }
@@ -558,8 +581,8 @@
 
     const scheduleCatalog={
       regularTF:{title:"Daily Schedule (Tue–Fri)",blocks:[["Period 1","08:45","09:42"],["Period 2","09:48","10:45"],["Period 3","10:51","11:48"],["Period 4","11:54","12:51"],["Lunch","12:57","13:27"],["Period 5","13:33","14:30"],["Period 6","14:36","15:33"]]},
-      mondayBroadcast:{title:"Monday Late Start (with PHHS Broadcast News)",blocks:[["Period 1","09:20","10:10"],["Period 2","10:16","11:06"],["Period 3","11:12","12:02"],["Period 4","12:08","12:58"],["Lunch","13:04","13:35"],["Period 5","13:41","20:54"],["Period 6","14:37","20:55"]]},
-      mondayNoBroadcast:{title:"Monday Late Start (w/o Broadcast: first 3 Mondays)",blocks:[["Period 1","09:20","10:11"],["Period 2","10:17","11:08"],["Period 3","11:14","12:05"],["Period 4","12:11","13:02"],["Lunch","13:08","13:39"],["Period 5","13:45","14:36"],["Period 6","14:42","15:33"]]},
+      mondayBroadcast:{title:"Monday Late Start (with PHHS Broadcast News)",blocks:[["Period 1","09:20","10:10"],["Period 2","10:16","11:06"],["Period 3","11:12","12:02"],["Period 4","12:08","12:58"],["Lunch","13:04","13:34"],["Period 5","13:40","14:39"],["Period 6","14:45","15:35"]]},
+      mondayNoBroadcast:{title:"Monday Late Start (w/o Broadcast: first 3 Mondays)",blocks:[["Period 1","09:20","10:11"],["Period 2","10:17","11:08"],["Period 3","11:14","12:05"],["Period 4","12:11","13:02"],["Lunch","13:08","13:41"],["Period 5","13:47","14:38"],["Period 6","14:44","15:35"]]},
       pepRally:{title:"Pep Rally Schedule",blocks:[["Period 1","08:45","09:32"],["Period 2","09:38","10:25"],["Period 3","10:31","11:18"],["Rally","11:25","12:17"],["Period 4","12:24","13:11"],["Lunch","13:17","13:47"],["Period 5","13:53","14:40"],["Period 6","14:46","15:33"]]},
       finalsP12:{title:"Minimum Day Finals (P1 & P2)",blocks:[["Period 1 Final","08:45","10:45"],["Period 2 Final","11:11","13:11"]]},
       finalsP34:{title:"Minimum Day Finals (P3 & P4)",blocks:[["Period 3 Final","08:45","10:45"],["Period 4 Final","11:11","13:11"]]},
@@ -746,6 +769,30 @@
       setTimeout(fitContainer, 700);
     }
 
+    function setDevTime(){
+      const input=document.getElementById("devTimeInput");
+      if(!input) return;
+      const raw=(input.value || "").trim();
+      if(!/^\d{6}$/.test(raw)) return;
+
+      const h=Number(raw.slice(0,2));
+      const m=Number(raw.slice(2,4));
+      const s=Number(raw.slice(4,6));
+      if(h>23 || m>59 || s>59) return;
+
+      const now=new Date();
+      const target=new Date(now.getFullYear(), now.getMonth(), now.getDate(), h, m, s);
+      devTimeOffsetMs=target.getTime() - Date.now();
+      devTimeActive=true;
+      update();
+    }
+
+    function resetDevTime(){
+      devTimeActive=false;
+      devTimeOffsetMs=0;
+      update();
+    }
+
     function toggleToday(){
       const p=document.getElementById("todayPanel");
       p.classList.toggle("show");
@@ -870,6 +917,12 @@
 
     addEventListener("resize", fitContainer);
     addEventListener("pointerdown", initBellAudio, {once:true});
+    if(devMode){
+      document.getElementById("devPanel")?.classList.add("show");
+    }
+    if(RELOAD_TOAST_MESSAGE.trim()){
+      showBellToast(RELOAD_TOAST_MESSAGE.trim(), false);
+    }
     update(); fitContainer();
     setInterval(()=>{update();},250);
     renderCalendar();
