@@ -514,9 +514,13 @@
         const Ctx=window.AudioContext||window.webkitAudioContext;
         if(Ctx) bellAudioContext=new Ctx();
       }
+      if (bellAudioContext?.state === "suspended") {
+        bellAudioContext.resume();
+      }
     }
 
     function playBellTone(){
+      initBellAudio();
       if(!bellAudioContext) return;
       const now=bellAudioContext.currentTime;
       const baseFreq=233.08;
