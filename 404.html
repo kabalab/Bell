@@ -368,6 +368,99 @@
   </div>
 
   <script>
+    /* ================================================================
+       SCHOOL CONFIGURATION
+       Add a school in SCHOOL_CONFIGS. Anything not supplied there
+       automatically comes from DEFAULT_CONFIG.
+       ================================================================ */
+
+    const DEFAULT_CONFIG={
+      name:"School",
+      title:"School",
+
+      calendar:{
+        enabled:false,
+        icsUrl:""
+      },
+
+      keywords:{
+        firstDay:[{all:["day","school"],any:["first","1st"]}],
+        lastDay:[{all:["last","day","school"]}],
+        noSchool:["no school"],
+        thanksgivingBreak:["thanksgiving break"],
+        winterBreak:["winter break"]
+      },
+
+      defaults:{
+        schoolYearEndFromNextFirstDay:true,
+        breakWeekdays:5
+      },
+
+      schedule:{
+        regularTF:{title:"Daily Schedule (Tue–Fri)",blocks:[["Period 1","08:45","09:42"],["Period 2","09:48","10:45"],["Period 3","10:51","11:48"],["Period 4","11:54","12:51"],["Lunch","12:57","13:27"],["Period 5","13:33","14:30"],["Period 6","14:36","15:33"]]},
+        mondayBroadcast:{title:"Monday Late Start (with Broadcast News)",blocks:[["Period 1","09:20","10:10"],["Period 2","10:16","11:06"],["Period 3","11:12","12:02"],["Period 4","12:08","12:58"],["Lunch","13:04","13:34"],["Period 5","13:40","14:39"],["Period 6","14:45","15:35"]]},
+        mondayNoBroadcast:{title:"Monday Late Start (w/o Broadcast: first 3 Mondays)",blocks:[["Period 1","09:20","10:11"],["Period 2","10:17","11:08"],["Period 3","11:14","12:05"],["Period 4","12:11","13:02"],["Lunch","13:08","13:41"],["Period 5","13:47","14:38"],["Period 6","14:44","15:35"]]},
+        pepRally:{title:"Pep Rally Schedule",blocks:[["Period 1","08:45","09:32"],["Period 2","09:38","10:25"],["Period 3","10:31","11:18"],["Rally","11:25","12:17"],["Period 4","12:24","13:11"],["Lunch","13:17","13:47"],["Period 5","13:53","14:40"],["Period 6","14:46","15:33"]]},
+        finalsP12:{title:"Minimum Day Finals (P1 & P2)",blocks:[["Period 1 Final","08:45","10:45"],["Period 2 Final","11:11","13:11"]]},
+        finalsP34:{title:"Minimum Day Finals (P3 & P4)",blocks:[["Period 3 Final","08:45","10:45"],["Period 4 Final","11:11","13:11"]]},
+        finalsP56:{title:"Minimum Day Finals (P5 & P6)",blocks:[["Period 5 Final","08:45","10:45"],["Period 6 Final","11:11","13:11"]]}
+      },
+
+      logic:{
+        getScheduleKeyForDate:null
+      }
+    };
+
+    const SCHOOL_CONFIGS={
+      phhs:{
+        name:"Patrick Henry High School",
+        title:"Patrick Henry High School",
+        calendar:{
+          enabled:true,
+          icsUrl:"https://r.jina.ai/http://calendar.google.com/calendar/ical/patrickhenryhs.net_l9rvi05c4sq4qk48dklvmvjc40@group.calendar.google.com/public/basic.ics"
+        },
+        keywords:{
+          firstDay:[{all:["day","school"],any:["first","1st"]}],
+          lastDay:[{all:["last","day","school"]}],
+          noSchool:["no school"],
+          thanksgivingBreak:["thanksgiving break"],
+          winterBreak:["winter break"]
+        },
+        schedule:{
+          regularTF:{title:"Daily Schedule (Tue–Fri)",blocks:[["Period 1","08:45","09:42"],["Period 2","09:48","10:45"],["Period 3","10:51","11:48"],["Period 4","11:54","12:51"],["Lunch","12:57","13:27"],["Period 5","13:33","14:30"],["Period 6","14:36","15:33"]]},
+          mondayBroadcast:{title:"Monday Late Start (with PHHS Broadcast News)",blocks:[["Period 1","09:20","10:10"],["Period 2","10:16","11:06"],["Period 3","11:12","12:02"],["Period 4","12:08","12:58"],["Lunch","13:04","13:34"],["Period 5","13:40","14:39"],["Period 6","14:45","15:35"]]},
+          mondayNoBroadcast:{title:"Monday Late Start (w/o Broadcast: first 3 Mondays)",blocks:[["Period 1","09:20","10:11"],["Period 2","10:17","11:08"],["Period 3","11:14","12:05"],["Period 4","12:11","13:02"],["Lunch","13:08","13:41"],["Period 5","13:47","14:38"],["Period 6","14:44","15:35"]]},
+          pepRally:{title:"Pep Rally Schedule",blocks:[["Period 1","08:45","09:32"],["Period 2","09:38","10:25"],["Period 3","10:31","11:18"],["Rally","11:25","12:17"],["Period 4","12:24","13:11"],["Lunch","13:17","13:47"],["Period 5","13:53","14:40"],["Period 6","14:46","15:33"]]},
+          finalsP12:{title:"Minimum Day Finals (P1 & P2)",blocks:[["Period 1 Final","08:45","10:45"],["Period 2 Final","11:11","13:11"]]},
+          finalsP34:{title:"Minimum Day Finals (P3 & P4)",blocks:[["Period 3 Final","08:45","10:45"],["Period 4 Final","11:11","13:11"]]},
+          finalsP56:{title:"Minimum Day Finals (P5 & P6)",blocks:[["Period 5 Final","08:45","10:45"],["Period 6 Final","11:11","13:11"]]}
+        }
+      }
+
+    };
+
+    function mergeConfig(base,override){
+      if(override===undefined) return base;
+      if(Array.isArray(base) || Array.isArray(override)) return override===undefined?base:override;
+      if(base && typeof base==="object" && override && typeof override==="object"){
+        const out={...base};
+        for(const [key,value] of Object.entries(override)) out[key]=mergeConfig(base[key],value);
+        return out;
+      }
+      return override;
+    }
+
+    function getSchoolConfig(slug){
+      return mergeConfig(DEFAULT_CONFIG,SCHOOL_CONFIGS[slug]||{});
+    }
+
+    const SCHOOL_ROUTES=Object.fromEntries(
+      Object.entries(SCHOOL_CONFIGS).map(([slug,school])=>[slug,{name:school.name||slug,title:school.title||school.name||slug}])
+    );
+
+    let activeSchoolSlug=null;
+    let activeSchoolConfig=null;
+
     function getCurrentSchoolSlug(){
       const parts=location.pathname.split("/").filter(Boolean);
       const last=(parts[parts.length-1]||"").toLowerCase().replace(/\.html$/i,"");
@@ -399,9 +492,11 @@
       buttons.innerHTML=Object.entries(SCHOOL_ROUTES).map(([slug,school])=>
         `<button type="button" onclick="selectSchool('${slug}')">${school.name}</button>`
       ).join("");
+      const existing=buttons.parentElement.querySelector(".school-picker-message");
+      if(existing) existing.remove();
       if(message){
         const note=document.createElement("div");
-        note.className="schedule-item";
+        note.className="schedule-item school-picker-message";
         note.textContent=message;
         buttons.parentElement.insertBefore(note,buttons);
       }
@@ -412,20 +507,17 @@
       const picker=document.getElementById("schoolPicker");
       const main=document.getElementById("mainContainer");
       if(!slug){
-        const hasSchoolPath=location.pathname.split("/").filter(Boolean).length>1;
+        const parts=location.pathname.split("/").filter(Boolean);
+        const hasSchoolPath=parts.length>1;
         renderSchoolPicker(hasSchoolPath?"That school path is not configured yet.":"");
         return;
       }
       picker.style.display="none";
       main.style.display="block";
-      document.title=`${SCHOOL_ROUTES[slug].title} Schedule`;
+      activeSchoolConfig=getSchoolConfig(slug);
+      document.title=`${activeSchoolConfig.title||SCHOOL_ROUTES[slug].title} Schedule`;
+      initSchoolApp(slug);
     }
-
-    const SCHOOL_ROUTES={
-      phhs:{name:"Patrick Henry High School",title:"Patrick Henry High School"}
-    };
-
-    const CALENDAR_ICS_URL="https://r.jina.ai/http://calendar.google.com/calendar/ical/patrickhenryhs.net_l9rvi05c4sq4qk48dklvmvjc40@group.calendar.google.com/public/basic.ics";
 
     const devMode=new URLSearchParams(location.search).get("dev")==="1";
     let devTimeOffsetMs=0;
@@ -436,6 +528,13 @@
     let calendarEventsByDate=new Map();
     let calendarEvents=[];
     let calendarDataLoaded=false;
+    let yearDataCache=new Map();
+    let lastMainLabel="";
+    let activeScheduleKey=null;
+    let calendarViewDate=new Date();
+    let selectedDateStr=null;
+    let calendarVisible=false;
+    let updateIntervalId=null;
 
     function getNow(){
       return devTimeActive ? new Date(Date.now() + devTimeOffsetMs) : new Date();
@@ -443,8 +542,7 @@
 
     function formatDate(d){return d.getFullYear()+"-"+String(d.getMonth()+1).padStart(2,"0")+"-"+String(d.getDate()).padStart(2,"0");}
     function parseTimeToMinutes(hhmm){const [h,m]=hhmm.split(":").map(Number);return h*60+m;}
-    function toNormalTime(hhmm){const [h,m]=hhmm.split(":").map(Number);const ap=h>=12?"PM":"AM";let hr=h%12; if(hr===0) hr=12; return `${hr}:${String(m).padStart(2,"0")} ${ap}`;}
-    function dateRange(s,e){const a=[];let d=new Date(s+"T00:00:00"),end=new Date(e+"T00:00:00");while(d<=end){a.push(formatDate(d));d.setDate(d.getDate()+1)}return a;}
+    function toNormalTime(hhmm){const [h,m]=hhmm.split(":").map(Number);const ap=h>=12?"PM":"AM";let hr=h%12;if(hr===0)hr=12;return `${hr}:${String(m).padStart(2,"0")} ${ap}`;}
     function prettyDate(s){return new Date(s+"T00:00:00").toLocaleDateString(undefined,{weekday:"short",month:"short",day:"numeric",year:"numeric"});}
     function fullDate(s){return new Date(s+"T00:00:00").toLocaleDateString(undefined,{weekday:"long",month:"long",day:"numeric",year:"numeric"});}
     function nthWeekday(year,month,weekday,n){const first=new Date(year,month,1);let off=(7+weekday-first.getDay())%7;off+=7*(n-1);return new Date(year,month,1+off);}
@@ -453,7 +551,7 @@
     function formatDuration(totalSeconds){totalSeconds=Math.max(0,Math.floor(totalSeconds));const h=Math.floor(totalSeconds/3600),m=Math.floor((totalSeconds%3600)/60),s=totalSeconds%60;return h>0?`${h}:${String(m).padStart(2,"0")}:${String(s).padStart(2,"0")}`:`${m}:${String(s).padStart(2,"0")}`;}
 
     function escapeHtml(str){
-      return str.replace(/[&<>"']/g,(c)=>({ "&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;" }[c]));
+      return str.replace(/[&<>"']/g,(c)=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;", "'":"&#39;"}[c]));
     }
 
     function parseIcsDate(value){
@@ -475,37 +573,22 @@
     }
 
     function parseIcs(text){
-      const raw=text.replace(/\r/g,"").split("\n");
-      const lines=[];
+      const raw=text.replace(/\r/g,"").split("\n"),lines=[];
       for(const line of raw){
-        if(line.startsWith(" ") || line.startsWith("\t")){
-          lines[lines.length-1]+=line.trim();
-        }else{
-          lines.push(line.trim());
-        }
+        if(line.startsWith(" ")||line.startsWith("\t")){
+          if(lines.length) lines[lines.length-1]+=line.trim();
+        }else lines.push(line.trim());
       }
-      const events=[];
-      let current=null;
+      const events=[];let current=null;
       for(const line of lines){
         if(line==="BEGIN:VEVENT"){current={};continue;}
-        if(line==="END:VEVENT"){
-          if(current?.start){events.push(current);}
-          current=null;continue;
-        }
-        if(!current) continue;
-        const idx=line.indexOf(":");
-        if(idx===-1) continue;
-        const key=line.slice(0,idx);
-        const value=line.slice(idx+1);
-        if(key.startsWith("SUMMARY")) current.summary=value.trim();
-        if(key.startsWith("DTSTART")){
-          const parsed=parseIcsDate(value.trim());
-          if(parsed){current.start=parsed.date;current.allDay=parsed.allDay;}
-        }
-        if(key.startsWith("DTEND")){
-          const parsed=parseIcsDate(value.trim());
-          if(parsed){current.end=parsed.date;}
-        }
+        if(line==="END:VEVENT"){if(current?.start)events.push(current);current=null;continue;}
+        if(!current)continue;
+        const idx=line.indexOf(":");if(idx===-1)continue;
+        const key=line.slice(0,idx),value=line.slice(idx+1);
+        if(key.startsWith("SUMMARY"))current.summary=value.trim();
+        if(key.startsWith("DTSTART")){const parsed=parseIcsDate(value.trim());if(parsed){current.start=parsed.date;current.allDay=parsed.allDay;}}
+        if(key.startsWith("DTEND")){const parsed=parseIcsDate(value.trim());if(parsed)current.end=parsed.date;}
       }
       return events;
     }
@@ -514,38 +597,32 @@
       return String(text||"").toLowerCase().replace(/[–—]/g,"-").replace(/\s+/g," ").trim();
     }
 
-    function isNoSchoolEvent(evt){
-      return normalizeEventTitle(evt.summary).includes("no school");
+    function matchesKeywordRule(title,rule){
+      if(typeof rule==="string") return title.includes(normalizeEventTitle(rule));
+      if(!rule||typeof rule!=="object") return false;
+      const all=Array.isArray(rule.all)?rule.all:[];
+      const any=Array.isArray(rule.any)?rule.any:[];
+      return all.every(word=>title.includes(normalizeEventTitle(word))) && (!any.length || any.some(word=>title.includes(normalizeEventTitle(word))));
     }
 
-    function isFirstDayOfSchoolEvent(evt){
+    function matchesConfiguredKeywords(evt,key){
       const title=normalizeEventTitle(evt.summary);
-      return /(?:^|\b)(?:first|1st)(?:\b|$)/.test(title) && /\bday\b/.test(title) && /\bschool\b/.test(title);
+      const rules=activeSchoolConfig?.keywords?.[key]||[];
+      return rules.some(rule=>matchesKeywordRule(title,rule));
     }
 
-    function isThanksgivingBreakEvent(evt){
-      const title=normalizeEventTitle(evt.summary);
-      return title.includes("thanksgiving break");
-    }
-
-    function isWinterBreakEvent(evt){
-      const title=normalizeEventTitle(evt.summary);
-      return title.includes("winter break");
-    }
-
-    function isLastDayOfSchoolEvent(evt){
-      const title=normalizeEventTitle(evt.summary);
-      return /\blast\s+day\b/.test(title) && /\bschool\b/.test(title);
-    }
+    function isNoSchoolEvent(evt){return matchesConfiguredKeywords(evt,"noSchool");}
+    function isFirstDayOfSchoolEvent(evt){return matchesConfiguredKeywords(evt,"firstDay");}
+    function isThanksgivingBreakEvent(evt){return matchesConfiguredKeywords(evt,"thanksgivingBreak");}
+    function isWinterBreakEvent(evt){return matchesConfiguredKeywords(evt,"winterBreak");}
+    function isLastDayOfSchoolEvent(evt){return matchesConfiguredKeywords(evt,"lastDay");}
 
     function addWeekdaysFromStart(startDate,count){
       const dates=[];
       const d=new Date(startDate.getFullYear(),startDate.getMonth(),startDate.getDate());
       while(dates.length<count){
         const day=d.getDay();
-        if(day!==0 && day!==6){
-          dates.push(formatDate(d));
-        }
+        if(day!==0&&day!==6)dates.push(formatDate(d));
         d.setDate(d.getDate()+1);
       }
       return dates;
@@ -556,205 +633,180 @@
       calendarEventsByDate=new Map();
       for(const evt of events){
         const dateStr=formatDate(evt.start);
-        const timeLabel=evt.allDay ? "" : evt.start.toLocaleTimeString([], {hour:"numeric", minute:"2-digit"});
-        const item={
-          summary: evt.summary || "Event",
-          dateStr,
-          startMs: evt.start.getTime(),
-          allDay: evt.allDay,
-          timeLabel
-        };
-
-        if(!calendarEventsByDate.has(dateStr)) calendarEventsByDate.set(dateStr, []);
+        const timeLabel=evt.allDay?"":evt.start.toLocaleTimeString([],{hour:"numeric",minute:"2-digit"});
+        const item={summary:evt.summary||"Event",dateStr,startMs:evt.start.getTime(),allDay:evt.allDay,timeLabel};
+        if(!calendarEventsByDate.has(dateStr))calendarEventsByDate.set(dateStr,[]);
         calendarEventsByDate.get(dateStr).push(item);
       }
-
-      for(const [key,arr] of calendarEventsByDate){
-        arr.sort((a,b)=>a.startMs-b.startMs);
-      }
+      for(const [key,arr] of calendarEventsByDate)arr.sort((a,b)=>a.startMs-b.startMs);
       calendarDataLoaded=true;
       yearDataCache.clear();
     }
 
     function loadCalendarEvents(){
-      fetch(CALENDAR_ICS_URL)
-        .then(res=>res.text())
+      const cal=activeSchoolConfig?.calendar||{};
+      if(!cal.enabled || !cal.icsUrl){
+        indexCalendarEvents([]);
+        renderCalendar();
+        update();
+        return;
+      }
+      calendarDataLoaded=false;
+      fetch(cal.icsUrl)
+        .then(res=>{if(!res.ok)throw new Error(`Calendar request failed: ${res.status}`);return res.text();})
         .then(text=>{
-          const events=parseIcs(text);
-          indexCalendarEvents(events);
+          indexCalendarEvents(parseIcs(text));
           renderCalendar();
-          if(selectedDateStr) showCalendarInfo(selectedDateStr);
+          if(selectedDateStr)showCalendarInfo(selectedDateStr);
           update();
         })
         .catch(()=>{
-          calendarDataLoaded=false;
+          indexCalendarEvents([]);
+          renderCalendar();
           update();
         });
     }
 
-    let lastMainLabel="";
     function setMainLabel(nextLabel){
       const el=document.getElementById("currentPeriod");
-      if(nextLabel!==lastMainLabel){
-        el.classList.remove("period-flash");void el.offsetWidth;el.classList.add("period-flash");
-      }
-      el.innerHTML=nextLabel;
-      lastMainLabel=nextLabel;
+      if(nextLabel!==lastMainLabel){el.classList.remove("period-flash");void el.offsetWidth;el.classList.add("period-flash");}
+      el.innerHTML=nextLabel;lastMainLabel=nextLabel;
     }
 
-    const scheduleCatalog={
-      regularTF:{title:"Daily Schedule (Tue–Fri)",blocks:[["Period 1","08:45","09:42"],["Period 2","09:48","10:45"],["Period 3","10:51","11:48"],["Period 4","11:54","12:51"],["Lunch","12:57","13:27"],["Period 5","13:33","14:30"],["Period 6","14:36","15:33"]]},
-      mondayBroadcast:{title:"Monday Late Start (with PHHS Broadcast News)",blocks:[["Period 1","09:20","10:10"],["Period 2","10:16","11:06"],["Period 3","11:12","12:02"],["Period 4","12:08","12:58"],["Lunch","13:04","13:34"],["Period 5","13:40","14:39"],["Period 6","14:45","15:35"]]},
-      mondayNoBroadcast:{title:"Monday Late Start (w/o Broadcast: first 3 Mondays)",blocks:[["Period 1","09:20","10:11"],["Period 2","10:17","11:08"],["Period 3","11:14","12:05"],["Period 4","12:11","13:02"],["Lunch","13:08","13:41"],["Period 5","13:47","14:38"],["Period 6","14:44","15:35"]]},
-      pepRally:{title:"Pep Rally Schedule",blocks:[["Period 1","08:45","09:32"],["Period 2","09:38","10:25"],["Period 3","10:31","11:18"],["Rally","11:25","12:17"],["Period 4","12:24","13:11"],["Lunch","13:17","13:47"],["Period 5","13:53","14:40"],["Period 6","14:46","15:33"]]},
-      finalsP12:{title:"Minimum Day Finals (P1 & P2)",blocks:[["Period 1 Final","08:45","10:45"],["Period 2 Final","11:11","13:11"]]},
-      finalsP34:{title:"Minimum Day Finals (P3 & P4)",blocks:[["Period 3 Final","08:45","10:45"],["Period 4 Final","11:11","13:11"]]},
-      finalsP56:{title:"Minimum Day Finals (P5 & P6)",blocks:[["Period 5 Final","08:45","10:45"],["Period 6 Final","11:11","13:11"]]}
-    };
+    function getScheduleCatalog(){return activeSchoolConfig?.schedule||{};}
 
-    const yearDataCache=new Map();
-
-    function findFirstDayEvents(){
-      return calendarEvents
-        .filter(isFirstDayOfSchoolEvent)
-        .sort((a,b)=>a.start.getTime()-b.start.getTime());
+    function getFirstDayEvents(){
+      return calendarEvents.filter(isFirstDayOfSchoolEvent).sort((a,b)=>a.start.getTime()-b.start.getTime());
     }
 
     function getFirstDayForStartYear(startYear){
-      const matches=findFirstDayEvents().filter(evt=>{
-        const y=evt.start.getFullYear();
-        return y===startYear;
-      });
-      return matches.length ? matches[0].start : null;
+      const matches=getFirstDayEvents().filter(evt=>evt.start.getFullYear()===startYear);
+      return matches.length?matches[0].start:null;
     }
 
     function getSchoolYearEndForStartYear(startYear){
-      const lastDays=calendarEvents
-        .filter(isLastDayOfSchoolEvent)
-        .filter(evt=>evt.start.getFullYear()===startYear+1)
-        .sort((a,b)=>a.start.getTime()-b.start.getTime());
-      if(lastDays.length){
-        return formatDate(lastDays[0].start);
-      }
+      const lastDays=calendarEvents.filter(isLastDayOfSchoolEvent).sort((a,b)=>a.start.getTime()-b.start.getTime());
+      const matchingLast=lastDays.find(evt=>evt.start.getFullYear()===startYear+1);
+      if(matchingLast)return formatDate(matchingLast.start);
 
-      const firstDays=findFirstDayEvents();
-      const next=firstDays.find(evt=>evt.start.getFullYear()>startYear);
-      if(next){
-        const end=new Date(next.start.getFullYear(),next.start.getMonth(),next.start.getDate());
-        end.setDate(end.getDate()-1);
-        return formatDate(end);
+      if(activeSchoolConfig?.defaults?.schoolYearEndFromNextFirstDay!==false){
+        const next=getFirstDayEvents().find(evt=>evt.start.getFullYear()>startYear);
+        if(next){
+          const end=new Date(next.start.getFullYear(),next.start.getMonth(),next.start.getDate());
+          end.setDate(end.getDate()-1);
+          return formatDate(end);
+        }
       }
       return null;
     }
 
     function buildSchoolYearData(startYear){
       const firstDay=getFirstDayForStartYear(startYear);
-      if(!firstDay) return null;
+      if(!firstDay)return null;
 
       const y1=startYear,y2=startYear+1;
       const classesBegin=formatDate(firstDay);
       const classesEnd=getSchoolYearEndForStartYear(startYear);
-      const d={
-        label:`${y1}-${y2}`,
-        classesBegin,
-        classesEnd,
-        mondayNoBroadcast:new Set(),
-        pepRallyDays:new Set(),
-        finalsMap:{},
-        noSchoolReasons:{}
-      };
+      const d={label:`${y1}-${y2}`,classesBegin,classesEnd,mondayNoBroadcast:new Set(),pepRallyDays:new Set(),finalsMap:{},noSchoolReasons:{}};
 
       let c=new Date(classesBegin+"T00:00:00");
-      while(c.getDay()!==1) c.setDate(c.getDate()+1);
+      while(c.getDay()!==1)c.setDate(c.getDate()+1);
       for(let i=0;i<3;i++){d.mondayNoBroadcast.add(formatDate(c));c.setDate(c.getDate()+7);}
 
       [nthWeekday(y1,9,5,4),lastWeekday(y2,0,5),nthWeekday(y2,3,5,4)].forEach(x=>d.pepRallyDays.add(formatDate(x)));
-      d.finalsMap[`${y1}-12-17`]='finalsP12';
-      d.finalsMap[`${y1}-12-18`]='finalsP34';
-      d.finalsMap[`${y1}-12-19`]='finalsP56';
-      d.finalsMap[`${y2}-05-26`]='finalsP12';
-      d.finalsMap[`${y2}-05-27`]='finalsP34';
-      d.finalsMap[`${y2}-05-28`]='finalsP56';
+      d.finalsMap[`${y1}-12-17`]="finalsP12";
+      d.finalsMap[`${y1}-12-18`]="finalsP34";
+      d.finalsMap[`${y1}-12-19`]="finalsP56";
+      d.finalsMap[`${y2}-05-26`]="finalsP12";
+      d.finalsMap[`${y2}-05-27`]="finalsP34";
+      d.finalsMap[`${y2}-05-28`]="finalsP56";
 
-      const yearEndMs=classesEnd ? new Date(classesEnd+"T23:59:59").getTime() : Infinity;
+      const yearEndMs=classesEnd?new Date(classesEnd+"T23:59:59").getTime():Infinity;
       const relevantEvents=calendarEvents.filter(evt=>{
         const ms=evt.start.getTime();
-        const isHolidayEvent=isNoSchoolEvent(evt) || isThanksgivingBreakEvent(evt) || isWinterBreakEvent(evt);
-        return ms>=firstDay.getTime() && ms<=yearEndMs && isHolidayEvent;
+        const holiday=isNoSchoolEvent(evt)||isThanksgivingBreakEvent(evt)||isWinterBreakEvent(evt);
+        return ms>=firstDay.getTime()&&ms<=yearEndMs&&holiday;
       });
 
       for(const evt of relevantEvents){
-        let dates=[formatDate(evt.start)];
-        let reason=evt.summary || 'No School';
-
+        let dates=[formatDate(evt.start)],reason=evt.summary||"No School";
         if(isThanksgivingBreakEvent(evt)){
-          dates=addWeekdaysFromStart(evt.start,5);
-          reason='Thanksgiving Break';
+          dates=addWeekdaysFromStart(evt.start,activeSchoolConfig?.defaults?.breakWeekdays||5);
+          reason="Thanksgiving Break";
         }else if(isWinterBreakEvent(evt)){
-          dates=addWeekdaysFromStart(evt.start,5);
-          reason='Winter Break';
+          dates=addWeekdaysFromStart(evt.start,activeSchoolConfig?.defaults?.breakWeekdays||5);
+          reason="Winter Break";
         }
-
-        for(const ds of dates){
-          d.noSchoolReasons[ds]=reason;
-        }
+        for(const ds of dates)d.noSchoolReasons[ds]=reason;
       }
-
       return d;
     }
 
     function getSchoolYearData(startYear){
-      if(!calendarDataLoaded) return null;
-      if(!yearDataCache.has(startYear)) yearDataCache.set(startYear,buildSchoolYearData(startYear));
+      if(!calendarDataLoaded)return null;
+      if(!yearDataCache.has(startYear))yearDataCache.set(startYear,buildSchoolYearData(startYear));
       return yearDataCache.get(startYear);
     }
 
     function getYearDataByDate(ds){
-      if(!calendarDataLoaded) return null;
+      if(!calendarDataLoaded)return null;
       const year=Number(ds.slice(0,4));
       for(const s of [year-1,year]){
         const yData=getSchoolYearData(s);
-        if(yData && ds>=yData.classesBegin && (!yData.classesEnd || ds<=yData.classesEnd)) return yData;
+        if(yData&&ds>=yData.classesBegin&&(!yData.classesEnd||ds<=yData.classesEnd))return yData;
       }
       return null;
     }
 
-    function getScheduleKeyForDate(dateObj){
+    function defaultScheduleKeyForDate(dateObj){
+      const catalog=getScheduleCatalog();
       const ds=formatDate(dateObj),y=getYearDataByDate(ds),day=dateObj.getDay();
-      if(!calendarDataLoaded) return {type:'closed',reason:'Loading School Calendar',yearLabel:'Loading'};
-      if(!y) return {type:'closed',reason:'No School (Outside School Year)',yearLabel:'Outside School Year'};
-      if(day===0||day===6) return {type:'closed',reason:'Weekend',yearLabel:y.label};
-      if(y.noSchoolReasons[ds]) return {type:'closed',reason:y.noSchoolReasons[ds],yearLabel:y.label};
-      if(y.finalsMap[ds]) return {type:'schedule',key:y.finalsMap[ds],yearLabel:y.label};
-      if(y.pepRallyDays.has(ds)) return {type:'schedule',key:'pepRally',yearLabel:y.label};
-      if(day===1) return y.mondayNoBroadcast.has(ds)?{type:'schedule',key:'mondayNoBroadcast',yearLabel:y.label}:{type:'schedule',key:'mondayBroadcast',yearLabel:y.label};
-      return {type:'schedule',key:'regularTF',yearLabel:y.label};
+      if(!calendarDataLoaded)return {type:"closed",reason:"Loading School Calendar",yearLabel:"Loading"};
+      if(!y)return {type:"closed",reason:"No School (Outside School Year)",yearLabel:"Outside School Year"};
+      if(day===0||day===6)return {type:"closed",reason:"Weekend",yearLabel:y.label};
+      if(y.noSchoolReasons[ds])return {type:"closed",reason:y.noSchoolReasons[ds],yearLabel:y.label};
+      if(y.finalsMap[ds]&&catalog[y.finalsMap[ds]])return {type:"schedule",key:y.finalsMap[ds],yearLabel:y.label};
+      if(y.pepRallyDays.has(ds)&&catalog.pepRally)return {type:"schedule",key:"pepRally",yearLabel:y.label};
+      if(day===1&&catalog.mondayBroadcast&&catalog.mondayNoBroadcast){
+        return y.mondayNoBroadcast.has(ds)?{type:"schedule",key:"mondayNoBroadcast",yearLabel:y.label}:{type:"schedule",key:"mondayBroadcast",yearLabel:y.label};
+      }
+      if(catalog.regularTF)return {type:"schedule",key:"regularTF",yearLabel:y.label};
+      const firstKey=Object.keys(catalog)[0];
+      return firstKey?{type:"schedule",key:firstKey,yearLabel:y.label}:{type:"closed",reason:"No Schedule Configured",yearLabel:y.label};
+    }
+
+    function getScheduleKeyForDate(dateObj){
+      const custom=activeSchoolConfig?.logic?.getScheduleKeyForDate;
+      return typeof custom==="function"?custom(dateObj,{config:activeSchoolConfig,calendarEvents,getScheduleCatalog,formatDate,yearData:getYearDataByDate}):defaultScheduleKeyForDate(dateObj);
     }
 
     function getMarkersForDate(dateObj){
       const ds=formatDate(dateObj),y=getYearDataByDate(ds);
-      if(!y) return ['noschool'];
+      if(!y)return ["noschool"];
       const marks=[];
-      if(y.finalsMap[ds]) marks.push('finals');
-      if(y.pepRallyDays.has(ds)) marks.push('rally');
-      if(y.noSchoolReasons[ds]||dateObj.getDay()===0||dateObj.getDay()===6) marks.push('noschool');
+      if(y.finalsMap[ds])marks.push("finals");
+      if(y.pepRallyDays.has(ds))marks.push("rally");
+      if(y.noSchoolReasons[ds]||dateObj.getDay()===0||dateObj.getDay()===6)marks.push("noschool");
       return marks;
     }
 
     function markerClass(m){
       const f=m.includes("finals"),r=m.includes("rally"),n=m.includes("noschool"),c=[f,r,n].filter(Boolean).length;
-      if(c>1) return "filled-multi"; if(f) return "filled-finals"; if(r) return "filled-rally"; if(n) return "filled-noschool"; return "";
+      if(c>1)return "filled-multi";if(f)return "filled-finals";if(r)return "filled-rally";if(n)return "filled-noschool";return "";
     }
 
     function renderScheduleBlocks(s){
-      return s.blocks.map(b=>`<div class="schedule-item"><strong>${b[0]}</strong> : ${toNormalTime(b[1])} - ${toNormalTime(b[2])}</div>`).join("");
+      return (s?.blocks||[]).map(b=>`<div class="schedule-item"><strong>${b[0]}</strong> : ${toNormalTime(b[1])} - ${toNormalTime(b[2])}</div>`).join("");
     }
 
-    function isWeekendNowOrAfterSchoolToWeekend(dateObj, info){
-      const day = dateObj.getDay(); if (day === 0 || day === 6) return true;
-      if (day === 5 && info.type === "schedule") {
-        const sch = scheduleCatalog[info.key],lastBlock = sch.blocks[sch.blocks.length - 1],lastEndSec = parseTimeToMinutes(lastBlock[2]) * 60,nowSec = dateObj.getHours()*3600 + dateObj.getMinutes()*60 + dateObj.getSeconds();
-        if (nowSec >= lastEndSec) return true;
+    function isWeekendNowOrAfterSchoolToWeekend(dateObj,info){
+      const day=dateObj.getDay();if(day===0||day===6)return true;
+      if(info.type==="schedule"&&day===5){
+        const sch=getScheduleCatalog()[info.key];
+        if(sch?.blocks?.length){
+          const lastBlock=sch.blocks[sch.blocks.length-1],lastEndSec=parseTimeToMinutes(lastBlock[2])*60,nowSec=dateObj.getHours()*3600+dateObj.getMinutes()*60+dateObj.getSeconds();
+          if(nowSec>=lastEndSec)return true;
+        }
       }
       return false;
     }
@@ -767,257 +819,179 @@
 
     function update(){
       if(!calendarDataLoaded){
-        setMainLabel('Loading school calendar...');
-        document.getElementById('endTime').innerText='';
-        document.getElementById('countdown').innerText='';
+        setMainLabel("Loading school calendar...");
+        document.getElementById("endTime").innerText="";
+        document.getElementById("countdown").innerText="";
         return;
       }
-      const now=getNow(),todayText=fullDate(formatDate(now));
-      const info=getScheduleKeyForDate(now);
 
+      const now=getNow(),todayText=fullDate(formatDate(now)),info=getScheduleKeyForDate(now);
       if(info.type==="closed"){
-        applyState({
-          labelHtml:`<span class="holiday">${info.reason}</span>`,
-          endText:todayText,
-          cdText:"",
-        });
+        applyState({labelHtml:`<span class="holiday">${info.reason}</span>`,endText:todayText,cdText:""});
         return;
       }
 
-      const sch=scheduleCatalog[info.key],
-            nowSec=now.getHours()*3600+now.getMinutes()*60+now.getSeconds(),
-            firstSec=parseTimeToMinutes(sch.blocks[0][1])*60,
-            passingBeforeFirstSec=firstSec - (6*60);
+      const sch=getScheduleCatalog()[info.key];
+      if(!sch?.blocks?.length){
+        applyState({labelHtml:"School is Out",endText:todayText,cdText:""});
+        return;
+      }
 
-      if(nowSec < firstSec){
-        if(nowSec >= passingBeforeFirstSec){
+      const nowSec=now.getHours()*3600+now.getMinutes()*60+now.getSeconds(),firstSec=parseTimeToMinutes(sch.blocks[0][1])*60,passingBeforeFirstSec=firstSec-6*60;
+
+      if(nowSec<firstSec){
+        if(nowSec>=passingBeforeFirstSec){
           const firstLabel=getPeriodLabel(sch.blocks[0][0]);
-          applyState({
-            labelHtml:"Passing Period",
-            endText:`${firstLabel} starts at ${toNormalTime(sch.blocks[0][1])}`,
-            cdText:`Starts in: ${formatDuration(firstSec-nowSec)}`,
-          });
+          applyState({labelHtml:"Passing Period",endText:`${firstLabel} starts at ${toNormalTime(sch.blocks[0][1])}`,cdText:`Starts in: ${formatDuration(firstSec-nowSec)}`});
           return;
         }
-
-        const passingStartSec = passingBeforeFirstSec;
-        const passingStartTime = toNormalTime(
-          `${String(Math.floor(passingStartSec/3600)).padStart(2,"0")}:${String(Math.floor((passingStartSec%3600)/60)).padStart(2,"0")}`
-        );
-
-        applyState({
-          labelHtml:"Before School",
-          endText:`Passing Period starts at ${passingStartTime}`,
-          cdText:`Starts in: ${formatDuration(passingStartSec-nowSec)}`,
-        });
+        const passingStartSec=passingBeforeFirstSec;
+        const passingStartTime=toNormalTime(`${String(Math.floor(passingStartSec/3600)).padStart(2,"0")}:${String(Math.floor((passingStartSec%3600)/60)).padStart(2,"0")}`);
+        applyState({labelHtml:"Before School",endText:`Passing Period starts at ${passingStartTime}`,cdText:`Starts in: ${formatDuration(passingStartSec-nowSec)}`});
         return;
       }
 
       for(let i=0;i<sch.blocks.length;i++){
         const [name,s,e]=sch.blocks[i],sm=parseTimeToMinutes(s)*60,em=parseTimeToMinutes(e)*60;
-        if(nowSec>=sm && nowSec<em){
-          applyState({
-            labelHtml:name,
-            endText:`Ends at ${toNormalTime(e)}`,
-            cdText:`Time remaining: ${formatDuration(Math.max(0,em-nowSec))}`,
-          });
+        if(nowSec>=sm&&nowSec<em){
+          applyState({labelHtml:name,endText:`Ends at ${toNormalTime(e)}`,cdText:`Time remaining: ${formatDuration(Math.max(0,em-nowSec))}`});
           return;
         }
         if(i<sch.blocks.length-1){
           const next=sch.blocks[i+1],nm=parseTimeToMinutes(next[1])*60;
-          if(nowSec>=em && nowSec<nm){
+          if(nowSec>=em&&nowSec<nm){
             const nextLabel=getPeriodLabel(next[0]);
-            applyState({
-              labelHtml:"Passing Period",
-              endText:`${nextLabel} starts at ${toNormalTime(next[1])}`,
-              cdText:`Starts in: ${formatDuration(Math.max(0,nm-nowSec))}`,
-            });
+            applyState({labelHtml:"Passing Period",endText:`${nextLabel} starts at ${toNormalTime(next[1])}`,cdText:`Starts in: ${formatDuration(Math.max(0,nm-nowSec))}`});
             return;
           }
         }
       }
 
-      if (isWeekendNowOrAfterSchoolToWeekend(now, info)){
-        applyState({
-          labelHtml:`<span class="holiday">Weekend</span>`,
-          endText:todayText,
-          cdText:"",
-        });
-      }else{
-        applyState({
-          labelHtml:"School is Out",
-          endText:todayText,
-          cdText:"",
-        });
-      }
+      if(isWeekendNowOrAfterSchoolToWeekend(now,info))applyState({labelHtml:`<span class="holiday">Weekend</span>`,endText:todayText,cdText:""});
+      else applyState({labelHtml:"School is Out",endText:todayText,cdText:""});
     }
 
-    function scheduleFit(){
-      fitContainer();
-      setTimeout(fitContainer, 300);
-      setTimeout(fitContainer, 700);
-    }
+    function scheduleFit(){fitContainer();setTimeout(fitContainer,300);setTimeout(fitContainer,700);}
 
     function setDevTime(){
-      const input=document.getElementById("devTimeInput");
-      if(!input) return;
-      const raw=(input.value || "").trim();
-      if(!/^\d{6}$/.test(raw)) return;
-
-      const h=Number(raw.slice(0,2));
-      const m=Number(raw.slice(2,4));
-      const s=Number(raw.slice(4,6));
-      if(h>23 || m>59 || s>59) return;
-
-      const now=new Date();
-      const target=new Date(now.getFullYear(), now.getMonth(), now.getDate(), h, m, s);
-      devTimeOffsetMs=target.getTime() - Date.now();
-      devTimeActive=true;
-      update();
+      const input=document.getElementById("devTimeInput");if(!input)return;
+      const raw=(input.value||"").trim();if(!/^\d{6}$/.test(raw))return;
+      const h=Number(raw.slice(0,2)),m=Number(raw.slice(2,4)),s=Number(raw.slice(4,6));if(h>23||m>59||s>59)return;
+      const now=new Date(),target=new Date(now.getFullYear(),now.getMonth(),now.getDate(),h,m,s);
+      devTimeOffsetMs=target.getTime()-Date.now();devTimeActive=true;update();
     }
 
-    function resetDevTime(){
-      devTimeActive=false;
-      devTimeOffsetMs=0;
-      update();
-    }
+    function resetDevTime(){devTimeActive=false;devTimeOffsetMs=0;update();}
 
     function toggleToday(){
-      const p=document.getElementById("todayPanel");
-      p.classList.toggle("show");
+      const p=document.getElementById("todayPanel");p.classList.toggle("show");
       const now=getNow(),info=getScheduleKeyForDate(now),dateLabel=prettyDate(formatDate(now));
-
-      if(info.type==="closed"){
-        p.innerHTML=`<div class="schedule-item"><strong>${dateLabel}</strong><span class="badge">${info.yearLabel}</span></div><div class="schedule-item holiday">${info.reason}</div>`;
-      }else{
-        const s=scheduleCatalog[info.key];
-        p.innerHTML=`<div class="schedule-item"><strong>${s.title}</strong><span class="badge">${info.yearLabel}</span></div>${renderScheduleBlocks(s)}`;
-      }
+      if(info.type==="closed")p.innerHTML=`<div class="schedule-item"><strong>${dateLabel}</strong><span class="badge">${info.yearLabel}</span></div><div class="schedule-item holiday">${info.reason}</div>`;
+      else {const s=getScheduleCatalog()[info.key];p.innerHTML=`<div class="schedule-item"><strong>${s.title}</strong><span class="badge">${info.yearLabel}</span></div>${renderScheduleBlocks(s)}`;}
       scheduleFit();
     }
 
-    let activeScheduleKey=null;
     function renderAllSchedulesList(){
-      const panel=document.getElementById("allPanel"),keys=Object.keys(scheduleCatalog);
-      let html=`<div><strong>Click a schedule type:</strong></div>`;
-      for(const key of keys){
-        const s=scheduleCatalog[key];
-        html+=`
-          <button class="schedule-link ${activeScheduleKey===key?'active-btn':''}" onclick="toggleInlineSchedule('${key}',event)">${s.title}</button>
-          <div class="inline-detail ${activeScheduleKey===key?'show':''}" id="detail-${key}">
-            ${renderScheduleBlocks(s)}
-          </div>`;
-      }
+      const panel=document.getElementById("allPanel"),catalog=getScheduleCatalog(),keys=Object.keys(catalog);let html=`<div><strong>Click a schedule type:</strong></div>`;
+      for(const key of keys){const s=catalog[key];html+=`<button class="schedule-link ${activeScheduleKey===key?"active-btn":""}" onclick="toggleInlineSchedule('${key}',event)">${s.title}</button><div class="inline-detail ${activeScheduleKey===key?"show":""}" id="detail-${key}">${renderScheduleBlocks(s)}</div>`;}
       panel.innerHTML=html;
     }
 
     function toggleInlineSchedule(key,ev){
-      if(ev&&ev.currentTarget){
-        const btn=ev.currentTarget;btn.classList.remove("click-animate");void btn.offsetWidth;btn.classList.add("click-animate");
-      }
-      activeScheduleKey=(activeScheduleKey===key)?null:key;
-      renderAllSchedulesList();scheduleFit();
+      if(ev?.currentTarget){const btn=ev.currentTarget;btn.classList.remove("click-animate");void btn.offsetWidth;btn.classList.add("click-animate");}
+      activeScheduleKey=activeScheduleKey===key?null:key;renderAllSchedulesList();scheduleFit();
     }
 
     function toggleAll(){
-      const p=document.getElementById("allPanel");p.classList.toggle("show");
-      if(p.classList.contains("show")) renderAllSchedulesList();
-      scheduleFit();
+      const p=document.getElementById("allPanel");p.classList.toggle("show");if(p.classList.contains("show"))renderAllSchedulesList();scheduleFit();
     }
 
-    let calendarViewDate=new Date(),selectedDateStr=null,calendarVisible=false;
     function monthName(m){return new Date(2000,m,1).toLocaleString(undefined,{month:"long"});}
 
     function renderCalendar(){
       const grid=document.getElementById("calGrid"),title=document.getElementById("calTitle");
-      const y=calendarViewDate.getFullYear(),m=calendarViewDate.getMonth();
-      title.textContent=`${monthName(m)} ${y}`; grid.innerHTML="";
-      ["Sun","Mon","Tue","Wed","Thu","Fri","Sat"].forEach(d=>{const e=document.createElement("div"); e.className="cal-dow"; e.textContent=d; grid.appendChild(e);});
+      const y=calendarViewDate.getFullYear(),m=calendarViewDate.getMonth();title.textContent=`${monthName(m)} ${y}`;grid.innerHTML="";
+      ["Sun","Mon","Tue","Wed","Thu","Fri","Sat"].forEach(d=>{const e=document.createElement("div");e.className="cal-dow";e.textContent=d;grid.appendChild(e);});
       const firstDay=new Date(y,m,1).getDay(),daysInMonth=new Date(y,m+1,0).getDate(),today=formatDate(getNow());
-
       for(let i=0;i<firstDay;i++){const b=document.createElement("button");b.className="cal-day muted";b.disabled=true;grid.appendChild(b);}
-
       for(let day=1;day<=daysInMonth;day++){
-        const d=new Date(y,m,day),ds=formatDate(d),marks=getMarkersForDate(d);
-        const b=document.createElement("button");b.className="cal-day";
-        const mc=markerClass(marks);if(mc) b.classList.add(mc); if(ds===today) b.classList.add("today"); if(ds===selectedDateStr) b.classList.add("selected");
-
-        const dayNum=document.createElement("div");
-        dayNum.textContent=day;
-        b.appendChild(dayNum);
-
-        const events=calendarEventsByDate.get(ds) || [];
-        if(events.length){
-          const dots=document.createElement("div");
-          dots.className="event-dots";
-          events.forEach(()=>{const dot=document.createElement("span");dot.className="event-dot";dots.appendChild(dot);});
-          b.appendChild(dots);
-        }
-
-        b.onclick=()=>{selectedDateStr=ds;renderCalendar();showCalendarInfo(ds);fitContainer();};
-        grid.appendChild(b);
+        const d=new Date(y,m,day),ds=formatDate(d),marks=getMarkersForDate(d);const b=document.createElement("button");b.className="cal-day";
+        const mc=markerClass(marks);if(mc)b.classList.add(mc);if(ds===today)b.classList.add("today");if(ds===selectedDateStr)b.classList.add("selected");
+        const dayNum=document.createElement("div");dayNum.textContent=day;b.appendChild(dayNum);
+        const events=calendarEventsByDate.get(ds)||[];
+        if(events.length){const dots=document.createElement("div");dots.className="event-dots";events.forEach(()=>{const dot=document.createElement("span");dot.className="event-dot";dots.appendChild(dot);});b.appendChild(dots);}
+        b.onclick=()=>{selectedDateStr=ds;renderCalendar();showCalendarInfo(ds);fitContainer();};grid.appendChild(b);
       }
-
-      if(selectedDateStr) showCalendarInfo(selectedDateStr); else document.getElementById("calendarInfo").innerHTML="";
-      fitContainer();
+      if(selectedDateStr)showCalendarInfo(selectedDateStr);else document.getElementById("calendarInfo").innerHTML="";fitContainer();
     }
 
     function showCalendarInfo(ds){
-      const el=document.getElementById("calendarInfo"),d=new Date(ds+"T00:00:00"),info=getScheduleKeyForDate(d);
-      let html="";
-      if(info.type==="closed"){
-        html=`<strong>${prettyDate(ds)}</strong><br><span class="holiday">${info.reason}</span>`;
-      }else{
-        const s=scheduleCatalog[info.key];
-        html=`<strong>${prettyDate(ds)}</strong><br>${s.title}`;
-      }
-
-      const events=calendarEventsByDate.get(ds) || [];
-      if(events.length){
-        const list=events.map(evt=>`<div class="event-item"><span class="event-time">${evt.timeLabel}</span>${escapeHtml(evt.summary)}</div>`).join("");
-        html+=`<div class="event-list">${list}</div>`;
-      }
-
+      const el=document.getElementById("calendarInfo"),d=new Date(ds+"T00:00:00"),info=getScheduleKeyForDate(d);let html="";
+      if(info.type==="closed")html=`<strong>${prettyDate(ds)}</strong><br><span class="holiday">${info.reason}</span>`;
+      else {const s=getScheduleCatalog()[info.key];html=`<strong>${prettyDate(ds)}</strong><br>${s.title}`;}
+      const events=calendarEventsByDate.get(ds)||[];
+      if(events.length){const list=events.map(evt=>`<div class="event-item"><span class="event-time">${evt.timeLabel}</span>${escapeHtml(evt.summary)}</div>`).join("");html+=`<div class="event-list">${list}</div>`;}
       el.innerHTML=html;
     }
 
     function changeMonth(delta){calendarViewDate=new Date(calendarViewDate.getFullYear(),calendarViewDate.getMonth()+delta,1);selectedDateStr=null;renderCalendar();}
     function goToCurrentMonth(){const n=getNow();calendarViewDate=new Date(n.getFullYear(),n.getMonth(),1);selectedDateStr=null;renderCalendar();}
     function toggleCalendar(){
-      calendarVisible=!calendarVisible;
-      document.getElementById("calendarCard").classList.toggle("hidden",!calendarVisible);
-      document.getElementById("topGrid").classList.toggle("calendar-visible",calendarVisible);
-      document.getElementById("calendarToggleBtn").textContent=calendarVisible?"Hide Calendar":"Show Calendar";
-      scheduleFit();
+      calendarVisible=!calendarVisible;document.getElementById("calendarCard").classList.toggle("hidden",!calendarVisible);document.getElementById("topGrid").classList.toggle("calendar-visible",calendarVisible);document.getElementById("calendarToggleBtn").textContent=calendarVisible?"Hide Calendar":"Show Calendar";scheduleFit();
     }
 
     function fitContainer(){
-      const c=document.getElementById("mainContainer");
-      c.classList.remove("allow-scroll");
-      const max=Math.floor(innerHeight*.94); c.style.maxHeight=`${max}px`;
-      requestAnimationFrame(()=>{c.classList.toggle("allow-scroll", c.scrollHeight>c.clientHeight+1);});
+      const c=document.getElementById("mainContainer");c.classList.remove("allow-scroll");const max=Math.floor(innerHeight*.94);c.style.maxHeight=`${max}px`;
+      requestAnimationFrame(()=>{c.classList.toggle("allow-scroll",c.scrollHeight>c.clientHeight+1);});
+    }
+
+    function resetSchoolUi(){
+      document.getElementById("todayPanel")?.classList.remove("show");
+      document.getElementById("allPanel")?.classList.remove("show");
+      document.getElementById("todayPanel").innerHTML="";
+      document.getElementById("allPanel").innerHTML="";
+      document.getElementById("devPanel")?.classList.remove("show");
+      activeScheduleKey=null;
+      lastMainLabel="";
+      calendarViewDate=new Date();
+      selectedDateStr=null;
+      calendarVisible=false;
+      document.getElementById("calendarCard")?.classList.add("hidden");
+      document.getElementById("topGrid")?.classList.remove("calendar-visible");
+      const calBtn=document.getElementById("calendarToggleBtn");if(calBtn)calBtn.textContent="Show Calendar";
+    }
+
+    function initSchoolApp(slug){
+      if(!slug||!SCHOOL_CONFIGS[slug])return;
+      const config=getSchoolConfig(slug);
+      activeSchoolSlug=slug;
+      activeSchoolConfig=config;
+
+      resetSchoolUi();
+      calendarEventsByDate=new Map();
+      calendarEvents=[];
+      calendarDataLoaded=false;
+      yearDataCache.clear();
+
+      if(devMode)document.getElementById("devPanel")?.classList.add("show");
+      update();
+      fitContainer();
+      renderCalendar();
+      loadCalendarEvents();
+
+      if(updateIntervalId===null){
+        updateIntervalId=setInterval(()=>{
+          if(getCurrentSchoolSlug()===activeSchoolSlug)update();
+        },250);
+      }
     }
 
     addEventListener("popstate",routeSchool);
-
-    document.getElementById("mainContainer").addEventListener("transitionend",(event)=>{
-      if(event.target?.classList?.contains("panel") || event.target?.classList?.contains("inline-detail")){
-        fitContainer();
-      }
+    document.getElementById("mainContainer").addEventListener("transitionend",event=>{
+      if(event.target?.classList?.contains("panel")||event.target?.classList?.contains("inline-detail"))fitContainer();
     });
-
-    addEventListener("resize", fitContainer);
+    addEventListener("resize",fitContainer);
     routeSchool();
-
-    if(getCurrentSchoolSlug()){
-      if(devMode){
-        document.getElementById("devPanel")?.classList.add("show");
-      }
-      update(); fitContainer();
-      setInterval(()=>{update();},250);
-      renderCalendar();
-      loadCalendarEvents();
-    }
   </script>
 </body>
 </html>
