@@ -379,8 +379,9 @@
       title:"School",
 
       calendar:{
-        enabled:true,
-        icsUrl:"https://r.jina.ai/http://calendar.google.com/calendar/ical/patrickhenryhs.net_l9rvi05c4sq4qk48dklvmvjc40@group.calendar.google.com/public/basic.ics"
+        url:"",
+        show:true,
+        useForSchoolYear:true
       },
 
       keywords:{
@@ -416,8 +417,9 @@
         name:"Patrick Henry High School",
         title:"Patrick Henry High School",
         calendar:{
-          enabled:true,
-          icsUrl:"https://r.jina.ai/http://calendar.google.com/calendar/ical/patrickhenryhs.net_l9rvi05c4sq4qk48dklvmvjc40@group.calendar.google.com/public/basic.ics"
+          url:"https://r.jina.ai/http://calendar.google.com/calendar/ical/patrickhenryhs.net_l9rvi05c4sq4qk48dklvmvjc40@group.calendar.google.com/public/basic.ics",
+          show:true,
+          useForSchoolYear:true
         },
         keywords:{
           firstDay:[{all:["day","school"],any:["first","1st"]}],
@@ -644,17 +646,27 @@
 
     function loadCalendarEvents(){
       const cal=activeSchoolConfig?.calendar||{};
-      if(!cal.enabled || !cal.icsUrl){
+      const shouldLoad=Boolean(cal.url) && (cal.show===true || cal.useForSchoolYear===true);
+      const shouldUseForSchoolYear=cal.useForSchoolYear===true;
+
+      if(!shouldLoad){
         indexCalendarEvents([]);
         renderCalendar();
         update();
         return;
       }
+
       calendarDataLoaded=false;
-      fetch(cal.icsUrl)
+      fetch(cal.url)
         .then(res=>{if(!res.ok)throw new Error(`Calendar request failed: ${res.status}`);return res.text();})
         .then(text=>{
-          indexCalendarEvents(parseIcs(text));
+          const events=parseIcs(text);
+          indexCalendarEvents(shouldUseForSchoolYear?events:[]);
+          if(cal.show===true){
+            indexCalendarEvents(events);
+          }else{
+            calendarEventsByDate=new Map();
+          }
           renderCalendar();
           if(selectedDateStr)showCalendarInfo(selectedDateStr);
           update();
@@ -674,8 +686,12 @@
 
     function getScheduleCatalog(){return activeSchoolConfig?.schedule||{};}
 
+    function getCalendarLogicEvents(){
+      return activeSchoolConfig?.calendar?.useForSchoolYear===true ? calendarEvents : [];
+    }
+
     function getFirstDayEvents(){
-      return calendarEvents.filter(isFirstDayOfSchoolEvent).sort((a,b)=>a.start.getTime()-b.start.getTime());
+      return getCalendarLogicEvents().filter(isFirstDayOfSchoolEvent).sort((a,b)=>a.start.getTime()-b.start.getTime());
     }
 
     function getFirstDayForStartYear(startYear){
@@ -684,7 +700,7 @@
     }
 
     function getSchoolYearEndForStartYear(startYear){
-      const lastDays=calendarEvents.filter(isLastDayOfSchoolEvent).sort((a,b)=>a.start.getTime()-b.start.getTime());
+      const lastDays=getCalendarLogicEvents().filter(isLastDayOfSchoolEvent).sort((a,b)=>a.start.getTime()-b.start.getTime());
       const matchingLast=lastDays.find(evt=>evt.start.getFullYear()===startYear+1);
       if(matchingLast)return formatDate(matchingLast.start);
 
@@ -721,7 +737,7 @@
       d.finalsMap[`${y2}-05-28`]="finalsP56";
 
       const yearEndMs=classesEnd?new Date(classesEnd+"T23:59:59").getTime():Infinity;
-      const relevantEvents=calendarEvents.filter(evt=>{
+      const relevantEvents=getCalendarLogicEvents().filter(evt=>{
         const ms=evt.start.getTime();
         const holiday=isNoSchoolEvent(evt)||isThanksgivingBreakEvent(evt)||isWinterBreakEvent(evt);
         return ms>=firstDay.getTime()&&ms<=yearEndMs&&holiday;
@@ -936,12 +952,25 @@
     function changeMonth(delta){calendarViewDate=new Date(calendarViewDate.getFullYear(),calendarViewDate.getMonth()+delta,1);selectedDateStr=null;renderCalendar();}
     function goToCurrentMonth(){const n=getNow();calendarViewDate=new Date(n.getFullYear(),n.getMonth(),1);selectedDateStr=null;renderCalendar();}
     function toggleCalendar(){
-      calendarVisible=!calendarVisible;document.getElementById("calendarCard").classList.toggle("hidden",!calendarVisible);document.getElementById("topGrid").classList.toggle("calendar-visible",calendarVisible);document.getElementById("calendarToggleBtn").textContent=calendarVisible?"Hide Calendar":"Show Calendar";scheduleFit();
+      if(activeSchoolConfig?.calendar?.show!==true)return;
+      calendarVisible=!calendarVisible;
+      applyCalendarVisibility();
+      scheduleFit();
     }
 
     function fitContainer(){
       const c=document.getElementById("mainContainer");c.classList.remove("allow-scroll");const max=Math.floor(innerHeight*.94);c.style.maxHeight=`${max}px`;
       requestAnimationFrame(()=>{c.classList.toggle("allow-scroll",c.scrollHeight>c.clientHeight+1);});
+    }
+
+    function applyCalendarVisibility(){
+      const show=activeSchoolConfig?.calendar?.show===true;
+      const card=document.getElementById("calendarCard");
+      const button=document.getElementById("calendarToggleBtn");
+      if(card)card.classList.toggle("hidden",!show || !calendarVisible);
+      if(button)button.style.display=show?"":"none";
+      document.getElementById("topGrid")?.classList.toggle("calendar-visible",show && calendarVisible);
+      if(button)button.textContent=calendarVisible?"Hide Calendar":"Show Calendar";
     }
 
     function resetSchoolUi(){
@@ -958,6 +987,7 @@
       document.getElementById("calendarCard")?.classList.add("hidden");
       document.getElementById("topGrid")?.classList.remove("calendar-visible");
       const calBtn=document.getElementById("calendarToggleBtn");if(calBtn)calBtn.textContent="Show Calendar";
+      applyCalendarVisibility();
     }
 
     function initSchoolApp(slug){
@@ -967,6 +997,7 @@
       activeSchoolConfig=config;
 
       resetSchoolUi();
+      applyCalendarVisibility();
       calendarEventsByDate=new Map();
       calendarEvents=[];
       calendarDataLoaded=false;
@@ -990,6 +1021,18 @@
       if(event.target?.classList?.contains("panel")||event.target?.classList?.contains("inline-detail"))fitContainer();
     });
     addEventListener("resize",fitContainer);
+
+    // GitHub Pages sends unknown deep links to 404.html. That tiny fallback
+    // stores the requested URL here before returning to this single app file.
+    const githubPagesRedirect=sessionStorage.getItem("githubPagesRedirect");
+    if(githubPagesRedirect){
+      sessionStorage.removeItem("githubPagesRedirect");
+      try{
+        const target=new URL(githubPagesRedirect,location.origin);
+        history.replaceState(null,"",target.pathname+target.search+target.hash);
+      }catch{}
+    }
+
     routeSchool();
   </script>
 </body>
