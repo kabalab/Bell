@@ -44,6 +44,131 @@
       justify-content:center;
       margin-top:18px;
     }
+    #comboBuilder{
+      display:none;
+      margin-top:18px;
+      padding:14px;
+      border-radius:14px;
+      background:rgba(0,0,0,.25);
+    }
+    #comboBuilder.show{display:block;}
+    #comboSchools{
+      display:grid;
+      grid-template-columns:repeat(auto-fit,minmax(180px,1fr));
+      gap:8px;
+      margin-top:10px;
+    }
+    #comboSchools button{
+      width:100%;
+      margin:0;
+      border-radius:12px;
+    }
+    #comboOrder{
+      margin-top:14px;
+      display:flex;
+      flex-direction:column;
+      gap:6px;
+    }
+    .combo-order-item{
+      display:flex;
+      align-items:center;
+      gap:8px;
+      padding:9px 10px;
+      border-radius:10px;
+      background:rgba(255,255,255,.1);
+    }
+    .combo-order-item span{flex:1;}
+    .combo-order-item button{
+      min-height:36px;
+      padding:6px 10px;
+      margin:0;
+      border-radius:9px;
+    }
+    .combo-empty{
+      opacity:.7;
+      text-align:center;
+      padding:8px;
+    }
+    #schoolStack{
+      display:none;
+      width:min(980px,96vw);
+      max-height:94dvh;
+      min-height:280px;
+      background:linear-gradient(145deg, color-mix(in oklab, var(--bg1) 78%, #0a0f1e 22%), color-mix(in oklab, var(--bg2) 80%, #0a0f1e 20%) 55%, color-mix(in oklab, var(--bg3) 82%, #0a0f1e 18%));
+      box-shadow:0 20px 60px rgba(0,0,0,.6);
+      padding:24px;
+      border-radius:22px;
+      overflow:auto;
+    }
+    #schoolStack .stack-title{
+      display:none;
+    }
+    .school-stack-item{
+      margin:0;
+      padding:18px 0;
+      border-radius:0;
+      overflow:visible;
+      background:transparent;
+      box-shadow:none;
+    }
+    .school-stack-item + .school-stack-item{
+      border-top:1px solid rgba(255,255,255,.16);
+    }
+    .school-stack-frame{
+      display:block;
+      width:100%;
+      min-height:520px;
+      height:620px;
+      border:0;
+      background:transparent;
+    }
+    body.stack-mode{
+      overflow:auto;
+      align-items:flex-start;
+      padding:18px 0;
+    }
+
+    .embedded-school-title{display:none;}
+    body.embedded-mode{
+      height:auto;
+      min-height:0;
+      overflow:visible;
+      align-items:flex-start;
+      background:transparent;
+      animation:none;
+      padding:0;
+    }
+    body.embedded-mode .container{
+      width:100%;
+      max-height:none;
+      min-height:0;
+      padding:0;
+      border-radius:0;
+      box-shadow:none;
+      background:transparent;
+      overflow:visible;
+    }
+    body.embedded-mode .embedded-school-title{
+      display:block;
+      font-size:2.1em;
+      margin:0 0 8px;
+      line-height:1.2;
+    }
+    body.embedded-mode #currentPeriod{
+      font-size:2.1em;
+      margin:0 0 4px;
+    }
+    body.embedded-mode #endTime{
+      font-size:1.5em;
+      margin:0 0 4px;
+    }
+    body.embedded-mode #countdown{
+      font-size:.95em;
+      margin:0 0 4px;
+    }
+    body.embedded-mode #mainContainer{
+      display:block;
+    }
 
     .container{
       position:relative;
@@ -281,6 +406,16 @@
       body{
         padding-bottom:env(safe-area-inset-bottom);
       }
+
+      body.embedded-mode .embedded-school-title{
+        font-size:1.35rem;
+      }
+      body.embedded-mode #currentPeriod{
+        font-size:1.35rem;
+      }
+      body.embedded-mode #endTime{
+        font-size:1rem;
+      }
     }
 
     @media (max-width:380px){
@@ -315,12 +450,36 @@
       <h1>Choose Your School</h1>
       <h2>Select a school to view its schedule.</h2>
       <div class="actions" id="schoolButtons"></div>
+      <div class="actions">
+        <button type="button" onclick="toggleComboBuilder()">Build School Combination</button>
+      </div>
+
+      <div id="comboBuilder">
+        <div><strong>Choose schools in the order you want them loaded.</strong></div>
+        <div style="opacity:.8;margin-top:4px;font-size:.9em;">Each click adds that school to the bottom of the list.</div>
+        <div id="comboSchools"></div>
+        <div id="comboOrder"></div>
+        <div class="actions" style="justify-content:center;margin-top:12px;">
+          <button type="button" onclick="clearComboSelection()">Clear</button>
+          <button type="button" onclick="openComboSelection()">Open Combination</button>
+          <button type="button" onclick="toggleComboBuilder()">Cancel</button>
+        </div>
+      </div>
     </div>
+  </div>
+
+  <div class="container" id="schoolStack">
+    <div class="stack-title">
+      <h1 id="schoolStackTitle">School Schedules</h1>
+      <h2>Loaded in the same order as the URL.</h2>
+    </div>
+    <div id="schoolStackItems"></div>
   </div>
 
   <div class="container" id="mainContainer" style="display:none;">
     <div class="top-grid" id="topGrid">
       <div>
+        <h1 id="schoolNameHeader" class="embedded-school-title"></h1>
         <h1 id="currentPeriod">Loading...</h1>
         <h2 id="endTime"></h2>
         <div id="countdown"></div>
@@ -437,6 +596,20 @@
           finalsP34:{title:"Minimum Day Finals (P3 & P4)",blocks:[["Period 3 Final","08:45","10:45"],["Period 4 Final","11:11","13:11"]]},
           finalsP56:{title:"Minimum Day Finals (P5 & P6)",blocks:[["Period 5 Final","08:45","10:45"],["Period 6 Final","11:11","13:11"]]}
         }
+        // A school can optionally add its own logic section here.
+      },
+
+      test:{
+        name:"Test School",
+        title:"Test School",
+        calendar:{
+          url:"https://r.jina.ai/http://calendar.google.com/calendar/ical/patrickhenryhs.net_l9rvi05c4sq4qk48dklvmvjc40@group.calendar.google.com/public/basic.ics",
+          show:false,
+          useForSchoolYear:true
+        },
+        schedule:{
+          regularTF:{title:"Test Regular Schedule",blocks:[["Period 1","08:45","09:42"],["Period 2","09:48","10:45"],["Period 3","10:51","11:48"],["Period 4","11:54","12:51"],["Lunch","12:57","13:27"],["Period 5","13:33","14:30"],["Period 6","14:36","15:33"]]}
+        }
       }
     };
 
@@ -461,40 +634,132 @@
 
     let activeSchoolSlug=null;
     let activeSchoolConfig=null;
+    let comboSelection=[];
+
+    function getLastRoutePart(){
+      const parts=location.pathname.split("/").filter(Boolean);
+      return (parts[parts.length-1]||"").toLowerCase().replace(/\.html$/i,"");
+    }
+
+    function getCurrentSchoolStack(){
+      const raw=getLastRoutePart();
+      if(!raw||!raw.includes("-"))return [];
+      const slugs=raw.split("-").filter(Boolean);
+      if(slugs.length<2)return [];
+      return slugs.every(slug=>Object.prototype.hasOwnProperty.call(SCHOOL_ROUTES,slug))?slugs:[];
+    }
 
     function getCurrentSchoolSlug(){
-      const parts=location.pathname.split("/").filter(Boolean);
-      const last=(parts[parts.length-1]||"").toLowerCase().replace(/\.html$/i,"");
-      return Object.prototype.hasOwnProperty.call(SCHOOL_ROUTES,last)?last:null;
+      const stack=getCurrentSchoolStack();
+      if(stack.length)return null;
+      const slug=getLastRoutePart();
+      return Object.prototype.hasOwnProperty.call(SCHOOL_ROUTES,slug)?slug:null;
+    }
+
+    function isKnownRoutePart(value){
+      if(Object.prototype.hasOwnProperty.call(SCHOOL_ROUTES,value))return true;
+      const slugs=value.split("-").filter(Boolean);
+      return slugs.length>=2 && slugs.every(slug=>Object.prototype.hasOwnProperty.call(SCHOOL_ROUTES,slug));
     }
 
     function getAppBasePath(){
       const raw=location.pathname.replace(/\/+$/g,"");
       const parts=raw.split("/").filter(Boolean);
       const last=(parts[parts.length-1]||"").toLowerCase().replace(/\.html$/i,"");
-      if(last && Object.prototype.hasOwnProperty.call(SCHOOL_ROUTES,last)) parts.pop();
-      if(parts[parts.length-1]==="index") parts.pop();
+      if(last && isKnownRoutePart(last))parts.pop();
+      if(parts[parts.length-1]==="index")parts.pop();
       return "/"+parts.join("/");
     }
 
     function selectSchool(slug){
-      if(!Object.prototype.hasOwnProperty.call(SCHOOL_ROUTES,slug)) return;
+      if(!Object.prototype.hasOwnProperty.call(SCHOOL_ROUTES,slug))return;
       const target=`${getAppBasePath()}/${slug}`.replace(/\/{2,}/g,"/");
       history.pushState({school:slug},"",target);
       routeSchool();
     }
 
+    function selectSchoolStack(slugs){
+      if(!Array.isArray(slugs)||slugs.length<2||!slugs.every(slug=>Object.prototype.hasOwnProperty.call(SCHOOL_ROUTES,slug)))return;
+      const target=`${getAppBasePath()}/${slugs.join("-")}`.replace(/\/{2,}/g,"/");
+      history.pushState({schools:slugs},"",target);
+      routeSchool();
+    }
+
+    function toggleComboBuilder(){
+      const builder=document.getElementById("comboBuilder");
+      const isOpen=builder.classList.toggle("show");
+      if(isOpen){
+        renderComboBuilder();
+        builder.scrollIntoView({behavior:"smooth",block:"nearest"});
+      }
+    }
+
+    function renderComboBuilder(){
+      const schools=document.getElementById("comboSchools");
+      const order=document.getElementById("comboOrder");
+      schools.innerHTML=Object.entries(SCHOOL_ROUTES).map(([slug,school])=>
+        `<button type="button" onclick="addComboSchool('${slug}')">${escapeHtml(school.name)}</button>`
+      ).join("");
+
+      if(!comboSelection.length){
+        order.innerHTML='<div class="combo-empty">No schools selected yet.</div>';
+        return;
+      }
+
+      order.innerHTML=comboSelection.map((slug,index)=>`
+        <div class="combo-order-item">
+          <strong>${index+1}.</strong>
+          <span>${escapeHtml(SCHOOL_ROUTES[slug].name)}</span>
+          <button type="button" onclick="moveComboSchool(${index},-1)" aria-label="Move up" ${index===0?'disabled':''}>▲</button>
+          <button type="button" onclick="moveComboSchool(${index},1)" aria-label="Move down" ${index===comboSelection.length-1?'disabled':''}>▼</button>
+          <button type="button" onclick="removeComboSchool(${index})" aria-label="Remove">Remove</button>
+        </div>
+      `).join("");
+    }
+
+    function addComboSchool(slug){
+      if(!Object.prototype.hasOwnProperty.call(SCHOOL_ROUTES,slug))return;
+      comboSelection.push(slug);
+      renderComboBuilder();
+    }
+
+    function removeComboSchool(index){
+      comboSelection.splice(index,1);
+      renderComboBuilder();
+    }
+
+    function moveComboSchool(index,direction){
+      const target=index+direction;
+      if(index<0||target<0||target>=comboSelection.length)return;
+      [comboSelection[index],comboSelection[target]]=[comboSelection[target],comboSelection[index]];
+      renderComboBuilder();
+    }
+
+    function clearComboSelection(){
+      comboSelection=[];
+      renderComboBuilder();
+    }
+
+    function openComboSelection(){
+      if(comboSelection.length<2)return;
+      selectSchoolStack(comboSelection);
+    }
+
     function renderSchoolPicker(message=""){
+      document.body.classList.remove("stack-mode");
       const picker=document.getElementById("schoolPicker");
+      const stack=document.getElementById("schoolStack");
       const main=document.getElementById("mainContainer");
       const buttons=document.getElementById("schoolButtons");
       picker.style.display="flex";
+      stack.style.display="none";
       main.style.display="none";
       buttons.innerHTML=Object.entries(SCHOOL_ROUTES).map(([slug,school])=>
-        `<button type="button" onclick="selectSchool('${slug}')">${school.name}</button>`
+        `<button type="button" onclick="selectSchool('${slug}')">${escapeHtml(school.name)}</button>`
       ).join("");
+      document.getElementById("comboBuilder").classList.remove("show");
       const existing=buttons.parentElement.querySelector(".school-picker-message");
-      if(existing) existing.remove();
+      if(existing)existing.remove();
       if(message){
         const note=document.createElement("div");
         note.className="schedule-item school-picker-message";
@@ -503,10 +768,49 @@
       }
     }
 
+    function renderSchoolStack(slugs){
+      const picker=document.getElementById("schoolPicker");
+      const stack=document.getElementById("schoolStack");
+      const main=document.getElementById("mainContainer");
+      const items=document.getElementById("schoolStackItems");
+      const title=document.getElementById("schoolStackTitle");
+      document.body.classList.add("stack-mode");
+      picker.style.display="none";
+      main.style.display="none";
+      stack.style.display="block";
+      title.textContent="Combined School Schedule";
+      items.innerHTML=slugs.map((slug,index)=>`
+        <section class="school-stack-item">
+          <iframe class="school-stack-frame" src="${getAppBasePath()}/${slug}?embed=1" title="${escapeHtml(SCHOOL_ROUTES[slug].name)} Schedule"></iframe>
+        </section>
+      `).join("");
+      items.querySelectorAll(".school-stack-frame").forEach(frame=>{
+        const resize=()=>{
+          try{
+            const doc=frame.contentDocument;
+            const height=Math.max(doc.documentElement.scrollHeight,doc.body?.scrollHeight||0);
+            frame.style.height=`${Math.max(520,height+12)}px`;
+          }catch{}
+        };
+        frame.addEventListener("load",()=>{
+          resize();
+          setTimeout(resize,150);
+          setTimeout(resize,500);
+        });
+      });
+    }
+
     function routeSchool(){
+      const stackSlugs=getCurrentSchoolStack();
+      if(stackSlugs.length){
+        renderSchoolStack(stackSlugs);
+        return;
+      }
       const slug=getCurrentSchoolSlug();
       const picker=document.getElementById("schoolPicker");
+      const stack=document.getElementById("schoolStack");
       const main=document.getElementById("mainContainer");
+      document.body.classList.remove("stack-mode");
       if(!slug){
         const parts=location.pathname.split("/").filter(Boolean);
         const hasSchoolPath=parts.length>1;
@@ -514,6 +818,7 @@
         return;
       }
       picker.style.display="none";
+      stack.style.display="none";
       main.style.display="block";
       activeSchoolConfig=getSchoolConfig(slug);
       document.title=`${activeSchoolConfig.title||SCHOOL_ROUTES[slug].title} Schedule`;
@@ -521,6 +826,8 @@
     }
 
     const devMode=new URLSearchParams(location.search).get("dev")==="1";
+    const embeddedMode=new URLSearchParams(location.search).get("embed")==="1";
+    if(embeddedMode)document.body.classList.add("embedded-mode");
     let devTimeOffsetMs=0;
     let devTimeActive=false;
 
@@ -995,6 +1302,9 @@
       const config=getSchoolConfig(slug);
       activeSchoolSlug=slug;
       activeSchoolConfig=config;
+
+      const schoolNameHeader=document.getElementById("schoolNameHeader");
+      if(schoolNameHeader)schoolNameHeader.textContent=config.name||SCHOOL_ROUTES[slug]?.name||slug;
 
       resetSchoolUi();
       applyCalendarVisibility();
