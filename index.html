@@ -538,18 +538,18 @@
       title:"School",
 
       calendar:{
-        url:"",
-        show:true,
+        url:"https://r.jina.ai/http://calendar.google.com/calendar/ical/patrickhenryhs.net_l9rvi05c4sq4qk48dklvmvjc40@group.calendar.google.com/public/basic.ics",
+        show:false,
         useForSchoolYear:true
       },
 
       keywords:{
-        firstDay:[{all:["day","school"],any:["first","1st"]}],
-        lastDay:[{all:["last","day","school"]}],
-        noSchool:["no school"],
-        thanksgivingBreak:["thanksgiving break"],
-        winterBreak:["winter break"]
-      },
+          firstDay:[{all:["day","school"],any:["first","1st"]}],
+          lastDay:[{all:["last","day","school"]}],
+          noSchool:["no school"],
+          thanksgivingBreak:["thanksgiving break"],
+          winterBreak:["winter break"]
+        },
 
       defaults:{
         schoolYearEndFromNextFirstDay:true,
@@ -559,11 +559,7 @@
       schedule:{
         regularTF:{title:"Daily Schedule (Tue–Fri)",blocks:[["Period 1","08:45","09:42"],["Period 2","09:48","10:45"],["Period 3","10:51","11:48"],["Period 4","11:54","12:51"],["Lunch","12:57","13:27"],["Period 5","13:33","14:30"],["Period 6","14:36","15:33"]]},
         mondayBroadcast:{title:"Monday Late Start (with Broadcast News)",blocks:[["Period 1","09:20","10:10"],["Period 2","10:16","11:06"],["Period 3","11:12","12:02"],["Period 4","12:08","12:58"],["Lunch","13:04","13:34"],["Period 5","13:40","14:39"],["Period 6","14:45","15:35"]]},
-        mondayNoBroadcast:{title:"Monday Late Start (w/o Broadcast: first 3 Mondays)",blocks:[["Period 1","09:20","10:11"],["Period 2","10:17","11:08"],["Period 3","11:14","12:05"],["Period 4","12:11","13:02"],["Lunch","13:08","13:41"],["Period 5","13:47","14:38"],["Period 6","14:44","15:35"]]},
-        pepRally:{title:"Pep Rally Schedule",blocks:[["Period 1","08:45","09:32"],["Period 2","09:38","10:25"],["Period 3","10:31","11:18"],["Rally","11:25","12:17"],["Period 4","12:24","13:11"],["Lunch","13:17","13:47"],["Period 5","13:53","14:40"],["Period 6","14:46","15:33"]]},
-        finalsP12:{title:"Minimum Day Finals (P1 & P2)",blocks:[["Period 1 Final","08:45","10:45"],["Period 2 Final","11:11","13:11"]]},
-        finalsP34:{title:"Minimum Day Finals (P3 & P4)",blocks:[["Period 3 Final","08:45","10:45"],["Period 4 Final","11:11","13:11"]]},
-        finalsP56:{title:"Minimum Day Finals (P5 & P6)",blocks:[["Period 5 Final","08:45","10:45"],["Period 6 Final","11:11","13:11"]]}
+        pepRally:{title:"Pep Rally Schedule",blocks:[["Period 1","08:45","09:32"],["Period 2","09:38","10:25"],["Period 3","10:31","11:18"],["Rally","11:25","12:17"],["Period 4","12:24","13:11"],["Lunch","13:17","13:47"],["Period 5","13:53","14:40"],["Period 6","14:46","15:33"]]}
       },
 
       logic:{
@@ -574,43 +570,33 @@
     const SCHOOL_CONFIGS={
       phhs:{
         name:"Patrick Henry High School",
-        title:"Patrick Henry High School",
-        calendar:{
-          url:"https://r.jina.ai/http://calendar.google.com/calendar/ical/patrickhenryhs.net_l9rvi05c4sq4qk48dklvmvjc40@group.calendar.google.com/public/basic.ics",
-          show:true,
-          useForSchoolYear:true
-        },
-        keywords:{
-          firstDay:[{all:["day","school"],any:["first","1st"]}],
-          lastDay:[{all:["last","day","school"]}],
-          noSchool:["no school"],
-          thanksgivingBreak:["thanksgiving break"],
-          winterBreak:["winter break"]
-        },
+        title:"Patrick Henry ",
+        calendar:{show:true},
         schedule:{
-          regularTF:{title:"Daily Schedule (Tue–Fri)",blocks:[["Period 1","08:45","09:42"],["Period 2","09:48","10:45"],["Period 3","10:51","11:48"],["Period 4","11:54","12:51"],["Lunch","12:57","13:27"],["Period 5","13:33","14:30"],["Period 6","14:36","15:33"]]},
           mondayBroadcast:{title:"Monday Late Start (with PHHS Broadcast News)",blocks:[["Period 1","09:20","10:10"],["Period 2","10:16","11:06"],["Period 3","11:12","12:02"],["Period 4","12:08","12:58"],["Lunch","13:04","13:34"],["Period 5","13:40","14:39"],["Period 6","14:45","15:35"]]},
           mondayNoBroadcast:{title:"Monday Late Start (w/o Broadcast: first 3 Mondays)",blocks:[["Period 1","09:20","10:11"],["Period 2","10:17","11:08"],["Period 3","11:14","12:05"],["Period 4","12:11","13:02"],["Lunch","13:08","13:41"],["Period 5","13:47","14:38"],["Period 6","14:44","15:35"]]},
-          pepRally:{title:"Pep Rally Schedule",blocks:[["Period 1","08:45","09:32"],["Period 2","09:38","10:25"],["Period 3","10:31","11:18"],["Rally","11:25","12:17"],["Period 4","12:24","13:11"],["Lunch","13:17","13:47"],["Period 5","13:53","14:40"],["Period 6","14:46","15:33"]]},
+          pepRally:{title:"Pep Rally Schedule"},
           finalsP12:{title:"Minimum Day Finals (P1 & P2)",blocks:[["Period 1 Final","08:45","10:45"],["Period 2 Final","11:11","13:11"]]},
           finalsP34:{title:"Minimum Day Finals (P3 & P4)",blocks:[["Period 3 Final","08:45","10:45"],["Period 4 Final","11:11","13:11"]]},
           finalsP56:{title:"Minimum Day Finals (P5 & P6)",blocks:[["Period 5 Final","08:45","10:45"],["Period 6 Final","11:11","13:11"]]}
-        }
-        // A school can optionally add its own logic section here.
-      },
-
-      test:{
-        name:"Test School",
-        title:"Test School",
-        calendar:{
-          url:"https://r.jina.ai/http://calendar.google.com/calendar/ical/patrickhenryhs.net_l9rvi05c4sq4qk48dklvmvjc40@group.calendar.google.com/public/basic.ics",
-          show:false,
-          useForSchoolYear:true
         },
-        schedule:{
-          regularTF:{title:"Test Regular Schedule",blocks:[["Period 1","08:45","09:42"],["Period 2","09:48","10:45"],["Period 3","10:51","11:48"],["Period 4","11:54","12:51"],["Lunch","12:57","13:27"],["Period 5","13:33","14:30"],["Period 6","14:36","15:33"]]}
-        }
-      }
+      },
+      
+      plhs:{
+          name:"Point Loma high school",
+          title:"Point Loma high",
+          schedule:{
+              regularTF:{
+                title:"Classic Schedule",blocks:[["Period 1","08:45","09:42"],["Period 2","09:47","10:44"],["Period 3","10:49","11:49"],["Lunch","11:54","12:24"],["Period 4","12:29","13:26"],["Period 5","13:31","14:28"],["Period 6","14:33","15:30"]]},
+              mondayBroadcast:{
+                title:"Modified Mondays",blocks:[["Period 1","08:45","09:34"],["Period 2","09:39","10:28"],["Period 3","10:33","11:23"],["Lunch","11:28","12:58"],["Period 4","12:03","12:52"],["Period 5","12:57","13:46"],["Period 6","13:51","14:40"]]},
+              pepRally:{
+                title:"Activity Calendar (pep rallies)",blocks:[["Period 1","08:45","09:37"],["Period 2","09:42","10:34"],["Period 3","10:39","11:34"],["Activity","11:39","12:04"],["Lunch","12:09","12:34"],["Period 4","12:44","13:36"],["Period 5","13:41","14:33"],["Period 6","14:38","15:30"]]}, 
+              finalsP123:{
+                title:"Finals P1,P2,P3 Schedule",blocks:[["Period 1","08:45","10:30"],["Period 2","10:35","12:20",],["Lunch","12:25","12:55"],["Period 3","13:00","14:45"]]},
+              finalsP456:{
+                title:"Finals P4,P5,P6 Schedule",blocks:[["Period 4","08:45","10:30"],["Period 5","10:35","12:20",],["Lunch","12:25","12:55"],["Period 6","13:00","14:45"]]},},
+      },
     };
 
     function mergeConfig(base,override){
