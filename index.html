@@ -557,7 +557,6 @@
 
       schedule:{
         regularTF:{title:"Daily Schedule (Tue–Fri)",blocks:[["Period 1","08:45","09:42"],["Period 2","09:48","10:45"],["Period 3","10:51","11:48"],["Period 4","11:54","12:51"],["Lunch","12:57","13:27"],["Period 5","13:33","14:30"],["Period 6","14:36","15:33"]]},
-        mondayBroadcast:{title:"Monday Late Start (with Broadcast News)",blocks:[["Period 1","09:20","10:10"],["Period 2","10:16","11:06"],["Period 3","11:12","12:02"],["Period 4","12:08","12:58"],["Lunch","13:04","13:34"],["Period 5","13:40","14:39"],["Period 6","14:45","15:35"]]},
         pepRally:{title:"Pep Rally Schedule",blocks:[["Period 1","08:45","09:32"],["Period 2","09:38","10:25"],["Period 3","10:31","11:18"],["Rally","11:25","12:17"],["Period 4","12:24","13:11"],["Lunch","13:17","13:47"],["Period 5","13:53","14:40"],["Period 6","14:46","15:33"]]}
       },
 
@@ -603,7 +602,7 @@
         schedule:{
           regularTF:{
             title:"Regular Schedule",blocks:[["Period 0","07:20","08:23"],["Period 1","08:30","09:26"],["Period 2","09:33","10:38"],["Period 3","10:45","11:41"],["1st Lunch","11:41","12:11"],["Period 4","11:48","12:44"],["Period 4","12:44","13:14"],["2nd Lunch","12:44","13:14"],["Period 5","13:21","14:17"],["Period 6","14:24","15:20"]],},
-          mondayBroadcast:{
+          fridaySchedual:{
             title:"Friday Confrence Schedule",blocks:[["Period 1","09:30","09:17"],["Period 2","10:24","11:11"],["Period 3","11:18","12:05"],["1st Lunch","12:05","12:35"],["Period 4","12:42","13:30"],["Period 4","12:12","13:00"],["2nd Lunch","13:00","13:30"],["Period 5","13:37","14:25"],["Period 6","14:32","15:20"]],}, 
           minimumDay:{
             title:"Minimum Day Schedule",blocks:[["Period 0","07:20","08:23"],["Period 1","08:30","09:05"],["Period 2","09:12","09:47"],["Period 3","10:36","11:11"],["Period 5","11:18","11:53"],["Period 6","12:00","12:35"],["Nutrition","12:35","12:50"]],},
@@ -1095,6 +1094,10 @@
       if(y.pepRallyDays.has(ds)&&catalog.pepRally)return {type:"schedule",key:"pepRally",yearLabel:y.label};
       if(day===1&&catalog.mondayBroadcast&&catalog.mondayNoBroadcast){
         return y.mondayNoBroadcast.has(ds)?{type:"schedule",key:"mondayNoBroadcast",yearLabel:y.label}:{type:"schedule",key:"mondayBroadcast",yearLabel:y.label};
+        
+      }
+      if(day===5&&catalog.fridaySchedual){
+          return {type:"schedule",key:"fridaySchedual",yearLabel:y.label};
       }
       if(catalog.regularTF)return {type:"schedule",key:"regularTF",yearLabel:y.label};
       const firstKey=Object.keys(catalog)[0];
@@ -1205,7 +1208,7 @@
       const rawT=(inputTime.value||"").trim();if(!/^\d{6}$/.test(rawT))return;
       const rawD=(inputDay.value||"").trim();if(!/^\d{6}$/.test(rawD))return;
       const h=Number(rawT.slice(0,2)),m=Number(rawT.slice(2,4)),s=Number(rawT.slice(4,6)),d=Number(rawD.slice(0,2)),mm=Number(rawD.slice(2,4)),y=Number(rawD.slice(4,6));if(h>23||m>59||s>59||d>31||mm>11||y>99)return;
-      const now=new Date(),target=new Date(2000+y,mm-1,d-1,h,m,s);
+      const now=new Date(),target=new Date(2000+y,mm-1,d,h,m,s);
       devTimeOffsetMs=target.getTime()-Date.now();devTimeActive=true;update();
     }
 
