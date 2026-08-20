@@ -198,7 +198,7 @@
 
     .actions{display:flex;flex-wrap:wrap;gap:2px}
     button{
-      margin:2px 0 0;
+      margin: 0.1rem;
       padding:9px 14px;
       border:none;
       border-radius:30px;
@@ -320,7 +320,7 @@
       .actions{
         display:grid;
         grid-template-columns:1fr;
-        gap:8px;
+        gap:2px;
         margin-top:8px;
       }
 
@@ -462,7 +462,6 @@
         <div class="actions" style="justify-content:center;margin-top:12px;">
           <button type="button" onclick="clearComboSelection()">Clear</button>
           <button type="button" onclick="openComboSelection()">Open Combination</button>
-          <button type="button" onclick="toggleComboBuilder()">Cancel</button>
         </div>
       </div>
     </div>
@@ -493,8 +492,8 @@
         <div class="panel" id="devPanel">
           <div class="schedule-item"><strong>Dev Time Override</strong></div>
           <div class="schedule-item">
-            <!-- <label for="devTimeInput">HHMMSS:</label> -->
             <input id="devTimeInput" type="text" placeholder="HHMMSS" maxlength="6" style="margin-left:8px; width:110px; padding:6px; border-radius:8px; border:1px solid rgba(255,255,255,.2); background:rgba(255,255,255,.1); color:#fff;">
+            <input id="devDateInput" type="text" placeholder="DDMMYR" maxlength="6" style="margin-left:8px; width:110px; padding:6px; border-radius:8px; border:1px solid rgba(255,255,255,.2); background:rgba(255,255,255,.1); color:#fff;">
           </div>
           <div class="actions">
             <button onclick="setDevTime()">Set Time</button>
@@ -583,8 +582,8 @@
       },
       
       plhs:{
-        name:"Point Loma high school",
-        title:"Point Loma high ",
+        name:"Point Loma High School",
+        title:"Point Loma ",
         schedule:{
           regularTF:{
             title:"Classic Schedule",blocks:[["Period 1","08:45","09:42"],["Period 2","09:47","10:44"],["Period 3","10:49","11:49"],["Lunch","11:54","12:24"],["Period 4","12:29","13:26"],["Period 5","13:31","14:28"],["Period 6","14:33","15:30"]]},
@@ -1201,10 +1200,12 @@
     function scheduleFit(){fitContainer();setTimeout(fitContainer,300);setTimeout(fitContainer,700);}
 
     function setDevTime(){
-      const input=document.getElementById("devTimeInput");if(!input)return;
-      const raw=(input.value||"").trim();if(!/^\d{6}$/.test(raw))return;
-      const h=Number(raw.slice(0,2)),m=Number(raw.slice(2,4)),s=Number(raw.slice(4,6));if(h>23||m>59||s>59)return;
-      const now=new Date(),target=new Date(now.getFullYear(),now.getMonth(),now.getDate(),h,m,s);
+      const inputTime=document.getElementById("devTimeInput");if(!inputTime)return;
+      const inputDay=document.getElementById("devDateInput");if(!inputDay)return;
+      const rawT=(inputTime.value||"").trim();if(!/^\d{6}$/.test(rawT))return;
+      const rawD=(inputDay.value||"").trim();if(!/^\d{6}$/.test(rawD))return;
+      const h=Number(rawT.slice(0,2)),m=Number(rawT.slice(2,4)),s=Number(rawT.slice(4,6)),d=Number(rawD.slice(0,2)),mm=Number(rawD.slice(2,4)),y=Number(rawD.slice(4,6));if(h>23||m>59||s>59||d>31||mm>11||y>99)return;
+      const now=new Date(),target=new Date(2000+y,mm-1,d-1,h,m,s);
       devTimeOffsetMs=target.getTime()-Date.now();devTimeActive=true;update();
     }
 
