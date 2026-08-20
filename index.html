@@ -604,9 +604,18 @@
         schedule:{
           regularTF:{
             title:"Regular Schedule",blocks:[["Period 0","07:20","08:23"],["Period 1","08:30","09:26"],["Period 2","09:33","10:38"],["Period 3","10:45","11:41"],["1st Lunch","11:41","12:11"],["Period 4","11:48","12:44"],["Period 4","12:44","13:14"],["2nd Lunch","12:44","13:14"],["Period 5","13:21","14:17"],["Period 6","14:24","15:20"]],},
+          mondayBroadcast:{
+            title:"Friday Confrence Schedule",blocks:[["Period 1","09:30","09:17"],["Period 2","10:24","11:11"],["Period 3","11:18","12:05"],["1st Lunch","12:05","12:35"],["Period 4","12:42","13:30"],["Period 4","12:12","13:00"],["2nd Lunch","13:00","13:30"],["Period 5","13:37","14:25"],["Period 6","14:32","15:20"]],}, 
+          minimumDay:{
+            title:"Minimum Day Schedule",blocks:[["Period 0","07:20","08:23"],["Period 1","08:30","09:05"],["Period 2","09:12","09:47"],["Period 3","10:36","11:11"],["Period 5","11:18","11:53"],["Period 6","12:00","12:35"],["Nutrition","12:35","12:50"]],},
+          finalsP12:{
+              title:"Final P1,P2",blocks:[["Period 1","08:30","10:30"],["Break","10:30","10:43"],["Period 2","10:50","12:50"]]},
+          finalsP34:{
+              title:"Final P3,P4",blocks:[["Period 3","08:30","10:30"],["Break","10:30","10:43"],["Period 4","10:50","12:50"]]},
+          finalsP56:{
+              title:"Final P5,P6",blocks:[["Period 5","08:30","10:30"],["Break","10:30","10:43"],["Period 6","10:50","12:50"]]},    
+          }
         },
-      },
-
     };
 
     function mergeConfig(base,override){
