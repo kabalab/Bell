@@ -4,7 +4,8 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <meta name="theme-color" content="#0d214a" />
-  <title>PHHS Schedule</title>
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🔔</text></svg>">
+  <title>Schedule Lobby</title>
   <style>
     :root{
       --bg1:#071327;
@@ -94,33 +95,17 @@
       width:min(980px,96vw);
       max-height:94dvh;
       min-height:280px;
-      background:linear-gradient(145deg, color-mix(in oklab, var(--bg1) 78%, #0a0f1e 22%), color-mix(in oklab, var(--bg2) 80%, #0a0f1e 20%) 55%, color-mix(in oklab, var(--bg3) 82%, #0a0f1e 18%));
+      background:rgba(7,19,39,.72);
       box-shadow:0 20px 60px rgba(0,0,0,.6);
-      padding:24px;
+      padding:18px;
       border-radius:22px;
       overflow:auto;
     }
     #schoolStack .stack-title{
       display:none;
     }
-    .school-stack-item{
-      margin:0;
-      padding:18px 0;
-      border-radius:0;
-      overflow:visible;
-      background:transparent;
-      box-shadow:none;
-    }
     .school-stack-item + .school-stack-item{
-      border-top:1px solid rgba(255,255,255,.16);
-    }
-    .school-stack-frame{
-      display:block;
-      width:100%;
-      min-height:520px;
-      height:620px;
-      border:0;
-      background:transparent;
+      border-top:none;
     }
     body.stack-mode{
       overflow:auto;
@@ -186,6 +171,75 @@
     }
 
     .container.allow-scroll{overflow:auto;}
+    .container.calendar-pending,
+    .school-stack-item.calendar-pending{
+      background:linear-gradient(145deg, color-mix(in oklab, #4a1010 55%, #1a0505 45%), color-mix(in oklab, #6b1c1c 60%, #2a0a0a 40%) 55%, color-mix(in oklab, #8a2828 55%, #3a1010 45%));
+    }
+    .container.calendar-ready,
+    .school-stack-item.calendar-ready{
+      background:linear-gradient(145deg, color-mix(in oklab, var(--bg1) 78%, #0a0f1e 22%), color-mix(in oklab, var(--bg2) 80%, #0a0f1e 20%) 55%, color-mix(in oklab, var(--bg3) 82%, #0a0f1e 18%));
+    }
+    #comboSchools button:disabled{
+      opacity:.45;
+      cursor:not-allowed;
+      filter:none;
+      transform:none;
+    }
+    .school-stack-item{
+      padding:18px 14px;
+      border-radius:14px;
+      margin:0 0 10px;
+      transition:background .35s linear;
+    }
+    .school-stack-item:last-child{margin-bottom:0;}
+    .school-stack-item .stack-school-name{
+      display:block;
+      font-size:1.55em;
+      margin:0 0 8px;
+      line-height:1.2;
+    }
+    .school-stack-item .currentPeriod{
+      font-size:2.1em;
+      margin:0 0 4px;
+      transition:transform .2s ease,text-shadow .25s ease,opacity .2s ease;
+    }
+    .school-stack-item .endTime{
+      font-size:1.5em;
+      margin:0 0 4px;
+      font-weight:400;
+      opacity:.9;
+    }
+    .school-stack-item .countdown{
+      font-size:.95em;
+      opacity:.9;
+      margin:0 0 8px;
+    }
+    .overlap-status{
+      display:flex;
+      flex-direction:column;
+      gap:12px;
+      text-align:left;
+    }
+    .overlap-block .overlap-name{
+      display:block;
+      font-size:1em;
+      font-weight:700;
+      line-height:1.15;
+    }
+    .overlap-block .overlap-end{
+      display:block;
+      font-size:.72em;
+      font-weight:400;
+      opacity:.9;
+      margin-top:2px;
+    }
+    .overlap-block .overlap-cd{
+      display:block;
+      font-size:.48em;
+      font-weight:400;
+      opacity:.9;
+      margin-top:2px;
+    }
 
     h1{margin:0;font-size:2.1em}
     h2{margin:8px 0 4px;font-weight:400;opacity:.9}
@@ -442,17 +496,126 @@
     @media (prefers-reduced-motion: reduce){
       body{animation:none !important}
     }
+
+    #feedbackBtn{
+      position:fixed;
+      top:14px;
+      right:14px;
+      z-index:1000;
+      margin:0;
+      padding:8px 12px;
+      min-height:40px;
+      font-size:.82em;
+      border-radius:12px;
+      background:rgba(255,255,255,.14);
+      backdrop-filter:blur(8px);
+      box-shadow:0 8px 24px rgba(0,0,0,.28);
+    }
+    #feedbackBtn:hover{background:rgba(255,255,255,.22)}
+    body.embedded-mode #feedbackBtn,
+    body.embedded-mode #feedbackModal{display:none !important}
+
+    #feedbackModal{
+      display:none;
+      position:fixed;
+      inset:0;
+      z-index:1100;
+      align-items:center;
+      justify-content:center;
+      padding:16px;
+      background:rgba(3,10,24,.62);
+    }
+    #feedbackModal.open{display:flex}
+    .feedback-dialog{
+      width:min(420px,100%);
+      padding:18px 16px 14px;
+      border-radius:16px;
+      background:rgba(7,19,39,.94);
+      border:1px solid rgba(255,255,255,.14);
+      box-shadow:0 20px 50px rgba(0,0,0,.55);
+    }
+    .feedback-dialog h3{
+      margin:0;
+      font-size:1.15rem;
+      font-weight:600;
+    }
+    .feedback-dialog .feedback-sub{
+      margin:6px 0 0;
+      font-size:.82rem;
+      opacity:.78;
+      line-height:1.35;
+    }
+    .feedback-dialog .feedback-hint{
+      margin:14px 0 8px;
+      font-size:.88rem;
+      line-height:1.4;
+      opacity:.92;
+    }
+    #feedbackMessage{
+      width:100%;
+      min-height:120px;
+      resize:vertical;
+      padding:10px 12px;
+      border-radius:12px;
+      border:1px solid rgba(255,255,255,.22);
+      background:rgba(255,255,255,.08);
+      color:#fff;
+      font:inherit;
+      font-size:.92rem;
+      line-height:1.4;
+    }
+    #feedbackMessage:focus{
+      outline:2px solid rgba(143,179,255,.55);
+      outline-offset:1px;
+    }
+    #feedbackMessage::placeholder{color:rgba(230,238,255,.45)}
+    .feedback-actions{
+      display:flex;
+      justify-content:flex-end;
+      gap:8px;
+      margin-top:12px;
+    }
+    .feedback-actions button[type="button"]{
+      background:rgba(255,255,255,.16);
+    }
+    .feedback-actions button:disabled{
+      opacity:.55;
+      cursor:default;
+      transform:none;
+      filter:none;
+    }
+    #feedbackStatus{
+      min-height:1.2em;
+      margin-top:8px;
+      font-size:.82rem;
+      opacity:.85;
+    }
+    #feedbackStatus.error{color:var(--warn)}
+    #feedbackStatus.ok{color:var(--ok)}
   </style>
 </head>
 <body>
+  <button type="button" id="feedbackBtn" aria-haspopup="dialog" aria-controls="feedbackModal">Bugs/Suggestions</button>
+  <div id="feedbackModal" role="dialog" aria-modal="true" aria-labelledby="feedbackTitle" hidden>
+    <div class="feedback-dialog">
+      <h3 id="feedbackTitle">Bugs/Suggestions</h3>
+      <p class="feedback-sub">Report bugs, concerns, suggestions</p>
+      <p class="feedback-hint">If you would like me to be able to tell you when it’s done or be able to ask questions, please add a way to contact you.</p>
+      <label for="feedbackMessage" class="visually-hidden" style="position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0,0,0,0);">Message</label>
+      <textarea id="feedbackMessage" name="message" maxlength="4000" placeholder="Your message…" required></textarea>
+      <div class="feedback-actions">
+        <button type="button" id="feedbackCancel">Cancel</button>
+        <button type="button" id="feedbackSubmit">Submit</button>
+      </div>
+      <div id="feedbackStatus" aria-live="polite"></div>
+    </div>
+  </div>
+
   <div class="container" id="schoolPicker">
     <div>
       <h1>Choose Your School</h1>
       <h2>Select a school to view its schedule.</h2>
       <div class="actions" id="schoolButtons"></div>
-      <div class="actions">
-        <button type="button" onclick="toggleComboBuilder()">Build School Combination</button>
-      </div>
 
       <div id="comboBuilder">
         <div><strong>Choose schools in the order you want them loaded.</strong></div>
@@ -471,6 +634,17 @@
     <div class="stack-title">
       <h1 id="schoolStackTitle">School Schedules</h1>
       <h2>Loaded in the same order as the URL.</h2>
+    </div>
+    <div class="panel" id="stackDevPanel">
+      <div class="schedule-item"><strong>Dev Time Override</strong></div>
+      <div class="schedule-item">
+        <input id="stackDevTimeInput" type="text" placeholder="HHMMSS" maxlength="6" style="margin-left:8px; width:110px; padding:6px; border-radius:8px; border:1px solid rgba(255,255,255,.2); background:rgba(255,255,255,.1); color:#fff;">
+        <input id="stackDevDateInput" type="text" placeholder="DDMMYR" maxlength="6" style="margin-left:8px; width:110px; padding:6px; border-radius:8px; border:1px solid rgba(255,255,255,.2); background:rgba(255,255,255,.1); color:#fff;">
+      </div>
+      <div class="actions">
+        <button onclick="setDevTime()">Set Time</button>
+        <button onclick="resetDevTime()">Reset Time</button>
+      </div>
     </div>
     <div id="schoolStackItems"></div>
   </div>
@@ -590,9 +764,9 @@
             title:"Modified Mondays",blocks:[["Period 1","08:45","09:34"],["Period 2","09:39","10:28"],["Period 3","10:33","11:23"],["Lunch","11:28","12:58"],["Period 4","12:03","12:52"],["Period 5","12:57","13:46"],["Period 6","13:51","14:40"]]},
           pepRally:{
             title:"Activity Calendar (pep rallies)",blocks:[["Period 1","08:45","09:37"],["Period 2","09:42","10:34"],["Period 3","10:39","11:34"],["Activity","11:39","12:04"],["Lunch","12:09","12:34"],["Period 4","12:44","13:36"],["Period 5","13:41","14:33"],["Period 6","14:38","15:30"]]}, 
-          finalsP123:{
+          finalsP34:{
             title:"Finals P1,P2,P3 Schedule",blocks:[["Period 1","08:45","10:30"],["Period 2","10:35","12:20",],["Lunch","12:25","12:55"],["Period 3","13:00","14:45"]]},
-          finalsP456:{
+          finalsP56:{
             title:"Finals P4,P5,P6 Schedule",blocks:[["Period 4","08:45","10:30"],["Period 5","10:35","12:20",],["Lunch","12:25","12:55"],["Period 6","13:00","14:45"]]},},
       },
 
@@ -601,9 +775,9 @@
         title:"Rancho Cucamonga ",
         schedule:{
           regularTF:{
-            title:"Regular Schedule",blocks:[["Period 0","07:20","08:23"],["Period 1","08:30","09:26"],["Period 2","09:33","10:38"],["Period 3","10:45","11:41"],["1st Lunch","11:41","12:11"],["Period 4","11:48","12:44"],["Period 4","12:44","13:14"],["2nd Lunch","12:44","13:14"],["Period 5","13:21","14:17"],["Period 6","14:24","15:20"]],},
-          fridaySchedual:{
-            title:"Friday Confrence Schedule",blocks:[["Period 1","09:30","09:17"],["Period 2","10:24","11:11"],["Period 3","11:18","12:05"],["1st Lunch","12:05","12:35"],["Period 4","12:42","13:30"],["Period 4","12:12","13:00"],["2nd Lunch","13:00","13:30"],["Period 5","13:37","14:25"],["Period 6","14:32","15:20"]],}, 
+            title:"Regular Schedule",blocks:[["Period 0","07:20","08:23"],["Period 1","08:30","09:26"],["Period 2","09:33","10:38"],["Period 3","10:45","11:41"],["1st Lunch","11:41","12:11"],["Period 4 (2nd Lunch)","11:48","12:44"],["Period 4 (1st Lunch)","12:18","13:14"],["2nd Lunch","12:44","13:14"],["Period 5","13:21","14:17"],["Period 6","14:24","15:20"]],},
+          fridaySchedule:{
+            title:"Friday Conference Schedule",blocks:[["Period 1","09:30","10:17"],["Period 2","10:24","11:11"],["Period 3","11:18","12:05"],["1st Lunch","12:05","12:35"],["Period 4 (2nd Lunch)","12:12","13:00"],["Period 4 (1st Lunch)","12:42","13:30"],["2nd Lunch","13:00","13:30"],["Period 5","13:37","14:25"],["Period 6","14:32","15:20"]],},
           minimumDay:{
             title:"Minimum Day Schedule",blocks:[["Period 0","07:20","08:23"],["Period 1","08:30","09:05"],["Period 2","09:12","09:47"],["Period 3","10:36","11:11"],["Period 5","11:18","11:53"],["Period 6","12:00","12:35"],["Nutrition","12:35","12:50"]],},
           finalsP12:{
@@ -635,9 +809,10 @@
       Object.entries(SCHOOL_CONFIGS).map(([slug,school])=>[slug,{name:school.name||slug,title:school.title||school.name||slug}])
     );
 
-    let activeSchoolSlug=null;
-    let activeSchoolConfig=null;
     let comboSelection=[];
+    let activeView=null;
+    let stackViews=[];
+    let viewSeq=0;
 
     function getLastRoutePart(){
       const parts=location.pathname.split("/").filter(Boolean);
@@ -683,8 +858,13 @@
 
     function selectSchoolStack(slugs){
       if(!Array.isArray(slugs)||slugs.length<2||!slugs.every(slug=>Object.prototype.hasOwnProperty.call(SCHOOL_ROUTES,slug)))return;
-      const target=`${getAppBasePath()}/${slugs.join("-")}`.replace(/\/{2,}/g,"/");
-      history.pushState({schools:slugs},"",target);
+      const unique=[];
+      for(const slug of slugs){
+        if(!unique.includes(slug))unique.push(slug);
+      }
+      if(unique.length<2)return;
+      const target=`${getAppBasePath()}/${unique.join("-")}`.replace(/\/{2,}/g,"/");
+      history.pushState({schools:unique},"",target);
       routeSchool();
     }
 
@@ -700,9 +880,10 @@
     function renderComboBuilder(){
       const schools=document.getElementById("comboSchools");
       const order=document.getElementById("comboOrder");
-      schools.innerHTML=Object.entries(SCHOOL_ROUTES).map(([slug,school])=>
-        `<button type="button" onclick="addComboSchool('${slug}')">${escapeHtml(school.name)}</button>`
-      ).join("");
+      schools.innerHTML=Object.entries(SCHOOL_ROUTES).map(([slug,school])=>{
+        const selected=comboSelection.includes(slug);
+        return `<button type="button" onclick="addComboSchool('${slug}')" ${selected?"disabled":""}>${escapeHtml(school.name)}</button>`;
+      }).join("");
 
       if(!comboSelection.length){
         order.innerHTML='<div class="combo-empty">No schools selected yet.</div>';
@@ -722,6 +903,7 @@
 
     function addComboSchool(slug){
       if(!Object.prototype.hasOwnProperty.call(SCHOOL_ROUTES,slug))return;
+      if(comboSelection.includes(slug))return;
       comboSelection.push(slug);
       renderComboBuilder();
     }
@@ -750,16 +932,19 @@
 
     function renderSchoolPicker(message=""){
       document.body.classList.remove("stack-mode");
+      clearViews();
       const picker=document.getElementById("schoolPicker");
       const stack=document.getElementById("schoolStack");
       const main=document.getElementById("mainContainer");
       const buttons=document.getElementById("schoolButtons");
       picker.style.display="flex";
       stack.style.display="none";
+      document.getElementById("stackDevPanel")?.classList.remove("show");
       main.style.display="none";
+      main.classList.remove("calendar-pending","calendar-ready");
       buttons.innerHTML=Object.entries(SCHOOL_ROUTES).map(([slug,school])=>
         `<button type="button" onclick="selectSchool('${slug}')">${escapeHtml(school.name)}</button>`
-      ).join("");
+      ).join("") + `<button type="button" onclick="toggleComboBuilder()">Build School Combination</button>`;
       document.getElementById("comboBuilder").classList.remove("show");
       const existing=buttons.parentElement.querySelector(".school-picker-message");
       if(existing)existing.remove();
@@ -771,6 +956,38 @@
       }
     }
 
+    function createSchoolView(slug, els, {isStack=false}={}){
+      return {
+        id:++viewSeq,
+        slug,
+        config:getSchoolConfig(slug),
+        els,
+        isStack,
+        calendarEvents:[],
+        calendarEventsByDate:new Map(),
+        calendarDataLoaded:false,
+        yearDataCache:new Map(),
+        lastMainLabel:"",
+        lastFlashKey:"",
+        activeScheduleKey:null
+      };
+    }
+
+    function setCalendarLoadState(view,loaded){
+      view.calendarDataLoaded=loaded;
+      const target=view.els.statusTarget;
+      if(!target)return;
+      target.classList.toggle("calendar-pending",!loaded);
+      target.classList.toggle("calendar-ready",loaded);
+    }
+
+    function clearViews(){
+      stackViews=[];
+      activeView=null;
+      const items=document.getElementById("schoolStackItems");
+      if(items)items.innerHTML="";
+    }
+
     function renderSchoolStack(slugs){
       const picker=document.getElementById("schoolPicker");
       const stack=document.getElementById("schoolStack");
@@ -778,29 +995,46 @@
       const items=document.getElementById("schoolStackItems");
       const title=document.getElementById("schoolStackTitle");
       document.body.classList.add("stack-mode");
+      clearViews();
       picker.style.display="none";
       main.style.display="none";
+      main.classList.remove("calendar-pending","calendar-ready");
       stack.style.display="block";
       title.textContent="Combined School Schedule";
-      items.innerHTML=slugs.map((slug,index)=>`
-        <section class="school-stack-item">
-          <iframe class="school-stack-frame" src="${getAppBasePath()}/${slug}?embed=1" title="${escapeHtml(SCHOOL_ROUTES[slug].name)} Schedule"></iframe>
-        </section>
-      `).join("");
-      items.querySelectorAll(".school-stack-frame").forEach(frame=>{
-        const resize=()=>{
-          try{
-            const doc=frame.contentDocument;
-            const height=Math.max(doc.documentElement.scrollHeight,doc.body?.scrollHeight||0);
-            frame.style.height=`${Math.max(520,height+12)}px`;
-          }catch{}
-        };
-        frame.addEventListener("load",()=>{
-          resize();
-          setTimeout(resize,150);
-          setTimeout(resize,500);
-        });
+      document.title="Combined School Schedule";
+      document.getElementById("stackDevPanel")?.classList.toggle("show",devMode);
+
+      stackViews=slugs.map(slug=>{
+        const section=document.createElement("section");
+        section.className="school-stack-item calendar-pending";
+        section.innerHTML=`
+          <h1 class="stack-school-name">${escapeHtml(SCHOOL_ROUTES[slug].name)}</h1>
+          <h1 class="currentPeriod">Loading...</h1>
+          <h2 class="endTime"></h2>
+          <div class="countdown"></div>
+          <div class="actions">
+            <button type="button" data-action="today">Today's Schedule</button>
+            <button type="button" data-action="all">All Schedules</button>
+          </div>
+          <div class="panel todayPanel"></div>
+          <div class="panel allPanel"></div>
+        `;
+        items.appendChild(section);
+        const view=createSchoolView(slug,{
+          statusTarget:section,
+          currentPeriod:section.querySelector(".currentPeriod"),
+          endTime:section.querySelector(".endTime"),
+          countdown:section.querySelector(".countdown"),
+          todayPanel:section.querySelector(".todayPanel"),
+          allPanel:section.querySelector(".allPanel")
+        },{isStack:true});
+        section.querySelector('[data-action="today"]').addEventListener("click",()=>toggleTodayForView(view));
+        section.querySelector('[data-action="all"]').addEventListener("click",()=>toggleAllForView(view));
+        loadCalendarEventsForView(view);
+        updateView(view);
+        return view;
       });
+      ensureUpdateInterval();
     }
 
     function routeSchool(){
@@ -820,11 +1054,12 @@
         renderSchoolPicker(hasSchoolPath?"That school path is not configured yet.":"");
         return;
       }
+      clearViews();
       picker.style.display="none";
       stack.style.display="none";
+      document.getElementById("stackDevPanel")?.classList.remove("show");
       main.style.display="block";
-      activeSchoolConfig=getSchoolConfig(slug);
-      document.title=`${activeSchoolConfig.title||SCHOOL_ROUTES[slug].title} Schedule`;
+      document.title=`${getSchoolConfig(slug).title||SCHOOL_ROUTES[slug].title} Schedule`;
       initSchoolApp(slug);
     }
 
@@ -834,14 +1069,6 @@
     let devTimeOffsetMs=0;
     let devTimeActive=false;
 
-    let currentDensity=1;
-    let reducedMotion=window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-    let calendarEventsByDate=new Map();
-    let calendarEvents=[];
-    let calendarDataLoaded=false;
-    let yearDataCache=new Map();
-    let lastMainLabel="";
-    let activeScheduleKey=null;
     let calendarViewDate=new Date();
     let selectedDateStr=null;
     let calendarVisible=false;
@@ -859,6 +1086,39 @@
     function nthWeekday(year,month,weekday,n){const first=new Date(year,month,1);let off=(7+weekday-first.getDay())%7;off+=7*(n-1);return new Date(year,month,1+off);}
     function lastWeekday(year,month,weekday){const last=new Date(year,month+1,0);const off=(7+last.getDay()-weekday)%7;return new Date(year,month+1,0-off);}
     function getPeriodLabel(name){const m=name.match(/Period\s+\d+/i);return m?m[0]:name;}
+    function blockStartSec(block){return parseTimeToMinutes(block[1])*60;}
+    function blockEndSec(block){return parseTimeToMinutes(block[2])*60;}
+    function getActiveBlocks(blocks,nowSec){
+      return (blocks||[]).filter(block=>nowSec>=blockStartSec(block)&&nowSec<blockEndSec(block));
+    }
+    function getNextUpcomingBlock(blocks,nowSec){
+      let best=null,bestStart=Infinity;
+      for(const block of blocks||[]){
+        const start=blockStartSec(block);
+        if(start>nowSec&&start<bestStart){best=block;bestStart=start;}
+      }
+      return best;
+    }
+    function getUpcomingDuringActive(blocks,activeBlocks,nowSec){
+      if(!activeBlocks.length)return [];
+      const soonestActiveEnd=Math.min(...activeBlocks.map(blockEndSec));
+      return (blocks||[])
+        .filter(block=>{
+          const start=blockStartSec(block);
+          return start>nowSec && start<soonestActiveEnd;
+        })
+        .sort((a,b)=>blockStartSec(a)-blockStartSec(b));
+    }
+    function renderOverlapStatusHtml(entries,nowSec){
+      return `<div class="overlap-status">${entries.map(entry=>{
+        if(entry.kind==="active"){
+          const rem=formatDuration(Math.max(0,blockEndSec(entry.block)-nowSec));
+          return `<div class="overlap-block"><span class="overlap-name">${escapeHtml(entry.block[0])}</span><span class="overlap-end">Ends at ${toNormalTime(entry.block[2])}</span><span class="overlap-cd">Time remaining: ${rem}</span></div>`;
+        }
+        const startIn=formatDuration(Math.max(0,blockStartSec(entry.block)-nowSec));
+        return `<div class="overlap-block"><span class="overlap-name">Passing Period</span><span class="overlap-end">${escapeHtml(entry.block[0])} starts at ${toNormalTime(entry.block[1])}</span><span class="overlap-cd">Starts in: ${startIn}</span></div>`;
+      }).join("")}</div>`;
+    }
     function formatDuration(totalSeconds){totalSeconds=Math.max(0,Math.floor(totalSeconds));const h=Math.floor(totalSeconds/3600),m=Math.floor((totalSeconds%3600)/60),s=totalSeconds%60;return h>0?`${h}:${String(m).padStart(2,"0")}:${String(s).padStart(2,"0")}`:`${m}:${String(s).padStart(2,"0")}`;}
 
     function escapeHtml(str){
@@ -916,17 +1176,17 @@
       return all.every(word=>title.includes(normalizeEventTitle(word))) && (!any.length || any.some(word=>title.includes(normalizeEventTitle(word))));
     }
 
-    function matchesConfiguredKeywords(evt,key){
+    function matchesConfiguredKeywords(evt,key,view){
       const title=normalizeEventTitle(evt.summary);
-      const rules=activeSchoolConfig?.keywords?.[key]||[];
+      const rules=view?.config?.keywords?.[key]||[];
       return rules.some(rule=>matchesKeywordRule(title,rule));
     }
 
-    function isNoSchoolEvent(evt){return matchesConfiguredKeywords(evt,"noSchool");}
-    function isFirstDayOfSchoolEvent(evt){return matchesConfiguredKeywords(evt,"firstDay");}
-    function isThanksgivingBreakEvent(evt){return matchesConfiguredKeywords(evt,"thanksgivingBreak");}
-    function isWinterBreakEvent(evt){return matchesConfiguredKeywords(evt,"winterBreak");}
-    function isLastDayOfSchoolEvent(evt){return matchesConfiguredKeywords(evt,"lastDay");}
+    function isNoSchoolEvent(evt,view){return matchesConfiguredKeywords(evt,"noSchool",view);}
+    function isFirstDayOfSchoolEvent(evt,view){return matchesConfiguredKeywords(evt,"firstDay",view);}
+    function isThanksgivingBreakEvent(evt,view){return matchesConfiguredKeywords(evt,"thanksgivingBreak",view);}
+    function isWinterBreakEvent(evt,view){return matchesConfiguredKeywords(evt,"winterBreak",view);}
+    function isLastDayOfSchoolEvent(evt,view){return matchesConfiguredKeywords(evt,"lastDay",view);}
 
     function addWeekdaysFromStart(startDate,count){
       const dates=[];
@@ -939,99 +1199,164 @@
       return dates;
     }
 
-    function indexCalendarEvents(events){
-      calendarEvents=events.slice();
-      calendarEventsByDate=new Map();
+    function previousWeekdayDate(date){
+      const d=new Date(date.getFullYear(),date.getMonth(),date.getDate());
+      do{d.setDate(d.getDate()-1);}while(d.getDay()===0||d.getDay()===6);
+      return d;
+    }
+
+    function ensureWeekdayOnOrBefore(date){
+      const d=new Date(date.getFullYear(),date.getMonth(),date.getDate());
+      while(d.getDay()===0||d.getDay()===6)d.setDate(d.getDate()-1);
+      return d;
+    }
+
+    function assignFinalsFromEndDay(finalsMap,endDate,catalog){
+      if(!endDate||!catalog)return;
+      const keys=["finalsP56","finalsP34","finalsP12"].filter(key=>catalog[key]);
+      let d=ensureWeekdayOnOrBefore(endDate);
+      for(const key of keys){
+        finalsMap[formatDate(d)]=key;
+        d=previousWeekdayDate(d);
+      }
+    }
+
+    function indexCalendarEventsForView(view,events){
+      view.calendarEvents=events.slice();
+      view.calendarEventsByDate=new Map();
       for(const evt of events){
         const dateStr=formatDate(evt.start);
         const timeLabel=evt.allDay?"":evt.start.toLocaleTimeString([],{hour:"numeric",minute:"2-digit"});
         const item={summary:evt.summary||"Event",dateStr,startMs:evt.start.getTime(),allDay:evt.allDay,timeLabel};
-        if(!calendarEventsByDate.has(dateStr))calendarEventsByDate.set(dateStr,[]);
-        calendarEventsByDate.get(dateStr).push(item);
+        if(!view.calendarEventsByDate.has(dateStr))view.calendarEventsByDate.set(dateStr,[]);
+        view.calendarEventsByDate.get(dateStr).push(item);
       }
-      for(const [key,arr] of calendarEventsByDate)arr.sort((a,b)=>a.startMs-b.startMs);
-      calendarDataLoaded=true;
-      yearDataCache.clear();
+      for(const [,arr] of view.calendarEventsByDate)arr.sort((a,b)=>a.startMs-b.startMs);
+      view.yearDataCache.clear();
+      setCalendarLoadState(view,true);
     }
 
-    function loadCalendarEvents(){
-      const cal=activeSchoolConfig?.calendar||{};
+    function loadCalendarEventsForView(view){
+      const cal=view.config?.calendar||{};
       const shouldLoad=Boolean(cal.url) && (cal.show===true || cal.useForSchoolYear===true);
       const shouldUseForSchoolYear=cal.useForSchoolYear===true;
 
       if(!shouldLoad){
-        indexCalendarEvents([]);
-        renderCalendar();
-        update();
+        indexCalendarEventsForView(view,[]);
+        if(view===activeView){
+          renderCalendar();
+        }
+        updateView(view);
         return;
       }
 
-      calendarDataLoaded=false;
+      setCalendarLoadState(view,false);
+      updateView(view);
+
       fetch(cal.url)
         .then(res=>{if(!res.ok)throw new Error(`Calendar request failed: ${res.status}`);return res.text();})
         .then(text=>{
           const events=parseIcs(text);
-          indexCalendarEvents(shouldUseForSchoolYear?events:[]);
-          if(cal.show===true){
-            indexCalendarEvents(events);
+          if(shouldUseForSchoolYear||cal.show===true){
+            indexCalendarEventsForView(view,events);
           }else{
-            calendarEventsByDate=new Map();
+            indexCalendarEventsForView(view,[]);
           }
-          renderCalendar();
-          if(selectedDateStr)showCalendarInfo(selectedDateStr);
-          update();
+          if(cal.show!==true){
+            view.calendarEventsByDate=new Map();
+          }
+          if(view===activeView){
+            renderCalendar();
+            if(selectedDateStr)showCalendarInfo(selectedDateStr);
+          }
+          updateView(view);
         })
         .catch(()=>{
-          indexCalendarEvents([]);
-          renderCalendar();
-          update();
+          indexCalendarEventsForView(view,[]);
+          if(view===activeView)renderCalendar();
+          updateView(view);
         });
     }
 
-    function setMainLabel(nextLabel){
-      const el=document.getElementById("currentPeriod");
-      if(nextLabel!==lastMainLabel){el.classList.remove("period-flash");void el.offsetWidth;el.classList.add("period-flash");}
-      el.innerHTML=nextLabel;lastMainLabel=nextLabel;
+    function setMainLabelForView(view,nextLabel,flashKey){
+      const el=view.els.currentPeriod;
+      if(!el)return;
+      const key=flashKey??nextLabel;
+      if(key!==view.lastFlashKey){
+        el.classList.remove("period-flash");void el.offsetWidth;el.classList.add("period-flash");
+        view.lastFlashKey=key;
+      }
+      el.innerHTML=nextLabel;view.lastMainLabel=nextLabel;
     }
 
-    function getScheduleCatalog(){return activeSchoolConfig?.schedule||{};}
-
-    function getCalendarLogicEvents(){
-      return activeSchoolConfig?.calendar?.useForSchoolYear===true ? calendarEvents : [];
+    function applyStateForView(view,{labelHtml,endText,cdText,flashKey}){
+      setMainLabelForView(view,labelHtml,flashKey);
+      if(view.els.endTime)view.els.endTime.innerText=endText;
+      if(view.els.countdown)view.els.countdown.innerText=cdText;
     }
 
-    function getFirstDayEvents(){
-      return getCalendarLogicEvents().filter(isFirstDayOfSchoolEvent).sort((a,b)=>a.start.getTime()-b.start.getTime());
+    function getScheduleCatalog(view){return view?.config?.schedule||{};}
+
+    function getCalendarLogicEvents(view){
+      return view?.config?.calendar?.useForSchoolYear===true ? view.calendarEvents : [];
     }
 
-    function getFirstDayForStartYear(startYear){
-      const matches=getFirstDayEvents().filter(evt=>evt.start.getFullYear()===startYear);
+    function getFirstDayEvents(view){
+      return getCalendarLogicEvents(view).filter(evt=>isFirstDayOfSchoolEvent(evt,view)).sort((a,b)=>a.start.getTime()-b.start.getTime());
+    }
+
+    function getFirstDayForStartYear(startYear,view){
+      const matches=getFirstDayEvents(view).filter(evt=>evt.start.getFullYear()===startYear);
       return matches.length?matches[0].start:null;
     }
 
-    function getSchoolYearEndForStartYear(startYear){
-      const lastDays=getCalendarLogicEvents().filter(isLastDayOfSchoolEvent).sort((a,b)=>a.start.getTime()-b.start.getTime());
+    function getSchoolYearEndDateForStartYear(startYear,view){
+      const lastDays=getCalendarLogicEvents(view).filter(evt=>isLastDayOfSchoolEvent(evt,view)).sort((a,b)=>a.start.getTime()-b.start.getTime());
       const matchingLast=lastDays.find(evt=>evt.start.getFullYear()===startYear+1);
-      if(matchingLast)return formatDate(matchingLast.start);
+      if(matchingLast)return matchingLast.start;
 
-      if(activeSchoolConfig?.defaults?.schoolYearEndFromNextFirstDay!==false){
-        const next=getFirstDayEvents().find(evt=>evt.start.getFullYear()>startYear);
+      if(view.config?.defaults?.schoolYearEndFromNextFirstDay!==false){
+        const next=getFirstDayEvents(view).find(evt=>evt.start.getFullYear()>startYear);
         if(next){
           const end=new Date(next.start.getFullYear(),next.start.getMonth(),next.start.getDate());
           end.setDate(end.getDate()-1);
-          return formatDate(end);
+          return end;
         }
       }
       return null;
     }
 
-    function buildSchoolYearData(startYear){
-      const firstDay=getFirstDayForStartYear(startYear);
+    function getSchoolYearEndForStartYear(startYear,view){
+      const end=getSchoolYearEndDateForStartYear(startYear,view);
+      return end?formatDate(end):null;
+    }
+
+    function getWinterBreakStartForStartYear(startYear,view){
+      const firstDay=getFirstDayForStartYear(startYear,view);
+      const yearEnd=getSchoolYearEndDateForStartYear(startYear,view);
+      const yearEndMs=yearEnd?new Date(yearEnd.getFullYear(),yearEnd.getMonth(),yearEnd.getDate(),23,59,59).getTime():Infinity;
+      const events=getCalendarLogicEvents(view)
+        .filter(evt=>isWinterBreakEvent(evt,view))
+        .filter(evt=>{
+          const ms=evt.start.getTime();
+          if(firstDay && ms<firstDay.getTime())return false;
+          if(ms>yearEndMs)return false;
+          const y=evt.start.getFullYear();
+          const m=evt.start.getMonth();
+          return (y===startYear && m>=10) || (y===startYear+1 && m<=1);
+        })
+        .sort((a,b)=>a.start.getTime()-b.start.getTime());
+      return events[0]?.start||null;
+    }
+
+    function buildSchoolYearData(startYear,view){
+      const firstDay=getFirstDayForStartYear(startYear,view);
       if(!firstDay)return null;
 
       const y1=startYear,y2=startYear+1;
       const classesBegin=formatDate(firstDay);
-      const classesEnd=getSchoolYearEndForStartYear(startYear);
+      const classesEnd=getSchoolYearEndForStartYear(startYear,view);
+      const catalog=getScheduleCatalog(view);
       const d={label:`${y1}-${y2}`,classesBegin,classesEnd,mondayNoBroadcast:new Set(),pepRallyDays:new Set(),finalsMap:{},noSchoolReasons:{}};
 
       let c=new Date(classesBegin+"T00:00:00");
@@ -1039,27 +1364,30 @@
       for(let i=0;i<3;i++){d.mondayNoBroadcast.add(formatDate(c));c.setDate(c.getDate()+7);}
 
       [nthWeekday(y1,9,5,4),lastWeekday(y2,0,5),nthWeekday(y2,3,5,4)].forEach(x=>d.pepRallyDays.add(formatDate(x)));
-      d.finalsMap[`${y1}-12-17`]="finalsP12";
-      d.finalsMap[`${y1}-12-18`]="finalsP34";
-      d.finalsMap[`${y1}-12-19`]="finalsP56";
-      d.finalsMap[`${y2}-05-26`]="finalsP12";
-      d.finalsMap[`${y2}-05-27`]="finalsP34";
-      d.finalsMap[`${y2}-05-28`]="finalsP56";
+
+      const winterBreakStart=getWinterBreakStartForStartYear(startYear,view);
+      if(winterBreakStart){
+        assignFinalsFromEndDay(d.finalsMap,previousWeekdayDate(winterBreakStart),catalog);
+      }
+      const springEnd=getSchoolYearEndDateForStartYear(startYear,view);
+      if(springEnd){
+        assignFinalsFromEndDay(d.finalsMap,springEnd,catalog);
+      }
 
       const yearEndMs=classesEnd?new Date(classesEnd+"T23:59:59").getTime():Infinity;
-      const relevantEvents=getCalendarLogicEvents().filter(evt=>{
+      const relevantEvents=getCalendarLogicEvents(view).filter(evt=>{
         const ms=evt.start.getTime();
-        const holiday=isNoSchoolEvent(evt)||isThanksgivingBreakEvent(evt)||isWinterBreakEvent(evt);
+        const holiday=isNoSchoolEvent(evt,view)||isThanksgivingBreakEvent(evt,view)||isWinterBreakEvent(evt,view);
         return ms>=firstDay.getTime()&&ms<=yearEndMs&&holiday;
       });
 
       for(const evt of relevantEvents){
         let dates=[formatDate(evt.start)],reason=evt.summary||"No School";
-        if(isThanksgivingBreakEvent(evt)){
-          dates=addWeekdaysFromStart(evt.start,activeSchoolConfig?.defaults?.breakWeekdays||5);
+        if(isThanksgivingBreakEvent(evt,view)){
+          dates=addWeekdaysFromStart(evt.start,view.config?.defaults?.breakWeekdays||5);
           reason="Thanksgiving Break";
-        }else if(isWinterBreakEvent(evt)){
-          dates=addWeekdaysFromStart(evt.start,activeSchoolConfig?.defaults?.breakWeekdays||5);
+        }else if(isWinterBreakEvent(evt,view)){
+          dates=addWeekdaysFromStart(evt.start,view.config?.defaults?.breakWeekdays||5);
           reason="Winter Break";
         }
         for(const ds of dates)d.noSchoolReasons[ds]=reason;
@@ -1067,26 +1395,37 @@
       return d;
     }
 
-    function getSchoolYearData(startYear){
-      if(!calendarDataLoaded)return null;
-      if(!yearDataCache.has(startYear))yearDataCache.set(startYear,buildSchoolYearData(startYear));
-      return yearDataCache.get(startYear);
+    function getSchoolYearData(startYear,view){
+      if(!view.calendarDataLoaded)return null;
+      if(!view.yearDataCache.has(startYear))view.yearDataCache.set(startYear,buildSchoolYearData(startYear,view));
+      return view.yearDataCache.get(startYear);
     }
 
-    function getYearDataByDate(ds){
-      if(!calendarDataLoaded)return null;
+    function getYearDataByDate(ds,view){
+      if(!view.calendarDataLoaded)return null;
       const year=Number(ds.slice(0,4));
       for(const s of [year-1,year]){
-        const yData=getSchoolYearData(s);
+        const yData=getSchoolYearData(s,view);
         if(yData&&ds>=yData.classesBegin&&(!yData.classesEnd||ds<=yData.classesEnd))return yData;
       }
       return null;
     }
 
-    function defaultScheduleKeyForDate(dateObj){
-      const catalog=getScheduleCatalog();
-      const ds=formatDate(dateObj),y=getYearDataByDate(ds),day=dateObj.getDay();
-      if(!calendarDataLoaded)return {type:"closed",reason:"Loading School Calendar",yearLabel:"Loading"};
+    function optimisticScheduleKeyForDate(dateObj,view){
+      const catalog=getScheduleCatalog(view);
+      const day=dateObj.getDay();
+      if(day===0||day===6)return {type:"closed",reason:"Weekend",yearLabel:"Loading"};
+      if(day===1&&catalog.mondayBroadcast)return {type:"schedule",key:"mondayBroadcast",yearLabel:"Loading"};
+      if(day===5&&catalog.fridaySchedule)return {type:"schedule",key:"fridaySchedule",yearLabel:"Loading"};
+      if(catalog.regularTF)return {type:"schedule",key:"regularTF",yearLabel:"Loading"};
+      const firstKey=Object.keys(catalog)[0];
+      return firstKey?{type:"schedule",key:firstKey,yearLabel:"Loading"}:{type:"closed",reason:"No Schedule Configured",yearLabel:"Loading"};
+    }
+
+    function defaultScheduleKeyForDate(dateObj,view){
+      const catalog=getScheduleCatalog(view);
+      const ds=formatDate(dateObj),y=getYearDataByDate(ds,view),day=dateObj.getDay();
+      if(!view.calendarDataLoaded)return optimisticScheduleKeyForDate(dateObj,view);
       if(!y)return {type:"closed",reason:"No School (Outside School Year)",yearLabel:"Outside School Year"};
       if(day===0||day===6)return {type:"closed",reason:"Weekend",yearLabel:y.label};
       if(y.noSchoolReasons[ds])return {type:"closed",reason:y.noSchoolReasons[ds],yearLabel:y.label};
@@ -1094,23 +1433,31 @@
       if(y.pepRallyDays.has(ds)&&catalog.pepRally)return {type:"schedule",key:"pepRally",yearLabel:y.label};
       if(day===1&&catalog.mondayBroadcast&&catalog.mondayNoBroadcast){
         return y.mondayNoBroadcast.has(ds)?{type:"schedule",key:"mondayNoBroadcast",yearLabel:y.label}:{type:"schedule",key:"mondayBroadcast",yearLabel:y.label};
-        
       }
-      if(day===5&&catalog.fridaySchedual){
-          return {type:"schedule",key:"fridaySchedual",yearLabel:y.label};
+      if(day===5&&catalog.fridaySchedule){
+        return {type:"schedule",key:"fridaySchedule",yearLabel:y.label};
       }
       if(catalog.regularTF)return {type:"schedule",key:"regularTF",yearLabel:y.label};
       const firstKey=Object.keys(catalog)[0];
       return firstKey?{type:"schedule",key:firstKey,yearLabel:y.label}:{type:"closed",reason:"No Schedule Configured",yearLabel:y.label};
     }
 
-    function getScheduleKeyForDate(dateObj){
-      const custom=activeSchoolConfig?.logic?.getScheduleKeyForDate;
-      return typeof custom==="function"?custom(dateObj,{config:activeSchoolConfig,calendarEvents,getScheduleCatalog,formatDate,yearData:getYearDataByDate}):defaultScheduleKeyForDate(dateObj);
+    function getScheduleKeyForDate(dateObj,view){
+      const custom=view?.config?.logic?.getScheduleKeyForDate;
+      if(typeof custom==="function"){
+        return custom(dateObj,{
+          config:view.config,
+          calendarEvents:view.calendarEvents,
+          getScheduleCatalog:()=>getScheduleCatalog(view),
+          formatDate,
+          yearData:ds=>getYearDataByDate(ds,view)
+        });
+      }
+      return defaultScheduleKeyForDate(dateObj,view);
     }
 
-    function getMarkersForDate(dateObj){
-      const ds=formatDate(dateObj),y=getYearDataByDate(ds);
+    function getMarkersForDate(dateObj,view){
+      const ds=formatDate(dateObj),y=getYearDataByDate(ds,view);
       if(!y)return ["noschool"];
       const marks=[];
       if(y.finalsMap[ds])marks.push("finals");
@@ -1128,10 +1475,10 @@
       return (s?.blocks||[]).map(b=>`<div class="schedule-item"><strong>${b[0]}</strong> : ${toNormalTime(b[1])} - ${toNormalTime(b[2])}</div>`).join("");
     }
 
-    function isWeekendNowOrAfterSchoolToWeekend(dateObj,info){
+    function isWeekendNowOrAfterSchoolToWeekend(dateObj,info,view){
       const day=dateObj.getDay();if(day===0||day===6)return true;
       if(info.type==="schedule"&&day===5){
-        const sch=getScheduleCatalog()[info.key];
+        const sch=getScheduleCatalog(view)[info.key];
         if(sch?.blocks?.length){
           const lastBlock=sch.blocks[sch.blocks.length-1],lastEndSec=parseTimeToMinutes(lastBlock[2])*60,nowSec=dateObj.getHours()*3600+dateObj.getMinutes()*60+dateObj.getSeconds();
           if(nowSec>=lastEndSec)return true;
@@ -1140,29 +1487,17 @@
       return false;
     }
 
-    function applyState({labelHtml,endText,cdText}){
-      setMainLabel(labelHtml);
-      document.getElementById("endTime").innerText=endText;
-      document.getElementById("countdown").innerText=cdText;
-    }
-
-    function update(){
-      if(!calendarDataLoaded){
-        setMainLabel("Loading school calendar...");
-        document.getElementById("endTime").innerText="";
-        document.getElementById("countdown").innerText="";
-        return;
-      }
-
-      const now=getNow(),todayText=fullDate(formatDate(now)),info=getScheduleKeyForDate(now);
+    function updateView(view){
+      if(!view)return;
+      const now=getNow(),todayText=fullDate(formatDate(now)),info=getScheduleKeyForDate(now,view);
       if(info.type==="closed"){
-        applyState({labelHtml:`<span class="holiday">${info.reason}</span>`,endText:todayText,cdText:""});
+        applyStateForView(view,{labelHtml:`<span class="holiday">${info.reason}</span>`,endText:todayText,cdText:""});
         return;
       }
 
-      const sch=getScheduleCatalog()[info.key];
+      const sch=getScheduleCatalog(view)[info.key];
       if(!sch?.blocks?.length){
-        applyState({labelHtml:"School is Out",endText:todayText,cdText:""});
+        applyStateForView(view,{labelHtml:"School is Out",endText:todayText,cdText:""});
         return;
       }
 
@@ -1171,96 +1506,189 @@
       if(nowSec<firstSec){
         if(nowSec>=passingBeforeFirstSec){
           const firstLabel=getPeriodLabel(sch.blocks[0][0]);
-          applyState({labelHtml:"Passing Period",endText:`${firstLabel} starts at ${toNormalTime(sch.blocks[0][1])}`,cdText:`Starts in: ${formatDuration(firstSec-nowSec)}`});
+          applyStateForView(view,{labelHtml:"Passing Period",endText:`${firstLabel} starts at ${toNormalTime(sch.blocks[0][1])}`,cdText:`Starts in: ${formatDuration(firstSec-nowSec)}`});
           return;
         }
         const passingStartSec=passingBeforeFirstSec;
         const passingStartTime=toNormalTime(`${String(Math.floor(passingStartSec/3600)).padStart(2,"0")}:${String(Math.floor((passingStartSec%3600)/60)).padStart(2,"0")}`);
-        applyState({labelHtml:"Before School",endText:`Passing Period starts at ${passingStartTime}`,cdText:`Starts in: ${formatDuration(passingStartSec-nowSec)}`});
+        applyStateForView(view,{labelHtml:"Before School",endText:`Passing Period starts at ${passingStartTime}`,cdText:`Starts in: ${formatDuration(passingStartSec-nowSec)}`});
         return;
       }
 
-      for(let i=0;i<sch.blocks.length;i++){
-        const [name,s,e]=sch.blocks[i],sm=parseTimeToMinutes(s)*60,em=parseTimeToMinutes(e)*60;
-        if(nowSec>=sm&&nowSec<em){
-          applyState({labelHtml:name,endText:`Ends at ${toNormalTime(e)}`,cdText:`Time remaining: ${formatDuration(Math.max(0,em-nowSec))}`});
+      const activeBlocks=getActiveBlocks(sch.blocks,nowSec);
+      if(activeBlocks.length){
+        const orderedActive=[...activeBlocks].sort((a,b)=>blockStartSec(a)-blockStartSec(b)||blockEndSec(a)-blockEndSec(b));
+        const upcoming=getUpcomingDuringActive(sch.blocks,orderedActive,nowSec);
+        const entries=[
+          ...orderedActive.map(block=>({kind:"active",block})),
+          ...upcoming.map(block=>({kind:"passing",block}))
+        ];
+        if(entries.length===1 && entries[0].kind==="active"){
+          const [name,,e]=entries[0].block,em=blockEndSec(entries[0].block);
+          applyStateForView(view,{labelHtml:name,endText:`Ends at ${toNormalTime(e)}`,cdText:`Time remaining: ${formatDuration(Math.max(0,em-nowSec))}`,flashKey:name});
           return;
         }
-        if(i<sch.blocks.length-1){
-          const next=sch.blocks[i+1],nm=parseTimeToMinutes(next[1])*60;
-          if(nowSec>=em&&nowSec<nm){
-            const nextLabel=getPeriodLabel(next[0]);
-            applyState({labelHtml:"Passing Period",endText:`${nextLabel} starts at ${toNormalTime(next[1])}`,cdText:`Starts in: ${formatDuration(Math.max(0,nm-nowSec))}`});
-            return;
-          }
-        }
+        const flashKey=entries.map(entry=>`${entry.kind}:${entry.block[0]}`).join("|");
+        applyStateForView(view,{
+          labelHtml:renderOverlapStatusHtml(entries,nowSec),
+          endText:"",
+          cdText:"",
+          flashKey
+        });
+        return;
       }
 
-      if(isWeekendNowOrAfterSchoolToWeekend(now,info))applyState({labelHtml:`<span class="holiday">Weekend</span>`,endText:todayText,cdText:""});
-      else applyState({labelHtml:"School is Out",endText:todayText,cdText:""});
+      const nextBlock=getNextUpcomingBlock(sch.blocks,nowSec);
+      if(nextBlock){
+        const nm=blockStartSec(nextBlock);
+        const nextLabel=getPeriodLabel(nextBlock[0]);
+        applyStateForView(view,{labelHtml:"Passing Period",endText:`${nextLabel} starts at ${toNormalTime(nextBlock[1])}`,cdText:`Starts in: ${formatDuration(Math.max(0,nm-nowSec))}`});
+        return;
+      }
+
+      if(isWeekendNowOrAfterSchoolToWeekend(now,info,view))applyStateForView(view,{labelHtml:`<span class="holiday">Weekend</span>`,endText:todayText,cdText:""});
+      else applyStateForView(view,{labelHtml:"School is Out",endText:todayText,cdText:""});
+    }
+
+    function update(){
+      if(stackViews.length){
+        stackViews.forEach(updateView);
+        return;
+      }
+      if(activeView)updateView(activeView);
+    }
+
+    function ensureUpdateInterval(){
+      if(updateIntervalId!==null)return;
+      updateIntervalId=setInterval(()=>{
+        if(stackViews.length){
+          stackViews.forEach(updateView);
+          return;
+        }
+        if(activeView && getCurrentSchoolSlug()===activeView.slug)updateView(activeView);
+      },250);
     }
 
     function scheduleFit(){fitContainer();setTimeout(fitContainer,300);setTimeout(fitContainer,700);}
 
+    function getActiveDevInputs(){
+      const pairs=[
+        ["devTimeInput","devDateInput"],
+        ["stackDevTimeInput","stackDevDateInput"]
+      ];
+      for(const [timeId,dateId] of pairs){
+        const inputTime=document.getElementById(timeId);
+        if(inputTime?.closest(".panel")?.classList.contains("show")){
+          return {inputTime,inputDay:document.getElementById(dateId)};
+        }
+      }
+      const inputTime=document.getElementById("devTimeInput")||document.getElementById("stackDevTimeInput");
+      return {inputTime,inputDay:document.getElementById("devDateInput")||document.getElementById("stackDevDateInput")};
+    }
+
     function setDevTime(){
-      const inputTime=document.getElementById("devTimeInput");if(!inputTime)return;
-      const inputDay=document.getElementById("devDateInput");if(!inputDay)return;
+      const {inputTime,inputDay}=getActiveDevInputs();if(!inputTime)return;
       const rawT=(inputTime.value||"").trim();if(!/^\d{6}$/.test(rawT))return;
-      const rawD=(inputDay.value||"").trim();if(!/^\d{6}$/.test(rawD))return;
-      const h=Number(rawT.slice(0,2)),m=Number(rawT.slice(2,4)),s=Number(rawT.slice(4,6)),d=Number(rawD.slice(0,2)),mm=Number(rawD.slice(2,4)),y=Number(rawD.slice(4,6));if(h>23||m>59||s>59||d>31||mm>11||y>99)return;
-      const now=new Date(),target=new Date(2000+y,mm-1,d,h,m,s);
+      const h=Number(rawT.slice(0,2)),m=Number(rawT.slice(2,4)),s=Number(rawT.slice(4,6));
+      if(h>23||m>59||s>59)return;
+      const now=new Date();
+      let d=now.getDate(),mm=now.getMonth()+1,y=now.getFullYear()%100;
+      if(inputDay){
+        const rawD=(inputDay.value||"").trim();
+        if(/^\d{6}$/.test(rawD)){
+          d=Number(rawD.slice(0,2));mm=Number(rawD.slice(2,4));y=Number(rawD.slice(4,6));
+          if(d>31||mm>11||y>99)return;
+        }
+      }
+      const target=new Date(2000+y,mm-1,d,h,m,s);
       devTimeOffsetMs=target.getTime()-Date.now();devTimeActive=true;update();
     }
-
     function resetDevTime(){devTimeActive=false;devTimeOffsetMs=0;update();}
 
-    function toggleToday(){
-      const p=document.getElementById("todayPanel");p.classList.toggle("show");
-      const now=getNow(),info=getScheduleKeyForDate(now),dateLabel=prettyDate(formatDate(now));
+    function toggleTodayForView(view){
+      const p=view.els.todayPanel;if(!p)return;
+      p.classList.toggle("show");
+      const now=getNow(),info=getScheduleKeyForDate(now,view),dateLabel=prettyDate(formatDate(now));
       if(info.type==="closed")p.innerHTML=`<div class="schedule-item"><strong>${dateLabel}</strong><span class="badge">${info.yearLabel}</span></div><div class="schedule-item holiday">${info.reason}</div>`;
-      else {const s=getScheduleCatalog()[info.key];p.innerHTML=`<div class="schedule-item"><strong>${s.title}</strong><span class="badge">${info.yearLabel}</span></div>${renderScheduleBlocks(s)}`;}
-      scheduleFit();
+      else {const s=getScheduleCatalog(view)[info.key];p.innerHTML=`<div class="schedule-item"><strong>${s.title}</strong><span class="badge">${info.yearLabel}</span></div>${renderScheduleBlocks(s)}`;}
+      if(!view.isStack)scheduleFit();
     }
 
-    function renderAllSchedulesList(){
-      const panel=document.getElementById("allPanel"),catalog=getScheduleCatalog(),keys=Object.keys(catalog);let html=`<div><strong>Click a schedule type:</strong></div>`;
-      for(const key of keys){const s=catalog[key];html+=`<button class="schedule-link ${activeScheduleKey===key?"active-btn":""}" onclick="toggleInlineSchedule('${key}',event)">${s.title}</button><div class="inline-detail ${activeScheduleKey===key?"show":""}" id="detail-${key}">${renderScheduleBlocks(s)}</div>`;}
+    function toggleToday(){
+      if(activeView)toggleTodayForView(activeView);
+    }
+
+    function renderAllSchedulesListForView(view){
+      const panel=view.els.allPanel;if(!panel)return;
+      const catalog=getScheduleCatalog(view),keys=Object.keys(catalog);
+      let html=`<div><strong>Click a schedule type:</strong></div>`;
+      for(const key of keys){
+        const s=catalog[key];
+        html+=`<button type="button" class="schedule-link ${view.activeScheduleKey===key?"active-btn":""}" data-schedule-key="${key}">${s.title}</button><div class="inline-detail ${view.activeScheduleKey===key?"show":""}" id="detail-${view.id}-${key}">${renderScheduleBlocks(s)}</div>`;
+      }
       panel.innerHTML=html;
+      panel.querySelectorAll("[data-schedule-key]").forEach(btn=>{
+        btn.addEventListener("click",ev=>{
+          const key=btn.getAttribute("data-schedule-key");
+          btn.classList.remove("click-animate");void btn.offsetWidth;btn.classList.add("click-animate");
+          view.activeScheduleKey=view.activeScheduleKey===key?null:key;
+          renderAllSchedulesListForView(view);
+          if(!view.isStack)scheduleFit();
+        });
+      });
     }
 
-    function toggleInlineSchedule(key,ev){
-      if(ev?.currentTarget){const btn=ev.currentTarget;btn.classList.remove("click-animate");void btn.offsetWidth;btn.classList.add("click-animate");}
-      activeScheduleKey=activeScheduleKey===key?null:key;renderAllSchedulesList();scheduleFit();
+    function toggleAllForView(view){
+      const p=view.els.allPanel;if(!p)return;
+      p.classList.toggle("show");
+      if(p.classList.contains("show"))renderAllSchedulesListForView(view);
+      if(!view.isStack)scheduleFit();
     }
 
     function toggleAll(){
-      const p=document.getElementById("allPanel");p.classList.toggle("show");if(p.classList.contains("show"))renderAllSchedulesList();scheduleFit();
+      if(activeView)toggleAllForView(activeView);
+    }
+
+    function toggleInlineSchedule(key,ev){
+      if(!activeView)return;
+      if(ev?.currentTarget){const btn=ev.currentTarget;btn.classList.remove("click-animate");void btn.offsetWidth;btn.classList.add("click-animate");}
+      activeView.activeScheduleKey=activeView.activeScheduleKey===key?null:key;
+      renderAllSchedulesListForView(activeView);
+      scheduleFit();
     }
 
     function monthName(m){return new Date(2000,m,1).toLocaleString(undefined,{month:"long"});}
 
     function renderCalendar(){
+      if(!activeView)return;
       const grid=document.getElementById("calGrid"),title=document.getElementById("calTitle");
+      if(!grid||!title)return;
       const y=calendarViewDate.getFullYear(),m=calendarViewDate.getMonth();title.textContent=`${monthName(m)} ${y}`;grid.innerHTML="";
       ["Sun","Mon","Tue","Wed","Thu","Fri","Sat"].forEach(d=>{const e=document.createElement("div");e.className="cal-dow";e.textContent=d;grid.appendChild(e);});
       const firstDay=new Date(y,m,1).getDay(),daysInMonth=new Date(y,m+1,0).getDate(),today=formatDate(getNow());
       for(let i=0;i<firstDay;i++){const b=document.createElement("button");b.className="cal-day muted";b.disabled=true;grid.appendChild(b);}
       for(let day=1;day<=daysInMonth;day++){
-        const d=new Date(y,m,day),ds=formatDate(d),marks=getMarkersForDate(d);const b=document.createElement("button");b.className="cal-day";
+        const d=new Date(y,m,day),ds=formatDate(d),marks=getMarkersForDate(d,activeView);const b=document.createElement("button");b.className="cal-day";
         const mc=markerClass(marks);if(mc)b.classList.add(mc);if(ds===today)b.classList.add("today");if(ds===selectedDateStr)b.classList.add("selected");
         const dayNum=document.createElement("div");dayNum.textContent=day;b.appendChild(dayNum);
-        const events=calendarEventsByDate.get(ds)||[];
+        const events=activeView.calendarEventsByDate.get(ds)||[];
         if(events.length){const dots=document.createElement("div");dots.className="event-dots";events.forEach(()=>{const dot=document.createElement("span");dot.className="event-dot";dots.appendChild(dot);});b.appendChild(dots);}
         b.onclick=()=>{selectedDateStr=ds;renderCalendar();showCalendarInfo(ds);fitContainer();};grid.appendChild(b);
       }
-      if(selectedDateStr)showCalendarInfo(selectedDateStr);else document.getElementById("calendarInfo").innerHTML="";fitContainer();
+      if(selectedDateStr)showCalendarInfo(selectedDateStr);else{
+        const infoEl=document.getElementById("calendarInfo");
+        if(infoEl)infoEl.innerHTML="";
+      }
+      fitContainer();
     }
 
     function showCalendarInfo(ds){
-      const el=document.getElementById("calendarInfo"),d=new Date(ds+"T00:00:00"),info=getScheduleKeyForDate(d);let html="";
+      if(!activeView)return;
+      const el=document.getElementById("calendarInfo");if(!el)return;
+      const d=new Date(ds+"T00:00:00"),info=getScheduleKeyForDate(d,activeView);let html="";
       if(info.type==="closed")html=`<strong>${prettyDate(ds)}</strong><br><span class="holiday">${info.reason}</span>`;
-      else {const s=getScheduleCatalog()[info.key];html=`<strong>${prettyDate(ds)}</strong><br>${s.title}`;}
-      const events=calendarEventsByDate.get(ds)||[];
+      else {const s=getScheduleCatalog(activeView)[info.key];html=`<strong>${prettyDate(ds)}</strong><br>${s.title}`;}
+      const events=activeView.calendarEventsByDate.get(ds)||[];
       if(events.length){const list=events.map(evt=>`<div class="event-item"><span class="event-time">${evt.timeLabel}</span>${escapeHtml(evt.summary)}</div>`).join("");html+=`<div class="event-list">${list}</div>`;}
       el.innerHTML=html;
     }
@@ -1268,19 +1696,20 @@
     function changeMonth(delta){calendarViewDate=new Date(calendarViewDate.getFullYear(),calendarViewDate.getMonth()+delta,1);selectedDateStr=null;renderCalendar();}
     function goToCurrentMonth(){const n=getNow();calendarViewDate=new Date(n.getFullYear(),n.getMonth(),1);selectedDateStr=null;renderCalendar();}
     function toggleCalendar(){
-      if(activeSchoolConfig?.calendar?.show!==true)return;
+      if(activeView?.config?.calendar?.show!==true)return;
       calendarVisible=!calendarVisible;
       applyCalendarVisibility();
       scheduleFit();
     }
 
     function fitContainer(){
-      const c=document.getElementById("mainContainer");c.classList.remove("allow-scroll");const max=Math.floor(innerHeight*.94);c.style.maxHeight=`${max}px`;
+      const c=document.getElementById("mainContainer");if(!c||c.style.display==="none")return;
+      c.classList.remove("allow-scroll");const max=Math.floor(innerHeight*.94);c.style.maxHeight=`${max}px`;
       requestAnimationFrame(()=>{c.classList.toggle("allow-scroll",c.scrollHeight>c.clientHeight+1);});
     }
 
     function applyCalendarVisibility(){
-      const show=activeSchoolConfig?.calendar?.show===true;
+      const show=activeView?.config?.calendar?.show===true;
       const card=document.getElementById("calendarCard");
       const button=document.getElementById("calendarToggleBtn");
       if(card)card.classList.toggle("hidden",!show || !calendarVisible);
@@ -1292,11 +1721,11 @@
     function resetSchoolUi(){
       document.getElementById("todayPanel")?.classList.remove("show");
       document.getElementById("allPanel")?.classList.remove("show");
-      document.getElementById("todayPanel").innerHTML="";
-      document.getElementById("allPanel").innerHTML="";
+      const todayPanel=document.getElementById("todayPanel");
+      const allPanel=document.getElementById("allPanel");
+      if(todayPanel)todayPanel.innerHTML="";
+      if(allPanel)allPanel.innerHTML="";
       document.getElementById("devPanel")?.classList.remove("show");
-      activeScheduleKey=null;
-      lastMainLabel="";
       calendarViewDate=new Date();
       selectedDateStr=null;
       calendarVisible=false;
@@ -1308,31 +1737,29 @@
 
     function initSchoolApp(slug){
       if(!slug||!SCHOOL_CONFIGS[slug])return;
-      const config=getSchoolConfig(slug);
-      activeSchoolSlug=slug;
-      activeSchoolConfig=config;
+      const main=document.getElementById("mainContainer");
+      activeView=createSchoolView(slug,{
+        statusTarget:main,
+        currentPeriod:document.getElementById("currentPeriod"),
+        endTime:document.getElementById("endTime"),
+        countdown:document.getElementById("countdown"),
+        todayPanel:document.getElementById("todayPanel"),
+        allPanel:document.getElementById("allPanel")
+      });
 
       const schoolNameHeader=document.getElementById("schoolNameHeader");
-      if(schoolNameHeader)schoolNameHeader.textContent=config.name||SCHOOL_ROUTES[slug]?.name||slug;
+      if(schoolNameHeader)schoolNameHeader.textContent=activeView.config.name||SCHOOL_ROUTES[slug]?.name||slug;
 
       resetSchoolUi();
       applyCalendarVisibility();
-      calendarEventsByDate=new Map();
-      calendarEvents=[];
-      calendarDataLoaded=false;
-      yearDataCache.clear();
+      setCalendarLoadState(activeView,false);
 
       if(devMode)document.getElementById("devPanel")?.classList.add("show");
-      update();
+      updateView(activeView);
       fitContainer();
       renderCalendar();
-      loadCalendarEvents();
-
-      if(updateIntervalId===null){
-        updateIntervalId=setInterval(()=>{
-          if(getCurrentSchoolSlug()===activeSchoolSlug)update();
-        },250);
-      }
+      loadCalendarEventsForView(activeView);
+      ensureUpdateInterval();
     }
 
     addEventListener("popstate",routeSchool);
@@ -1340,6 +1767,83 @@
       if(event.target?.classList?.contains("panel")||event.target?.classList?.contains("inline-detail"))fitContainer();
     });
     addEventListener("resize",fitContainer);
+
+    (function setupFeedbackForm(){
+      const btn=document.getElementById("feedbackBtn");
+      const modal=document.getElementById("feedbackModal");
+      const message=document.getElementById("feedbackMessage");
+      const cancel=document.getElementById("feedbackCancel");
+      const submit=document.getElementById("feedbackSubmit");
+      const status=document.getElementById("feedbackStatus");
+      if(!btn||!modal||!message||!cancel||!submit||!status)return;
+
+      function setStatus(text,kind){
+        status.textContent=text||"";
+        status.classList.remove("error","ok");
+        if(kind)status.classList.add(kind);
+      }
+
+      function openModal(){
+        modal.hidden=false;
+        modal.classList.add("open");
+        setStatus("");
+        message.focus();
+      }
+
+      function closeModal(){
+        modal.classList.remove("open");
+        modal.hidden=true;
+        setStatus("");
+        message.value="";
+        submit.disabled=false;
+      }
+
+      btn.addEventListener("click",openModal);
+      cancel.addEventListener("click",closeModal);
+      modal.addEventListener("click",event=>{
+        if(event.target===modal)closeModal();
+      });
+      addEventListener("keydown",event=>{
+        if(event.key==="Escape" && modal.classList.contains("open"))closeModal();
+      });
+
+      submit.addEventListener("click",async()=>{
+        const text=message.value.trim();
+        if(!text){
+          setStatus("Please enter a message before submitting.", "error");
+          message.focus();
+          return;
+        }
+        submit.disabled=true;
+        setStatus("Sending…");
+        try{
+          const res=await fetch("https://formsubmit.co/ajax/kaleb@theflings.com",{
+            method:"POST",
+            headers:{
+              "Content-Type":"application/json",
+              "Accept":"application/json"
+            },
+            body:JSON.stringify({
+              message:text,
+              _subject:"Bell suggests",
+              _template:"basic",
+              _captcha:"false"
+            })
+          });
+          const data=await res.json().catch(()=>({}));
+          if(!res.ok||data.success==="false"||data.error){
+            throw new Error(data.message||data.error||`Send failed (${res.status})`);
+          }
+          setStatus("Sent. Thanks for the feedback!", "ok");
+          message.value="";
+          setTimeout(closeModal,1100);
+        }catch(err){
+          const detail=err?.message&&err.message!=="Failed to fetch"?err.message:"Couldn’t reach the mail service. Check your connection and try again.";
+          setStatus(detail, "error");
+          submit.disabled=false;
+        }
+      });
+    })();
 
     // GitHub Pages sends unknown deep links to 404.html. That tiny fallback
     // stores the requested URL here before returning to this single app file.
