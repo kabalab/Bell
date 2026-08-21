@@ -1431,8 +1431,8 @@
       if(y.noSchoolReasons[ds])return {type:"closed",reason:y.noSchoolReasons[ds],yearLabel:y.label};
       if(y.finalsMap[ds]&&catalog[y.finalsMap[ds]])return {type:"schedule",key:y.finalsMap[ds],yearLabel:y.label};
       if(y.pepRallyDays.has(ds)&&catalog.pepRally)return {type:"schedule",key:"pepRally",yearLabel:y.label};
-      if(day===1&&catalog.mondayBroadcast&&catalog.mondayNoBroadcast){
-        return y.mondayNoBroadcast.has(ds)?{type:"schedule",key:"mondayNoBroadcast",yearLabel:y.label}:{type:"schedule",key:"mondayBroadcast",yearLabel:y.label};
+      if(day===1&&(catalog.mondayBroadcast||catalog.mondayNoBroadcast)){
+        return y.mondayNoBroadcast.has(ds)&&catalog.mondayNoBroadcast?{type:"schedule",key:"mondayNoBroadcast",yearLabel:y.label}:{type:"schedule",key:"mondayBroadcast",yearLabel:y.label};
       }
       if(day===5&&catalog.fridaySchedule){
         return {type:"schedule",key:"fridaySchedule",yearLabel:y.label};
@@ -1597,7 +1597,7 @@
         const rawD=(inputDay.value||"").trim();
         if(/^\d{6}$/.test(rawD)){
           d=Number(rawD.slice(0,2));mm=Number(rawD.slice(2,4));y=Number(rawD.slice(4,6));
-          if(d>31||mm>11||y>99)return;
+          if(d>31||mm>12||y>99)return;
         }
       }
       const target=new Date(2000+y,mm-1,d,h,m,s);
