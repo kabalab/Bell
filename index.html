@@ -40,6 +40,8 @@
     #schoolPicker{
       display:none;
       text-align:center;
+      overflow-y:auto;
+      max-height:94dvh;
     }
     #schoolPicker .actions{
       justify-content:center;
@@ -470,6 +472,12 @@
       body.embedded-mode #endTime{
         font-size:1rem;
       }
+
+      #schoolPicker{
+        max-height:100dvh;
+        overflow-y:auto;
+        align-items:flex-start;
+      }
     }
 
     @media (max-width:380px){
@@ -730,8 +738,7 @@
       },
 
       schedule:{
-        regularTF:{title:"Daily Schedule (Tue–Fri)",blocks:[["Period 1","08:45","09:42"],["Period 2","09:48","10:45"],["Period 3","10:51","11:48"],["Period 4","11:54","12:51"],["Lunch","12:57","13:27"],["Period 5","13:33","14:30"],["Period 6","14:36","15:33"]]},
-        pepRally:{title:"Pep Rally Schedule",blocks:[["Period 1","08:45","09:32"],["Period 2","09:38","10:25"],["Period 3","10:31","11:18"],["Rally","11:25","12:17"],["Period 4","12:24","13:11"],["Lunch","13:17","13:47"],["Period 5","13:53","14:40"],["Period 6","14:46","15:33"]]}
+        regular:{title:"Daily Schedule (Tue–Fri)",blocks:[["Period 1","08:45","09:42"],["Period 2","09:48","10:45"],["Period 3","10:51","11:48"],["Period 4","11:54","12:51"],["Lunch","12:57","13:27"],["Period 5","13:33","14:30"],["Period 6","14:36","15:33"]]}
       },
 
       logic:{
@@ -745,9 +752,9 @@
         title:"Patrick Henry ",
         calendar:{show:true},
         schedule:{
-          mondayBroadcast:{title:"Monday Late Start (with PHHS Broadcast News)",blocks:[["Period 1","09:20","10:10"],["Period 2","10:16","11:06"],["Period 3","11:12","12:02"],["Period 4","12:08","12:58"],["Lunch","13:04","13:34"],["Period 5","13:40","14:39"],["Period 6","14:45","15:35"]]},
+          mondaySchedule:{title:"Monday Late Start (with PHHS Broadcast News)",blocks:[["Period 1","09:20","10:10"],["Period 2","10:16","11:06"],["Period 3","11:12","12:02"],["Period 4","12:08","12:58"],["Lunch","13:04","13:34"],["Period 5","13:40","14:39"],["Period 6","14:45","15:35"]]},
           mondayNoBroadcast:{title:"Monday Late Start (w/o Broadcast: first 3 Mondays)",blocks:[["Period 1","09:20","10:11"],["Period 2","10:17","11:08"],["Period 3","11:14","12:05"],["Period 4","12:11","13:02"],["Lunch","13:08","13:41"],["Period 5","13:47","14:38"],["Period 6","14:44","15:35"]]},
-          pepRally:{title:"Pep Rally Schedule"},
+          pepRally:{title:"Pep Rally Schedule",blocks:[["Period 1","08:45","09:32"],["Period 2","09:38","10:25"],["Period 3","10:31","11:18"],["Rally","11:25","12:17"],["Period 4","12:24","13:11"],["Lunch","13:17","13:47"],["Period 5","13:53","14:40"],["Period 6","14:46","15:33"]]},
           finalsP12:{title:"Minimum Day Finals (P1 & P2)",blocks:[["Period 1 Final","08:45","10:45"],["Period 2 Final","11:11","13:11"]]},
           finalsP34:{title:"Minimum Day Finals (P3 & P4)",blocks:[["Period 3 Final","08:45","10:45"],["Period 4 Final","11:11","13:11"]]},
           finalsP56:{title:"Minimum Day Finals (P5 & P6)",blocks:[["Period 5 Final","08:45","10:45"],["Period 6 Final","11:11","13:11"]]}
@@ -758,9 +765,9 @@
         name:"Point Loma High School",
         title:"Point Loma ",
         schedule:{
-          regularTF:{
+          regular:{
             title:"Classic Schedule",blocks:[["Period 1","08:45","09:42"],["Period 2","09:47","10:44"],["Period 3","10:49","11:49"],["Lunch","11:54","12:24"],["Period 4","12:29","13:26"],["Period 5","13:31","14:28"],["Period 6","14:33","15:30"]]},
-          mondayBroadcast:{
+          mondaySchedule:{
             title:"Modified Mondays",blocks:[["Period 1","08:45","09:34"],["Period 2","09:39","10:28"],["Period 3","10:33","11:23"],["Lunch","11:28","12:58"],["Period 4","12:03","12:52"],["Period 5","12:57","13:46"],["Period 6","13:51","14:40"]]},
           pepRally:{
             title:"Activity Calendar (pep rallies)",blocks:[["Period 1","08:45","09:37"],["Period 2","09:42","10:34"],["Period 3","10:39","11:34"],["Activity","11:39","12:04"],["Lunch","12:09","12:34"],["Period 4","12:44","13:36"],["Period 5","13:41","14:33"],["Period 6","14:38","15:30"]]}, 
@@ -774,7 +781,7 @@
         name:"Rancho Cucamonga High School",
         title:"Rancho Cucamonga ",
         schedule:{
-          regularTF:{
+          regular:{
             title:"Regular Schedule",blocks:[["Period 0","07:20","08:23"],["Period 1","08:30","09:26"],["Period 2","09:33","10:38"],["Period 3","10:45","11:41"],["1st Lunch","11:41","12:11"],["Period 4 (2nd Lunch)","11:48","12:44"],["Period 4 (1st Lunch)","12:18","13:14"],["2nd Lunch","12:44","13:14"],["Period 5","13:21","14:17"],["Period 6","14:24","15:20"]],},
           fridaySchedule:{
             title:"Friday Conference Schedule",blocks:[["Period 1","09:30","10:17"],["Period 2","10:24","11:11"],["Period 3","11:18","12:05"],["1st Lunch","12:05","12:35"],["Period 4 (2nd Lunch)","12:12","13:00"],["Period 4 (1st Lunch)","12:42","13:30"],["2nd Lunch","13:00","13:30"],["Period 5","13:37","14:25"],["Period 6","14:32","15:20"]],},
@@ -788,7 +795,111 @@
               title:"Final P5,P6",blocks:[["Period 5","08:30","10:30"],["Break","10:30","10:43"],["Period 6","10:50","12:50"]]},    
           }
         },
-    };
+
+      hchs:{
+        name:"Helix Charter High School",
+        title:"Helix Charter ",
+        schedule:{
+          regular:{
+            title:"Monday - Thursday",blocks:[["Period 1","08:30","10:02"],["Period 2","10:12","11:46"],["Lunch","11:46","12:10"],["Period 3","12:20","13:53"],["Period 4","14:03","15:35"]]},
+          fridaySchedule:{
+            title:"Friday",blocks:[["Tutorial I","08:30","09:20"],["Tutorial II","09:30","10:20"],["Period 1","10:30","11:25"],["Period 2","11:35","12:30"],["Advisory","12:40","13:00"],["Lunch","13:00","13:25"],["Period 3","13:35","14:30"],["Period 4","14:40","15:35"]]},
+          minimumDay:{
+            title:"Minimum Day",blocks:[["Period 1","08:30","09:30"],["Period 2","09:40","10:40"],["Nutrition Break","10:40","10:55"],["Period 3","10:55","11:55"],["Period 4","12:05","13:05"],["Lunch","13:05","`2:35"]]},
+          finalsP34:{
+            title:"Final Exam Schedule (Day 1)",blocks:[["Period 1","08:30","09:40"],["Period 2","09:50","11:00"],["Lunch","11:00","11:20"],["Period 3","11:30","12:40"],["Period 4","12:50","14:00"]]},
+          finalsP56:{
+            title:"Final Exam Schedule (Day 2)",blocks:[["Period 1","08:30","09:40"],["Period 2","09:50","11:00"],["Lunch","11:00","11:20"],["Period 3","11:30","12:40"],["Period 4","12:50","14:00"]]},
+        }
+      },
+      hths:{
+        name:"High Tech High School",
+        title:"High Tech ",
+        schedule:{
+          regular:{
+            title:"Regular Dismissal",blocks:[["Home Room","08:36","08:50"],["Section 1","08:51","09:31"],["Section 2","09:32","10:12"],["Section 3","10:13","10:53"],["Section 4","10:54","11:34"],["Section 5","11:35","12:15"],["Section 6","12:16","12:56"],["Section 7","12:57","13:37"],["Section 8","13:38","14:18"],["Section 9","14:19","14:59"]]},
+          early:{
+            title:"Early Dismissal",blocks:[["Home Room","08:36","08:50"],["Section 1","08:51","09:19"],["Section 2","09:20","09:37"],["Section 3","09:48","10:15"],["Section 4","10:16","10:43"],["Section 5","10:44","11:11"],["Section 6","11:12","11:38"],["Section 7","11:39","12:05"],["Section 8","12:06","12:32"],["Section 9","12:33","13:00"]]},
+          late:{
+            title:"Delayed Opening",blocks:[["Home Room","10:36","10:51"],["Section 1","10:52","11:19"],["Section 2","11:20","11:47"],["Section 3","11:48","12:15"],["Section 4","12:16","12:43"],["Section 5","12:45","13:11"],["Section 6","13:12","13:38"],["Section 7","13:39","14:05"],["Section 8","14:06","14:32"],["Section 9","14:33","15:00"]]},
+          virtual:{
+            title:"Virtual/Hybrid",blocks:[["Home Room","08:40","08:55"],["Section 1","09:00","09:25"],["Section 2","09:30","09:55"],["Section 3","10:00","10:25"],["Section 4","10:30","10:55"],["Section 5","11:00","11:25"],["Section 6","11:30","11:55"],["Section 7","12:00","12:25"],["Section 8","12:30","12:55"],["Section 9","13:00","13:25"]]}
+        }
+      }, 
+      chhs:{
+        name:"Canyon Hills High School",
+        title:"Canyon Hills ",
+        schedule:{
+          regular:{
+            title:"Monday, Tuesday, Wednesday, & Friday",blocks:[["Period 1","08:45","10:15"],["Period 2","10:22","11:53"],["Lunch","11:58","12:28"],["Period 3","12:33","14:03"],["Period 4","14:10","15:40"]]},
+          thursdaySchedule:{
+            title:"Thursday",blocks:[["Period 1","08:45","09:55"],["Period 2","10:02","11:12"],["Lunch","11:19","11:49"],["Period 3","11:56","13:07"],["Period 4","13:14","14:25"]]},
+          finalsP56:{
+            title:"Finals",blocks:[["Period 1","08:45","09:55"],["Period 2","10:02","11:12"],["Lunch","11:19","11:49"],["Period 3","11:56","13:07"],["Period 4","13:14","14:25"]]},
+          teamMeets:{
+            title:"Team Meetings & Special Events",blocks:[["Team Meetings","14:30","15:35"]]}
+        }
+      }, 
+      dpms:{
+        name:"De Portola Middle School",
+        title:"De Portola ",
+        schedule:{
+          regular:{
+            title:"Regular Day",blocks:[["1","08:00","08:55"],["2","09:00","09:55"],["3","10:00","10:55"],["4","11:00","11:55"],["Lunch","12:00","12:30"],["5","12:35","13:30"],["6","13:35","14:30"]]},
+          thursdaySchedule:{
+            title:"Thursday Minimum Day",blocks:[["1","08:00","08:40"],["2","08:45","09:25"],["3","09:30","10:10"],["4","10:15","10:55"],["Lunch","11:00","11:30"],["5","11:35","12:15"],["6","12:20","13:00"]]}
+          }
+      }, 
+      lms:{
+        name:"Lewis Middle School",
+        title:"Lewis Middle ",
+        schedule:{
+          regular:{
+            title:"Regular",blocks:[["1","08:00","08:50"],["2","08:55","09:45"],["3","09:50","10:40"],["4","10:45","11:10"],["Advisory","11:10","11:15"],["Lunch","11:15","11:45"],["5","11:50","12:40"],["6","12:45","13:35"],["7","13:40","14:30"]]},
+          wednesdaySchedule:{
+            title:"Wednesday",blocks:[["1","08:00","08:43"],["2","08:48","09:31"],["3","09:36","10:19"],["5","10:24","11:07"],["Lunch","11:12","11:42"],["6","11:47","12:30"],["7","12:35","13:18"]]},
+          finalsP56:{
+            title:"Minimum Day",blocks:[["1","08:00","08:40"],["2","08:45","09:20"],["3","09:25","10:00"],["5","10:05","10:40"],["6","10:45","11:20"],["7","11:25","12:00"],["Lunch","12:00","12:30"]]
+          }
+        }
+      }, 
+      pms:{
+        name:"Pershing Middle School",
+        title:"Pershing ",
+        schedule:{
+          regular:{
+            title:"Mondays, Tuesdays, Thursdays, Fridays",blocks:[["Period 1","08:00","09:00"],["Period 2","09:05","10:03"],["Period 3","10:08","11:06"],["Period 4","11:11","12:09"],["Lunch","12:14","12:44"],["Period 5","12:49","13:47"],["Period 6A/6B","13:52","14:50"]]
+          },
+          wednesdaySchedule:{
+            title:"Wednesday",blocks:[["Period 1","08:00","08:39"],["Period 2","08:44","09:21"],["Period 3","09:26","10:03"],["Period 4","10:08","10:45"],["Lunch","10:50","11:20"],["Period 5","11:25","12:02"],["Period 6A/6B","12:07","12:44"],["OFFICE HOURS","12:45","13:20"]]
+          },
+        }
+      }, 
+      lmaa:{
+        name:"La Mesa Arts Academy",
+        title:"La Mesa Arts Academy",
+        schedule:{
+          regular:{
+            title:"Regular",blocks:[["Period 1","08:00","08:55"],["Period 2","09:00","09:50"],["Period 3","09:55","10:45"],["Advisory","10:50","11:15"],["1st Lunch","11:15","11:45"],["Period 4 (2nd Lunch)","11:15","11:45"],["Period 4 (3rd Lunch)","11:15","12:15"],["2nd Lunch","11:45","12:15"],["Period 4 (1st Lunch)","11:50","12:45"],["3rd Lunch","12:15","12:45"],["Period 4 (2nd Lunch)","12:20","12:45"],["Period 5","12:50","13:40"],["Period 6","13:45","14:35"]]},
+          tuesdaySchedule:{
+            title:"Tuesday",blocks:[["Period 1","08:00","08:43"],["Period 2","08:48","09:31"],["Period 3","09:36","10:19"],["1st Lunch","10:24","10:54"],["Period 4 (2nd Lunch)","10:24","10:54"],["Period 4 (3rd Lunch)","10:24","11:24"],["2nd Lunch","10:54","11:24"],["Period 4 (1st Lunch)","10:59","11:54"],["3rd Lunch","11:24","11:54"],["Period 4 (2nd Lunch)","11:29","11:54"],["Period 5","11:59","12:42"],["Period 6","12:47","13:30"]]
+          }
+        }
+      }, 
+      msa:{
+        name:"Magnolia Science Academy",
+        title:"Magnolia Science Academy",
+        schedule:{
+          regular:{
+            title:"Regular",blocks:[["Advisory","08:15","08:27"],["Period 1","08:27","09:18"],["Period 2","09:21","10:12"],["Nutrition Break","10:12","10:22"],["Period 3","10:25","11:16"],["Period 4","11:19","12:10"],["Lunch 1","12:10","12:40"],["Lunch 2","12:42","13:12"],["Period 6","13:15","14:06"],["Period 7","14:09","15:00"]]},
+          wednesdaySchedule:{
+            title:"Wednesday",blocks:[["Advisory","08:15","08:27"],["Period 1","08:27","09:08"],["Period 2","09:11","09:52"],["Nutrition Break","09:52","10:02"],["Period 3","10:05","10:46"],["Period 4","10:49","11:30"],["Lunch 1","11:30","12:00"],["Lunch 2","12:02","12:32"],["Period 6","12:35","13:16"],["Period 7","13:19","14:00"]]},
+          finalsP56:{
+            title:"Minimum Day",blocks:[["Period 1","08:15","08:56"],["Period 2","08:59","09:40"],["Period 3","09:43","10:24"],["Nutrition Break","10:24","10:34"],["Period 4","10:37","11:18"],["Period 5","11:21","12:02"],["Lunch 1","12:02","12:22"],["Lunch 2","12:25","12:45"]]
+          }
+        }
+      },
+    } 
 
     function mergeConfig(base,override){
       if(override===undefined) return base;
@@ -873,7 +984,7 @@
       const isOpen=builder.classList.toggle("show");
       if(isOpen){
         renderComboBuilder();
-        builder.scrollIntoView({behavior:"smooth",block:"nearest"});
+        builder.scrollIntoView({behavior:"smooth",block:"start"});
       }
     }
 
@@ -1415,9 +1526,12 @@
       const catalog=getScheduleCatalog(view);
       const day=dateObj.getDay();
       if(day===0||day===6)return {type:"closed",reason:"Weekend",yearLabel:"Loading"};
-      if(day===1&&catalog.mondayBroadcast)return {type:"schedule",key:"mondayBroadcast",yearLabel:"Loading"};
+      if(day===1&&catalog.mondaySchedule)return {type:"schedule",key:"mondaySchedule",yearLabel:"Loading"};
+      if(day===2&&catalog.tuesdaySchedule)return {type:"schedule",key:"tuesdaySchedule",yearLabel:"Loading"};
+      if(day===3&&catalog.wednesdaySchedule)return {type:"schedule",key:"wednesdaySchedule",yearLabel:"Loading"};
+      if(day===4&&catalog.thursdaySchedule)return {type:"schedule",key:"thursdaySchedule",yearLabel:"Loading"};
       if(day===5&&catalog.fridaySchedule)return {type:"schedule",key:"fridaySchedule",yearLabel:"Loading"};
-      if(catalog.regularTF)return {type:"schedule",key:"regularTF",yearLabel:"Loading"};
+      if(catalog.regular)return {type:"schedule",key:"regular",yearLabel:"Loading"};
       const firstKey=Object.keys(catalog)[0];
       return firstKey?{type:"schedule",key:firstKey,yearLabel:"Loading"}:{type:"closed",reason:"No Schedule Configured",yearLabel:"Loading"};
     }
@@ -1431,13 +1545,13 @@
       if(y.noSchoolReasons[ds])return {type:"closed",reason:y.noSchoolReasons[ds],yearLabel:y.label};
       if(y.finalsMap[ds]&&catalog[y.finalsMap[ds]])return {type:"schedule",key:y.finalsMap[ds],yearLabel:y.label};
       if(y.pepRallyDays.has(ds)&&catalog.pepRally)return {type:"schedule",key:"pepRally",yearLabel:y.label};
-      if(day===1&&(catalog.mondayBroadcast||catalog.mondayNoBroadcast)){
-        return y.mondayNoBroadcast.has(ds)&&catalog.mondayNoBroadcast?{type:"schedule",key:"mondayNoBroadcast",yearLabel:y.label}:{type:"schedule",key:"mondayBroadcast",yearLabel:y.label};
+      if(day===1&&(catalog.mondaySchedule||catalog.mondayNoBroadcast)){
+        return y.mondayNoBroadcast.has(ds)&&catalog.mondayNoBroadcast?{type:"schedule",key:"mondayNoBroadcast",yearLabel:y.label}:{type:"schedule",key:"mondaySchedule",yearLabel:y.label};
       }
       if(day===5&&catalog.fridaySchedule){
         return {type:"schedule",key:"fridaySchedule",yearLabel:y.label};
       }
-      if(catalog.regularTF)return {type:"schedule",key:"regularTF",yearLabel:y.label};
+      if(catalog.regular)return {type:"schedule",key:"regular",yearLabel:y.label};
       const firstKey=Object.keys(catalog)[0];
       return firstKey?{type:"schedule",key:firstKey,yearLabel:y.label}:{type:"closed",reason:"No Schedule Configured",yearLabel:y.label};
     }
