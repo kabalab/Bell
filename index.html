@@ -278,8 +278,9 @@
       transition:max-height .6s ease,opacity .35s ease,padding .25s ease;
     }
     .panel.show{max-height:1300px;opacity:1;padding:14px}
-    .schedule-item{padding:6px 0;border-bottom:1px solid rgba(255,255,255,.12)}
-    .schedule-item:last-child{border-bottom:none}
+    .schedule-solo{padding:6px 0;border-bottom:1px solid rgba(255,255,255,.12)}
+    .schedule-solo:last-child{border-bottom:none}
+    .schedule-together{padding:6px 0;}
     .holiday{color:var(--warn);font-size:1.16em}
     .badge{font-size:.76rem;padding:2px 8px;border-radius:999px;background:rgba(255,255,255,.18);margin-left:8px}
 
@@ -398,7 +399,7 @@
         padding:12px;
       }
 
-      .schedule-item{
+      .schedule-solo{
         font-size:.9rem;
         line-height:1.35;
         padding:7px 0;
@@ -644,8 +645,8 @@
       <h2>Loaded in the same order as the URL.</h2>
     </div>
     <div class="panel" id="stackDevPanel">
-      <div class="schedule-item"><strong>Dev Time Override</strong></div>
-      <div class="schedule-item">
+      <div class="schedule-solo"><strong>Dev Time Override</strong></div>
+      <div class="schedule-solo">
         <input id="stackDevTimeInput" type="text" placeholder="HHMMSS" maxlength="6" style="margin-left:8px; width:110px; padding:6px; border-radius:8px; border:1px solid rgba(255,255,255,.2); background:rgba(255,255,255,.1); color:#fff;">
         <input id="stackDevDateInput" type="text" placeholder="DDMMYR" maxlength="6" style="margin-left:8px; width:110px; padding:6px; border-radius:8px; border:1px solid rgba(255,255,255,.2); background:rgba(255,255,255,.1); color:#fff;">
       </div>
@@ -672,8 +673,8 @@
         </div>
 
         <div class="panel" id="devPanel">
-          <div class="schedule-item"><strong>Dev Time Override</strong></div>
-          <div class="schedule-item">
+          <div class="schedule-solo"><strong>Dev Time Override</strong></div>
+          <div class="schedule-solo">
             <input id="devTimeInput" type="text" placeholder="HHMMSS" maxlength="6" style="margin-left:8px; width:110px; padding:6px; border-radius:8px; border:1px solid rgba(255,255,255,.2); background:rgba(255,255,255,.1); color:#fff;">
             <input id="devDateInput" type="text" placeholder="DDMMYR" maxlength="6" style="margin-left:8px; width:110px; padding:6px; border-radius:8px; border:1px solid rgba(255,255,255,.2); background:rgba(255,255,255,.1); color:#fff;">
           </div>
@@ -782,9 +783,9 @@
         title:"Rancho Cucamonga ",
         schedule:{
           regular:{
-            title:"Regular Schedule",blocks:[["Period 0","07:20","08:23"],["Period 1","08:30","09:26"],["Period 2","09:33","10:38"],["Period 3","10:45","11:41"],["1st Lunch","11:41","12:11"],["Period 4 (2nd Lunch)","11:48","12:44"],["Period 4 (1st Lunch)","12:18","13:14"],["2nd Lunch","12:44","13:14"],["Period 5","13:21","14:17"],["Period 6","14:24","15:20"]],},
+            title:"Regular Schedule",blocks:[["Period 0","07:20","08:23"],["Period 1","08:30","09:26"],["Period 2","09:33","10:38"],["Period 3","10:45","11:41"],["1st Lunch (B, C, D, E, F, G, H, K, Y)","11:41","12:11"],["Period 4 (1st Lunch)","12:18","13:14"],["Period 4 (2nd Lunch)","11:48","12:44"],["2nd Lunch (A, J, N, Q, R, T, U, V, Gym/PE, P104)","12:44","13:14"],["Period 5","13:21","14:17"],["Period 6","14:24","15:20"]],together:[4,6]},
           fridaySchedule:{
-            title:"Friday Conference Schedule",blocks:[["Period 1","09:30","10:17"],["Period 2","10:24","11:11"],["Period 3","11:18","12:05"],["1st Lunch","12:05","12:35"],["Period 4 (2nd Lunch)","12:12","13:00"],["Period 4 (1st Lunch)","12:42","13:30"],["2nd Lunch","13:00","13:30"],["Period 5","13:37","14:25"],["Period 6","14:32","15:20"]],},
+            title:"Friday Conference Schedule",blocks:[["Period 1","09:30","10:17"],["Period 2","10:24","11:11"],["Period 3","11:18","12:05"],["1st Lunch (B, C, D, E, F, G, H, K, Y)","12:05","12:35"],["Period 4 (1st Lunch)","12:42","13:30"],["Period 4 (2nd Lunch)","12:12","13:00"],["2nd Lunch (A, J, N, Q, R, T, U, V, Gym/PE, P104)","13:00","13:30"],["Period 5","13:37","14:25"],["Period 6","14:32","15:20"]],together:[3,5]},
           minimumDay:{
             title:"Minimum Day Schedule",blocks:[["Period 0","07:20","08:23"],["Period 1","08:30","09:05"],["Period 2","09:12","09:47"],["Period 3","10:36","11:11"],["Period 5","11:18","11:53"],["Period 6","12:00","12:35"],["Nutrition","12:35","12:50"]],},
           finalsP12:{
@@ -845,9 +846,9 @@
         title:"De Portola ",
         schedule:{
           regular:{
-            title:"Regular Day",blocks:[["1","08:00","08:55"],["2","09:00","09:55"],["3","10:00","10:55"],["4","11:00","11:55"],["Lunch","12:00","12:30"],["5","12:35","13:30"],["6","13:35","14:30"]]},
+            title:"Regular Day",blocks:[["Period 1","08:00","08:55"],["Period 2","09:00","09:55"],["Period 3","10:00","10:55"],["Period 4","11:00","11:55"],["Lunch","12:00","12:30"],["Period 5","12:35","13:30"],["Period 6","13:35","14:30"]]},
           thursdaySchedule:{
-            title:"Thursday Minimum Day",blocks:[["1","08:00","08:40"],["2","08:45","09:25"],["3","09:30","10:10"],["4","10:15","10:55"],["Lunch","11:00","11:30"],["5","11:35","12:15"],["6","12:20","13:00"]]}
+            title:"Thursday Minimum Day",blocks:[["Period 1","08:00","08:40"],["Period 2","08:45","09:25"],["Period 3","09:30","10:10"],["Period 4","10:15","10:55"],["Lunch","11:00","11:30"],["Period 5","11:35","12:15"],["Period 6","12:20","13:00"]]}
           }
       }, 
       lms:{
@@ -880,9 +881,9 @@
         title:"La Mesa Arts Academy",
         schedule:{
           regular:{
-            title:"Regular",blocks:[["Period 1","08:00","08:55"],["Period 2","09:00","09:50"],["Period 3","09:55","10:45"],["Advisory","10:50","11:15"],["1st Lunch","11:15","11:45"],["Period 4 (2nd Lunch)","11:15","11:45"],["Period 4 (3rd Lunch)","11:15","12:15"],["2nd Lunch","11:45","12:15"],["Period 4 (1st Lunch)","11:50","12:45"],["3rd Lunch","12:15","12:45"],["Period 4 (2nd Lunch)","12:20","12:45"],["Period 5","12:50","13:40"],["Period 6","13:45","14:35"]]},
+            title:"Regular",blocks:[["Period 1","08:00","08:55"],["Period 2","09:00","09:50"],["Period 3","09:55","10:45"],["Advisory","10:50","11:15"],["1st Lunch","11:15","11:45"],["Period 4 (1st Lunch)","11:50","12:45"],["Period 4 (2nd Lunch)","11:15","11:45"],["2nd Lunch","11:45","12:15"],["Period 4 (2nd Lunch)","12:20","12:45"],["Period 4 (3rd Lunch)","11:15","12:15"],["3rd Lunch","12:15","12:45"],["Period 5","12:50","13:40"],["Period 6","13:45","14:35"]],together:[4,6,7,9]},
           tuesdaySchedule:{
-            title:"Tuesday",blocks:[["Period 1","08:00","08:43"],["Period 2","08:48","09:31"],["Period 3","09:36","10:19"],["1st Lunch","10:24","10:54"],["Period 4 (2nd Lunch)","10:24","10:54"],["Period 4 (3rd Lunch)","10:24","11:24"],["2nd Lunch","10:54","11:24"],["Period 4 (1st Lunch)","10:59","11:54"],["3rd Lunch","11:24","11:54"],["Period 4 (2nd Lunch)","11:29","11:54"],["Period 5","11:59","12:42"],["Period 6","12:47","13:30"]]
+            title:"Tuesday",blocks:[["Period 1","08:00","08:43"],["Period 2","08:48","09:31"],["Period 3","09:36","10:19"],["1st Lunch","10:24","10:54"],["Period 4 (1st Lunch)","10:59","11:54"],["Period 4 (2nd Lunch)","10:24","10:54"],["2nd Lunch","10:54","11:24"],["Period 4 (2nd Lunch)","11:29","11:54"],["Period 4 (3rd Lunch)","10:24","11:24"],["3rd Lunch","11:24","11:54"],["Period 5","11:59","12:42"],["Period 6","12:47","13:30"]],together:[3,5,6,8]
           }
         }
       }, 
@@ -984,7 +985,7 @@
       const isOpen=builder.classList.toggle("show");
       if(isOpen){
         renderComboBuilder();
-        builder.scrollIntoView({behavior:"smooth",block:"start"});
+        builder.scrollIntoView({behavior:"smooth",block:"startschedule-solo"});
       }
     }
 
@@ -1061,7 +1062,7 @@
       if(existing)existing.remove();
       if(message){
         const note=document.createElement("div");
-        note.className="schedule-item school-picker-message";
+        note.className="schedule-solo school-picker-message";
         note.textContent=message;
         buttons.parentElement.insertBefore(note,buttons);
       }
@@ -1345,6 +1346,7 @@
       for(const [,arr] of view.calendarEventsByDate)arr.sort((a,b)=>a.startMs-b.startMs);
       view.yearDataCache.clear();
       setCalendarLoadState(view,true);
+      refreshVisibleTodayPanelForView(view);
     }
 
     function loadCalendarEventsForView(view){
@@ -1381,11 +1383,13 @@
             if(selectedDateStr)showCalendarInfo(selectedDateStr);
           }
           updateView(view);
+          refreshVisibleTodayPanelForView(view);
         })
         .catch(()=>{
           indexCalendarEventsForView(view,[]);
           if(view===activeView)renderCalendar();
           updateView(view);
+          refreshVisibleTodayPanelForView(view);
         });
     }
 
@@ -1586,7 +1590,11 @@
     }
 
     function renderScheduleBlocks(s){
-      return (s?.blocks||[]).map(b=>`<div class="schedule-item"><strong>${b[0]}</strong> : ${toNormalTime(b[1])} - ${toNormalTime(b[2])}</div>`).join("");
+      const together = s?.together || [];
+      return (s?.blocks||[]).map((b,i)=>{
+        const type = together.some(r=>r===i)
+        return `<div class="schedule-${(type)?'together':'solo'}"><strong>${b[0]}</strong> : ${toNormalTime(b[1])} - ${toNormalTime(b[2])}</div>`}).join("");
+      
     }
 
     function isWeekendNowOrAfterSchoolToWeekend(dateObj,info,view){
@@ -1719,13 +1727,28 @@
     }
     function resetDevTime(){devTimeActive=false;devTimeOffsetMs=0;update();}
 
+    function renderTodayForView(view){
+      const p=view.els.todayPanel;if(!p)return;
+      const now=getNow(),info=getScheduleKeyForDate(now,view),dateLabel=prettyDate(formatDate(now));
+      if(info.type==="closed")p.innerHTML=`<div class="schedule-solo"><strong>${dateLabel}</strong><span class="badge">${info.yearLabel}</span></div><div class="schedule-solo holiday">${info.reason}</div>`;
+      else {
+        const s=getScheduleCatalog(view)[info.key];
+        const scheduleTitle=s?.title||"Schedule";
+        const yearLabel=info.yearLabel||"School Year";
+        p.innerHTML=`<div class="schedule-solo"><strong>${scheduleTitle}</strong><span class="badge">${yearLabel}</span></div>${renderScheduleBlocks(s)}`;
+      }
+      if(!view.isStack)scheduleFit();
+    }
+
     function toggleTodayForView(view){
       const p=view.els.todayPanel;if(!p)return;
       p.classList.toggle("show");
-      const now=getNow(),info=getScheduleKeyForDate(now,view),dateLabel=prettyDate(formatDate(now));
-      if(info.type==="closed")p.innerHTML=`<div class="schedule-item"><strong>${dateLabel}</strong><span class="badge">${info.yearLabel}</span></div><div class="schedule-item holiday">${info.reason}</div>`;
-      else {const s=getScheduleCatalog(view)[info.key];p.innerHTML=`<div class="schedule-item"><strong>${s.title}</strong><span class="badge">${info.yearLabel}</span></div>${renderScheduleBlocks(s)}`;}
-      if(!view.isStack)scheduleFit();
+      renderTodayForView(view);
+    }
+
+    function refreshVisibleTodayPanelForView(view){
+      const p=view?.els?.todayPanel;
+      if(p&&p.classList.contains("show"))renderTodayForView(view);
     }
 
     function toggleToday(){
